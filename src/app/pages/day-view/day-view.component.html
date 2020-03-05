@@ -1,0 +1,10 @@
+<section [ngClass]="{'current-day': day.isCurrentDay}">
+  <h3>{{day.dayName}}</h3>
+  <h4>{{day.daySubtitle}}</h4>
+  <ul>
+    <li *ngFor="let task of day.tasks">
+      {{task.content}}
+    </li>
+  </ul>
+
+</section>

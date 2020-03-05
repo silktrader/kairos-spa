@@ -1,0 +1,5 @@
+<main class="visible-days">
+  <button (click)="showPrevious()">Previous</button>
+  <app-day-view *ngFor="let day of displayedDays" [day]="day" class="day"></app-day-view>
+  <button (click)="showNext()">Next</button>
+</main>
