@@ -13,7 +13,7 @@ export class Day {
 
   public get daySubtitle(): string {
     // prettier-ignore
-    return format(this.date, 'LLLL\', the\' do');
+    return format(this.date, 'LLLL d');
   }
 
   public get isCurrentDay(): boolean {

@@ -1,10 +1,30 @@
-<section [ngClass]="{'current-day': day.isCurrentDay}">
-  <h3>{{day.dayName}}</h3>
-  <h4>{{day.daySubtitle}}</h4>
-  <ul>
-    <li *ngFor="let task of day.tasks">
-      {{task.content}}
-    </li>
-  </ul>
+<section [ngClass]="{'day': true, 'current-day': day.isCurrentDay}">
+  <h2>{{day.dayName}}</h2>
+  <h3>{{day.daySubtitle}}</h3>
+  <div class="tasks">
+    <mat-card *ngFor="let task of day.tasks" class="mat-elevation-z2" matRipple>
+      <span [matMenuTriggerFor]="appMenu">{{task.content}}</span>
+
+      <mat-menu #appMenu="matMenu" yPosition="below">
+        <button mat-menu-item>
+          <mat-icon>done</mat-icon>
+          <span>Mark as Done</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+        <button mat-menu-item (click)="deleteTask(task)">
+          <mat-icon>delete</mat-icon>
+          <span>Delete</span>
+        </button>
+      </mat-menu>
+    </mat-card>
+    <mat-form-field appearance="outline" class="add-task">
+      <!-- <mat-label>Add Task</mat-label> -->
+      <input type="text" autocomplete="off" placeholder="Add Task" matInput [formControl]="newNoteFormControl" #newNote
+        (keyup.enter)="onEnter(newNote.value)">
+    </mat-form-field>
+  </div>
 
 </section>

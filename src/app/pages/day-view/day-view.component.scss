@@ -1,3 +1,61 @@
+.day {
+  border-right: 1px solid gray;
+  height: 100%;
+  border-bottom: 1px solid gray;
+}
+
+h2,
+h3 {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+h2 {
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+}
+
+h3 {
+  font-variant: small-caps;
+}
+
+.day:hover {
+  .add-task {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
 .current-day {
   color: darkred;
+
+  .add-task {
+    visibility: visible;
+    opacity: 1;
+  }
+}
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-task {
+  margin: 0.5rem;
+  visibility: hidden;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 0.5s;
+  transition-timing-function: linear;
+}
+
+mat-card {
+  display: flex;
+  margin: 0.5rem;
+  margin-top: 0;
+
+  span {
+    width: 100%;
+  }
 }
