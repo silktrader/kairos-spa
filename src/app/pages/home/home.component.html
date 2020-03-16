@@ -1,8 +1,36 @@
 <mat-toolbar color="primary" class="mat-elevation-z4">
-  <span>Kairos</span>
+
+  <section class="header">
+    <h2>Kairos</h2>
+  </section>
+
+  <section class="navigation">
+
+  </section>
+
+  <section class="user">
+    <ng-container *ngIf="(user$ | async) as user">
+      <span class="user-name">{{user.name}}</span>
+      <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item (click)="handleSignout()">Logout</button>
+      </mat-menu>
+    </ng-container>
+  </section>
+
 </mat-toolbar>
-<main class="visible-days">
-  <button mat-button (click)="showPrevious()">Previous</button>
-  <app-day-view *ngFor="let day of (displayedDays$ | async)" [day]="day" class="day"></app-day-view>
-  <button mat-button (click)="showNext()">Next</button>
-</main>
+
+<div class="container">
+
+  <main *ngIf="user$ | async; else authPrompt" class="visible-days">
+    <button mat-button (click)="showPrevious()">Previous</button>
+    <app-day-view *ngFor="let day of (displayedDays$ | async)" [day]="day" class="day"></app-day-view>
+    <button mat-button (click)="showNext()">Next</button>
+  </main>
+
+  <ng-template #authPrompt>
+    <app-auth></app-auth>
+  </ng-template>
+</div>

@@ -4,8 +4,9 @@ import { addDays, isToday } from 'date-fns';
 import { DayService } from 'src/app/services/day.service';
 import { Schedule } from 'src/app/models/schedule';
 import { Store, select } from '@ngrx/store';
-import { Observable } from 'rxjs';
 import { selectDays } from 'src/app/store/schedule.selectors';
+import { AuthService, UserInfo } from 'auth';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -14,8 +15,13 @@ import { selectDays } from 'src/app/store/schedule.selectors';
 })
 export class HomeComponent implements OnInit {
   public displayedDays$: any;
+  public readonly user$ = this.authService.user$;
 
-  constructor(private ds: DayService, private store: Store<Schedule>) {
+  constructor(
+    // private ds: DayService,
+    private readonly store: Store<Schedule>,
+    private readonly authService: AuthService
+  ) {
     this.displayedDays$ = this.store.pipe(select(selectDays));
   }
 
@@ -47,4 +53,8 @@ export class HomeComponent implements OnInit {
 
   //   this.displayedDays = displayedDates;
   // }
+
+  handleSignout(): void {
+    this.authService.signout();
+  }
 }

@@ -11,9 +11,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../environments/environment'; // Angular CLI environment
+import { AuthModule } from 'auth';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthComponent } from './pages/auth/auth.component';
+import { SigninComponent } from './pages/auth/signin/signin.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, DayViewComponent],
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    DayViewComponent,
+    AuthComponent,
+    SigninComponent
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -25,7 +35,9 @@ import { environment } from '../environments/environment'; // Angular CLI enviro
     BrowserAnimationsModule,
     MaterialModule,
     FormsModule,
-    ReactiveFormsModule
+    HttpClientModule,
+    ReactiveFormsModule,
+    AuthModule.forRoot({ backendUrl: 'http://localhost:3000/auth/' })
   ],
   providers: [],
   bootstrap: [AppComponent]
