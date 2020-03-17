@@ -3,9 +3,7 @@ import { Day } from 'src/app/models/day';
 import { FormControl } from '@angular/forms';
 import { DayService } from 'src/app/services/day.service';
 import { Task } from 'src/app/models/task';
-import { Schedule } from 'src/app/models/schedule';
-import { Store } from '@ngrx/store';
-import { addTask, deleteTask } from 'src/app/store/schedule.actions';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-day-view',
@@ -13,20 +11,41 @@ import { addTask, deleteTask } from 'src/app/store/schedule.actions';
   styleUrls: ['./day-view.component.scss']
 })
 export class DayViewComponent implements OnInit {
-  @Input() day: Day;
+  @Input() date: Date;
+
+  tasks$: Observable<ReadonlyArray<Task>>;
 
   newNoteFormControl = new FormControl('');
 
-  constructor(private store: Store<Schedule>, private ds: DayService) {}
+  constructor(private ds: DayService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.tasks$ = this.ds.getDayTasks(this.date);
+  }
 
-  onEnter(value: string): void {
-    this.ds.addTask(new Task(value), this.day);
+  addTask(value: string): void {
+    this.ds.addTask({
+      date: this.date,
+      title: value,
+      details: '',
+      order: 1
+    });
     this.newNoteFormControl.reset();
   }
 
   deleteTask(task: Task): void {
-    this.ds.deleteTask(task, this.day);
+    this.ds.deleteTask(task);
+  }
+
+  get isToday(): boolean {
+    return this.ds.isToday(this.date);
+  }
+
+  get dayName(): string {
+    return this.ds.getDayName(this.date);
+  }
+
+  get daySubtitle(): string {
+    return this.ds.getDaySubtitle(this.date);
   }
 }

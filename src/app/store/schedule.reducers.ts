@@ -7,50 +7,39 @@ import * as ScheduleActions from './schedule.actions';
 
 // build a test initial schedule without recurring to backends
 export const buildSampleSchedule = (): Schedule => {
-  const initialDate = addDays(new Date(), -2);
-  const days = [];
+  // const initialDate = addDays(new Date(), -2);
+  // const days = [];
 
-  for (let index = 0; index < 5; index++) {
-    days.push(
-      new Day(addDays(initialDate, index), [
-        new Task('Task #1'),
-        new Task('Task #2')
-      ])
-    );
-  }
-  return { days };
+  // for (let index = 0; index < 5; index++) {
+  //   days.push(new Day(addDays(initialDate, index), []));
+  // }
+  // return { days };
+  return { tasks: [] };
 };
 
 export const initialState = buildSampleSchedule();
 
 export const taskReducer = createReducer(
   initialState,
-  on(ScheduleActions.addTask, (schedule, { day, task }) => {
-    // substitute the selected day with a new instance containing the new task
-    const newDays = [...schedule.days];
-    const index = newDays.findIndex(item => item.date === day.date);
-    newDays[index] = new Day(newDays[index].date, [
-      ...newDays[index].tasks,
-      task
-    ]);
+
+  on(ScheduleActions.addTask, (schedule, { task }) => {
     return {
       ...schedule,
-      days: newDays
+      tasks: [...schedule.tasks, task]
     };
   }),
-  on(ScheduleActions.deleteTask, (schedule, { day, task }) => {
-    const newDays = [...schedule.days];
-    const dayIndex = newDays.findIndex(item => item.date === day.date);
-    // tk replace with id?
-    const taskIndex = newDays[dayIndex].tasks.findIndex(
-      item => item.content === task.content
-    );
-    const newTasks = [...newDays[dayIndex].tasks];
-    newTasks.splice(taskIndex, 1);
-    newDays[dayIndex] = new Day(newDays[dayIndex].date, newTasks);
+
+  on(ScheduleActions.setTasks, (schedule, { tasks }) => {
     return {
       ...schedule,
-      days: newDays
+      tasks
+    };
+  }),
+
+  on(ScheduleActions.deleteTask, (schedule, { task }) => {
+    return {
+      ...schedule,
+      tasks: schedule.tasks.filter(item => item.id !== task.id)
     };
   })
 );

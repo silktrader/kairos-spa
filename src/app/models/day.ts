@@ -19,4 +19,8 @@ export class Day {
   public get isCurrentDay(): boolean {
     return isToday(this.date);
   }
+
+  public get url(): string {
+    return format(this.date, 'yyyy-MM-dd');
+  }
 }

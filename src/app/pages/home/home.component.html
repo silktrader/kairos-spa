@@ -26,7 +26,7 @@
 
   <main *ngIf="user$ | async; else authPrompt" class="visible-days">
     <button mat-button (click)="showPrevious()">Previous</button>
-    <app-day-view *ngFor="let day of (displayedDays$ | async)" [day]="day" class="day"></app-day-view>
+    <app-day-view *ngFor="let date of (visibleDates$ | async)" [date]="date" class="day"></app-day-view>
     <button mat-button (click)="showNext()">Next</button>
   </main>
 

@@ -1,15 +1,10 @@
 import { createAction, props } from '@ngrx/store';
-import { Day } from '../models/day';
 import { Task } from '../models/task';
 
-export const addTask = createAction(
-  'Add Task',
-  props<{ day: Day; task: Task }>()
+export const addTask = createAction('Add Task', props<{ task: Task }>());
+export const setTasks = createAction(
+  'Set Tasks',
+  props<{ tasks: ReadonlyArray<Task> }>()
 );
-
-export const deleteTask = createAction(
-  'Delete Task',
-  props<{ day: Day; task: Task }>()
-);
-
+export const deleteTask = createAction('Delete Task', props<{ task: Task }>());
 export const completeTask = createAction('Complete Task');

@@ -1,5 +1,5 @@
-import { Day } from './day';
+import { Task } from './task';
 
 export interface Schedule {
-  readonly days: ReadonlyArray<Day>;
+  readonly tasks: ReadonlyArray<Task>;
 }
