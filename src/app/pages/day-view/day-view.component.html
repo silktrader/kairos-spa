@@ -2,9 +2,9 @@
   <h2>{{dayName}}</h2>
   <h3>{{daySubtitle}}</h3>
   <div class="tasks">
+
     <mat-card *ngFor="let task of (tasks$ | async)" class="mat-elevation-z2" matRipple>
       <span [matMenuTriggerFor]="appMenu">{{task.title}}</span>
-
       <mat-menu #appMenu="matMenu" yPosition="below">
         <button mat-menu-item>
           <mat-icon>done</mat-icon>
@@ -20,10 +20,11 @@
         </button>
       </mat-menu>
     </mat-card>
+
     <mat-form-field appearance="outline" class="add-task">
       <!-- <mat-label>Add Task</mat-label> -->
-      <input type="text" autocomplete="off" placeholder="Add Task" matInput [formControl]="newNoteFormControl" #newNote
-        (keyup.enter)="addTask(newNote.value)">
+      <input type="text" autocomplete="off" placeholder="Add Task" matInput [formControl]="newTaskControl" #newTask
+        (keyup.enter)="addTask(newTask.value)">
     </mat-form-field>
   </div>
 

@@ -1,7 +1,7 @@
 export interface TaskDto {
-  id?: number;
+  id: number;
   date: Date;
   title: string;
-  details: string;
-  order: number;
+  details?: string;
+  previousId?: number;
 }

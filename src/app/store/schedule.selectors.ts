@@ -16,5 +16,50 @@ export const selectAllTasks = createSelector(
 export const selectTasksByDay = createSelector(
   selectAllTasks,
   (tasks: ReadonlyArray<Task>, props: { date: Date }) =>
-    tasks.filter(task => isSameDay(task.date, props.date))
+    sortTasks(tasks.filter(task => isSameDay(task.date, props.date)))
 );
+
+export const sortTasks = (tasks: ReadonlyArray<Task>) => {
+  if (tasks.length === 0) {
+    return [];
+  }
+
+  let initialTask: Task | undefined;
+  const mappedPreviousIds = new Map<number, Task>();
+
+  for (const task of tasks) {
+    // detect the initial task, whick lacks a reference to a previous one, IDs are never falsy
+    if (!task.previousId) {
+      if (initialTask) {
+        console.error(
+          'Two or more tasks are lacking references to previous tasks'
+        ); // tk
+        return tasks;
+      }
+      initialTask = task;
+    } else {
+      // map tasks so to get them by ID quickly
+      mappedPreviousIds.set(task.previousId, task);
+    }
+  }
+
+  if (!initialTask) {
+    console.error('Could not find an initial task');
+    return tasks;
+  }
+
+  const sortedTasks: Array<Task> = [initialTask];
+
+  while (sortedTasks.length < tasks.length) {
+    const orderedTask = mappedPreviousIds.get(
+      sortedTasks[sortedTasks.length - 1].id
+    );
+    if (!orderedTask) {
+      console.error('Could not reconstruct tasks positions');
+      return tasks;
+    }
+    sortedTasks.push(orderedTask);
+  }
+
+  return sortedTasks;
+};

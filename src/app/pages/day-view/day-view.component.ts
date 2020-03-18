@@ -1,36 +1,47 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Day } from 'src/app/models/day';
 import { FormControl } from '@angular/forms';
 import { DayService } from 'src/app/services/day.service';
 import { Task } from 'src/app/models/task';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-day-view',
   templateUrl: './day-view.component.html',
   styleUrls: ['./day-view.component.scss']
 })
-export class DayViewComponent implements OnInit {
+export class DayViewComponent implements OnInit, OnDestroy {
   @Input() date: Date;
 
   tasks$: Observable<ReadonlyArray<Task>>;
 
-  newNoteFormControl = new FormControl('');
+  private lastTaskId: number;
+  private subscriptions = new Subscription();
+
+  newTaskControl = new FormControl('');
 
   constructor(private ds: DayService) {}
 
   ngOnInit(): void {
     this.tasks$ = this.ds.getDayTasks(this.date);
+    this.tasks$.subscribe(tasks => {
+      this.lastTaskId = tasks[tasks.length - 1]?.id;
+    });
   }
 
-  addTask(value: string): void {
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+
+  addTask(title: string): void {
     this.ds.addTask({
       date: this.date,
-      title: value,
-      details: '',
-      order: 1
+      title,
+      id: 0, // tk diff between get and post dto,
+      previousId: this.lastTaskId
     });
-    this.newNoteFormControl.reset();
+    this.newTaskControl.reset();
   }
 
   deleteTask(task: Task): void {

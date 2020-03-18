@@ -32,6 +32,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // tk should be conditional on sign in
     this.subscriptions.add(
       this.visibleDates$$.subscribe(dates =>
         this.ds.getTasksBetweenDates(dates[0], dates[dates.length - 1])

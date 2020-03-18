@@ -94,9 +94,9 @@ export class DayService {
     return new Task(
       new Date(taskDto.date),
       taskDto.title,
-      taskDto.details,
-      taskDto.order,
-      taskDto.id
+      taskDto.details ?? '',
+      taskDto.id,
+      taskDto.previousId
     );
   }
 
