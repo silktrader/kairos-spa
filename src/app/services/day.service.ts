@@ -11,6 +11,7 @@ import { environment } from 'src/environments/environment';
 import { catchError } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 import { selectTasksByDay } from '../store/schedule.selectors';
+import { DeleteTaskDto } from '../models/dtos/deleteTask.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -102,6 +103,23 @@ export class DayService {
 
   // tk use delete {date}/tasks/{id}
   deleteTask(task: Task): void {
-    this.store.dispatch(deleteTask({ task }));
+    this.http
+      .delete(`${environment.backendRootURL}/schedule/tasks/${task.id}`)
+      .pipe(
+        catchError(error => {
+          console.error(error);
+          return throwError(`Could not delete task with ID ${task.id}`);
+        })
+      )
+      .subscribe((response: DeleteTaskDto) => {
+        this.store.dispatch(
+          deleteTask({
+            deletedTaskId: response.deletedTaskId,
+            affectedTask: response.affectedTask
+              ? this.mapTask(response.affectedTask)
+              : null
+          })
+        );
+      });
   }
 }

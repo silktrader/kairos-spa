@@ -1,19 +1,9 @@
 import { createReducer, on } from '@ngrx/store';
 import { Schedule } from '../models/schedule';
-import { Day } from '../models/day';
-import { addDays } from 'date-fns';
-import { Task } from '../models/task';
 import * as ScheduleActions from './schedule.actions';
 
 // build a test initial schedule without recurring to backends
 export const buildSampleSchedule = (): Schedule => {
-  // const initialDate = addDays(new Date(), -2);
-  // const days = [];
-
-  // for (let index = 0; index < 5; index++) {
-  //   days.push(new Day(addDays(initialDate, index), []));
-  // }
-  // return { days };
   return { tasks: [] };
 };
 
@@ -36,10 +26,24 @@ export const taskReducer = createReducer(
     };
   }),
 
-  on(ScheduleActions.deleteTask, (schedule, { task }) => {
-    return {
-      ...schedule,
-      tasks: schedule.tasks.filter(item => item.id !== task.id)
-    };
-  })
+  on(
+    ScheduleActions.deleteTask,
+    (schedule, { deletedTaskId, affectedTask }) => {
+      // replace the affected task and filter out the removed one
+      console.log(deletedTaskId);
+      const newTasks = schedule.tasks.filter(
+        task => task.id !== deletedTaskId && task.id !== affectedTask?.id
+      );
+
+      // the affected task will be null when the first element is deleted
+      if (affectedTask) {
+        newTasks.push(affectedTask);
+      }
+
+      return {
+        ...schedule,
+        tasks: newTasks
+      };
+    }
+  )
 );
