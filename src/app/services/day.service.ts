@@ -3,7 +3,12 @@ import { Day } from 'src/app/models/day';
 import { Task } from '../models/task';
 import { addDays, format, isToday } from 'date-fns';
 import { Store, select } from '@ngrx/store';
-import { addTask, deleteTask, setTasks } from '../store/schedule.actions';
+import {
+  addTask,
+  deleteTask,
+  setTasks,
+  repositionTasks
+} from '../store/schedule.actions';
 import { Schedule } from '../models/schedule';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { TaskDto } from '../models/dtos/task.dto';
@@ -12,6 +17,7 @@ import { catchError } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 import { selectTasksByDay } from '../store/schedule.selectors';
 import { DeleteTaskDto } from '../models/dtos/deleteTask.dto';
+import { NewTasksPositionsDto } from '../models/dtos/newTaskPositions.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -104,14 +110,16 @@ export class DayService {
   // tk use delete {date}/tasks/{id}
   deleteTask(task: Task): void {
     this.http
-      .delete(`${environment.backendRootURL}/schedule/tasks/${task.id}`)
+      .delete<DeleteTaskDto>(
+        `${environment.backendRootURL}/schedule/tasks/${task.id}`
+      )
       .pipe(
         catchError(error => {
           console.error(error);
           return throwError(`Could not delete task with ID ${task.id}`);
         })
       )
-      .subscribe((response: DeleteTaskDto) => {
+      .subscribe(response => {
         this.store.dispatch(
           deleteTask({
             deletedTaskId: response.deletedTaskId,
@@ -119,6 +127,25 @@ export class DayService {
               ? this.mapTask(response.affectedTask)
               : null
           })
+        );
+      });
+  }
+
+  updateTaskPositions(newPositions: NewTasksPositionsDto): void {
+    this.http
+      .patch<ReadonlyArray<TaskDto>>(
+        `${environment.backendRootURL}/schedule/tasks/positions`,
+        newPositions
+      )
+      .pipe(
+        catchError(error => {
+          console.error(error);
+          return throwError(error);
+        })
+      )
+      .subscribe(tasks => {
+        this.store.dispatch(
+          repositionTasks({ tasks: tasks.map(this.mapTask) })
         );
       });
   }

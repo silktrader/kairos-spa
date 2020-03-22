@@ -1,6 +1,5 @@
 import { createAction, props } from '@ngrx/store';
 import { Task } from '../models/task';
-import { TaskDto } from '../models/dtos/task.dto';
 
 export const addTask = createAction('Add Task', props<{ task: Task }>());
 export const setTasks = createAction(
@@ -12,3 +11,8 @@ export const deleteTask = createAction(
   props<{ deletedTaskId: number; affectedTask: Task | null }>()
 );
 export const completeTask = createAction('Complete Task');
+
+export const repositionTasks = createAction(
+  'Reposition Tasks',
+  props<{ tasks: ReadonlyArray<Task> }>()
+);

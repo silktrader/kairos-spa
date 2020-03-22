@@ -26,11 +26,22 @@ export const taskReducer = createReducer(
     };
   }),
 
+  on(ScheduleActions.repositionTasks, (schedule, { tasks }) => {
+    // mark the tasks which are being replaced
+    const substitutedTasksIds = new Set<number>(tasks.map(task => task.id));
+    return {
+      ...schedule,
+      tasks: [
+        ...schedule.tasks.filter(task => !substitutedTasksIds.has(task.id)),
+        ...tasks
+      ]
+    };
+  }),
+
   on(
     ScheduleActions.deleteTask,
     (schedule, { deletedTaskId, affectedTask }) => {
       // replace the affected task and filter out the removed one
-      console.log(deletedTaskId);
       const newTasks = schedule.tasks.filter(
         task => task.id !== deletedTaskId && task.id !== affectedTask?.id
       );

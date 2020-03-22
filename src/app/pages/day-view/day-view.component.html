@@ -1,7 +1,7 @@
 <section [ngClass]="{'day': true, 'current-day': isToday}">
   <h2>{{dayName}}</h2>
   <h3>{{daySubtitle}}</h3>
-  <div class="tasks">
+  <div class="tasks" sortablejs [sortablejsOptions]="options">
 
     <mat-card *ngFor="let task of (tasks$ | async)" class="mat-elevation-z2" matRipple>
       <span [matMenuTriggerFor]="appMenu">{{task.title}}</span>

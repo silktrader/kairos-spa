@@ -15,6 +15,7 @@ import { AuthModule } from 'auth';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthComponent } from './pages/auth/auth.component';
 import { SigninComponent } from './pages/auth/signin/signin.component';
+import { SortablejsModule } from 'ngx-sortablejs';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { SigninComponent } from './pages/auth/signin/signin.component';
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
-    AuthModule.forRoot({ backendUrl: 'http://localhost:3000/auth/' })
+    AuthModule.forRoot({ backendUrl: 'http://localhost:3000/auth/' }),
+    SortablejsModule.forRoot({ animation: 150 })
   ],
   providers: [],
   bootstrap: [AppComponent]

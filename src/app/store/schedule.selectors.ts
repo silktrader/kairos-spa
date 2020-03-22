@@ -55,7 +55,9 @@ export const sortTasks = (tasks: ReadonlyArray<Task>) => {
       sortedTasks[sortedTasks.length - 1].id
     );
     if (!orderedTask) {
-      console.error('Could not reconstruct tasks positions');
+      console.error(
+        `Could not reconstruct tasks positions: ${JSON.stringify(tasks)}`
+      );
       return tasks;
     }
     sortedTasks.push(orderedTask);
