@@ -2,7 +2,7 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DayService } from 'src/app/services/day.service';
 import { Task } from 'src/app/models/task';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Options } from 'sortablejs';
 import { NewTasksPositionsDto } from 'src/app/models/dtos/newTaskPositions.dto';
 
@@ -14,10 +14,8 @@ import { NewTasksPositionsDto } from 'src/app/models/dtos/newTaskPositions.dto';
 export class DayViewComponent implements OnInit, OnDestroy {
   @Input() date: Date;
 
-  tasks$: Observable<ReadonlyArray<Task>>;
   tasks: ReadonlyArray<Task>;
 
-  private lastTaskId: number;
   private subscriptions = new Subscription();
 
   newTaskControl = new FormControl('');
@@ -27,11 +25,11 @@ export class DayViewComponent implements OnInit, OnDestroy {
   constructor(private ds: DayService) {}
 
   ngOnInit(): void {
-    this.tasks$ = this.ds.getDayTasks(this.date);
-    this.tasks$.subscribe(tasks => {
-      this.tasks = tasks;
-      this.lastTaskId = tasks[tasks.length - 1]?.id;
-    });
+    this.subscriptions.add(
+      this.ds.getDayTasks(this.date).subscribe(tasks => {
+        this.tasks = tasks;
+      })
+    );
 
     this.options = {
       group: 'normal-group',
@@ -56,7 +54,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
       date: this.date,
       title,
       id: 0, // tk diff between get and post dto,
-      previousId: this.lastTaskId
+      previousId: this.tasks[this.tasks.length - 1].id
     });
     this.newTaskControl.reset();
   }

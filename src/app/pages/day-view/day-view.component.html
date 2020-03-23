@@ -3,7 +3,7 @@
   <h3>{{daySubtitle}}</h3>
   <div class="tasks" sortablejs [sortablejsOptions]="options">
 
-    <mat-card *ngFor="let task of (tasks$ | async)" class="mat-elevation-z2" matRipple>
+    <mat-card *ngFor="let task of tasks" class="mat-elevation-z2" matRipple>
       <span [matMenuTriggerFor]="appMenu">{{task.title}}</span>
       <mat-menu #appMenu="matMenu" yPosition="below">
         <button mat-menu-item>
