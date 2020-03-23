@@ -6,6 +6,21 @@
 
   <section class="navigation">
 
+    <button mat-icon-button color="accent" aria-label="Previous Dates" matTooltip="Previous Dates"
+      matTooltipPosition="left" (click)="showPrevious()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <button mat-icon-button color="accent" aria-label="Current Dates" matTooltip="Today" matTooltipPosition="above"
+      (click)="showToday()">
+      <mat-icon>home</mat-icon>
+    </button>
+
+    <button mat-icon-button color="accent" aria-label="Next Dates" matTooltip="Next Dates" matTooltipPosition="right"
+      (click)="showNext()">
+      <mat-icon>arrow_forward</mat-icon>
+    </button>
+
   </section>
 
   <section class="user">
@@ -25,9 +40,7 @@
 <div class="container">
 
   <main *ngIf="user$ | async; else authPrompt" class="visible-days">
-    <button mat-button (click)="showPrevious()">Previous</button>
     <app-day-view *ngFor="let date of (visibleDates$ | async)" [date]="date" class="day"></app-day-view>
-    <button mat-button (click)="showNext()">Next</button>
   </main>
 
   <ng-template #authPrompt>

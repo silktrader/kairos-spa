@@ -22,12 +22,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService
   ) {
     this.visibleDates$$ = new BehaviorSubject<ReadonlyArray<Date>>(
-      this.initialDates()
+      this.currentDates()
     );
     this.visibleDates$ = this.visibleDates$$.asObservable();
   }
 
-  private get currentDates() {
+  private get visibleDates() {
     return this.visibleDates$$?.value;
   }
 
@@ -47,27 +47,31 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public showPrevious(): void {
     this.visibleDates$$.next([
-      this.ds.getDateBefore(this.currentDates[0]),
-      ...this.currentDates.slice(0, this.currentDates.length - 1)
+      this.ds.getDateBefore(this.visibleDates[0]),
+      ...this.visibleDates.slice(0, this.visibleDates.length - 1)
     ]);
   }
 
   public showNext(): void {
     this.visibleDates$$.next([
-      ...this.currentDates.slice(1),
-      this.ds.getDateAfter(this.currentDates[this.currentDates.length - 1])
+      ...this.visibleDates.slice(1),
+      this.ds.getDateAfter(this.visibleDates[this.visibleDates.length - 1])
     ]);
   }
 
-  private initialDates(): ReadonlyArray<Date> {
+  public showToday(): void {
+    this.visibleDates$$.next(this.currentDates());
+  }
+
+  private currentDates(): ReadonlyArray<Date> {
     const initialDate = addDays(new Date(), -2);
-    const initialDates: Array<Date> = [];
+    const currentDates: Array<Date> = [];
 
     for (let index = 0; index < 5; index++) {
-      initialDates.push(addDays(initialDate, index));
+      currentDates.push(addDays(initialDate, index));
     }
 
-    return initialDates;
+    return currentDates;
   }
 
   handleSignout(): void {
