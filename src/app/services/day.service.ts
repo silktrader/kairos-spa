@@ -10,7 +10,7 @@ import {
   repositionTasks
 } from '../store/schedule.actions';
 import { Schedule } from '../models/schedule';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { TaskDto } from '../models/dtos/task.dto';
 import { environment } from 'src/environments/environment';
 import { catchError } from 'rxjs/operators';
@@ -33,7 +33,6 @@ export class DayService {
   }
 
   getDaySubtitle(date: Date): string {
-    // prettier-ignore
     return format(date, 'LLLL d');
   }
 

@@ -54,8 +54,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   public showNext(): void {
     this.visibleDates$$.next([
-      ...this.currentDates.slice(1, this.currentDates.length - 1),
-      this.ds.getDateAfter(this.currentDates[length - 1])
+      ...this.currentDates.slice(1),
+      this.ds.getDateAfter(this.currentDates[this.currentDates.length - 1])
     ]);
   }
 
