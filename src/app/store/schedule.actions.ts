@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { Task } from '../models/task';
 
 export const addTask = createAction('Add Task', props<{ task: Task }>());
+export const updateTask = createAction('Update Task', props<{ task: Task }>());
 export const setTasks = createAction(
   'Set Tasks',
   props<{ tasks: ReadonlyArray<Task> }>()

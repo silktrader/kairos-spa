@@ -1,6 +1,9 @@
 <section [ngClass]="{'day': true, 'current-day': isToday}">
-  <h2>{{dayName}}</h2>
-  <h3>{{daySubtitle}}</h3>
+
+  <header class="date-header">
+    <h2>{{dayName}}</h2>
+    <h3>{{daySubtitle}}</h3>
+  </header>
   <div class="tasks" sortablejs [sortablejsOptions]="options">
 
     <mat-card *ngFor="let task of tasks" class="mat-elevation-z2" matRipple>
@@ -10,7 +13,7 @@
           <mat-icon>done</mat-icon>
           <span>Mark as Done</span>
         </button>
-        <button mat-menu-item>
+        <button mat-menu-item (click)="openEditTakDialog(task)">
           <mat-icon>edit</mat-icon>
           <span>Edit</span>
         </button>

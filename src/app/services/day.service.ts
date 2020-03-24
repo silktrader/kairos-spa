@@ -7,7 +7,8 @@ import {
   addTask,
   deleteTask,
   setTasks,
-  repositionTasks
+  repositionTasks,
+  updateTask
 } from '../store/schedule.actions';
 import { Schedule } from '../models/schedule';
 import { HttpClient } from '@angular/common/http';
@@ -127,6 +128,23 @@ export class DayService {
               : null
           })
         );
+      });
+  }
+
+  updateTask(task: Task): void {
+    this.http
+      .put<TaskDto>(
+        `${environment.backendRootURL}/schedule/tasks/${task.id}`,
+        task
+      )
+      .pipe(
+        catchError(error => {
+          console.error(error);
+          return throwError(`Could not update task #${task.id}`);
+        })
+      )
+      .subscribe(taskDto => {
+        this.store.dispatch(updateTask({ task: this.mapTask(taskDto) }));
       });
   }
 

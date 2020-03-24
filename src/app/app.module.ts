@@ -16,6 +16,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthComponent } from './pages/auth/auth.component';
 import { SigninComponent } from './pages/auth/signin/signin.component';
 import { SortablejsModule } from 'ngx-sortablejs';
+import { EditTaskDialogComponent } from './pages/edit-task-dialog/edit-task-dialog.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { SortablejsModule } from 'ngx-sortablejs';
     HomeComponent,
     DayViewComponent,
     AuthComponent,
-    SigninComponent
+    SigninComponent,
+    EditTaskDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -41,6 +43,7 @@ import { SortablejsModule } from 'ngx-sortablejs';
     AuthModule.forRoot({ backendUrl: 'http://localhost:3000/auth/' }),
     SortablejsModule.forRoot({ animation: 150 })
   ],
+  entryComponents: [EditTaskDialogComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

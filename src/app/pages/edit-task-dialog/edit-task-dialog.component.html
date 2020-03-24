@@ -1,0 +1,19 @@
+<form [formGroup]="taskForm">
+
+  <main>
+    <mat-form-field class="title-input" appearance="outline">
+      <input type="text" formControlName="title" matInput>
+    </mat-form-field>
+
+    <mat-form-field class="details-input" appearance="outline">
+      <mat-label>Details</mat-label>
+      <textarea formControlName="details" matInput></textarea>
+    </mat-form-field>
+  </main>
+
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="saveTask()">Save</button>
+    <button mat-button mat-dialog-close cdkFocusInitial>Dismiss</button>
+  </div>
+</form>

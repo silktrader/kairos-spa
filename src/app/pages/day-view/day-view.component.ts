@@ -5,6 +5,8 @@ import { Task } from 'src/app/models/task';
 import { Subscription } from 'rxjs';
 import { Options } from 'sortablejs';
 import { NewTasksPositionsDto } from 'src/app/models/dtos/newTaskPositions.dto';
+import { MatDialog } from '@angular/material/dialog';
+import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 
 @Component({
   selector: 'app-day-view',
@@ -22,7 +24,10 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   options: Options;
 
-  constructor(private ds: DayService) {}
+  constructor(
+    private readonly ds: DayService,
+    private editTaskDialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.subscriptions.add(
@@ -111,6 +116,10 @@ export class DayViewComponent implements OnInit, OnDestroy {
     }
 
     return { tasks: changedTaskPositions };
+  }
+
+  public openEditTakDialog(task: Task) {
+    let a = this.editTaskDialog.open(EditTaskDialogComponent, { data: task });
   }
 
   get isToday(): boolean {

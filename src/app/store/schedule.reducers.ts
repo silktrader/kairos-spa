@@ -1,6 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
 import { Schedule } from '../models/schedule';
 import * as ScheduleActions from './schedule.actions';
+import { Task } from '../models/task';
 
 // build a test initial schedule without recurring to backends
 export const buildSampleSchedule = (): Schedule => {
@@ -9,6 +10,24 @@ export const buildSampleSchedule = (): Schedule => {
 
 export const initialState = buildSampleSchedule();
 
+export const removeTasksByIds = (
+  tasks: ReadonlyArray<Task>,
+  ...removedTasksIds: Array<number>
+): Array<Task> => {
+  const removedIds = new Set<number>(removedTasksIds);
+
+  const finalTasks: Array<Task> = [];
+
+  for (const task of tasks) {
+    if (removedIds.has(task.id)) {
+      continue;
+    }
+    finalTasks.push(task);
+  }
+
+  return finalTasks;
+};
+
 export const taskReducer = createReducer(
   initialState,
 
@@ -16,6 +35,13 @@ export const taskReducer = createReducer(
     return {
       ...schedule,
       tasks: [...schedule.tasks, task]
+    };
+  }),
+
+  on(ScheduleActions.updateTask, (schedule, { task }) => {
+    return {
+      ...schedule,
+      tasks: [...removeTasksByIds(schedule.tasks, task.id), task]
     };
   }),
 
