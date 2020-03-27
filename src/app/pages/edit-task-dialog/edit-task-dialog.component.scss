@@ -3,10 +3,31 @@ main {
   flex-direction: column;
 }
 
+// Toolbar
+.status {
+  display: flex;
+  flex: 1 1 70%;
+  font-size: medium;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1 1 30%;
+}
+
 .title-input {
-  min-width: 30rem;
+  min-width: 20rem;
+  font-size: larger;
 }
 
 .details-input {
-  min-width: 30rem;
+  min-width: 20rem;
+  font-size: large;
+}
+
+form {
+  margin-left: 2rem;
+  margin-right: 2rem;
+  margin-bottom: 1rem;
 }

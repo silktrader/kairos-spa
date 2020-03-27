@@ -55,17 +55,21 @@ export class DayViewComponent implements OnInit, OnDestroy {
   }
 
   addTask(title: string): void {
+    // check whether this is the first task
+    const previousId =
+      this.tasks.length > 0 ? this.tasks[this.tasks.length - 1].id : undefined;
+
     this.ds.addTask({
       date: this.date,
       title,
       id: 0, // tk diff between get and post dto,
-      previousId: this.tasks[this.tasks.length - 1].id
+      previousId
     });
     this.newTaskControl.reset();
   }
 
   deleteTask(task: Task): void {
-    this.ds.deleteTask(task);
+    this.ds.deleteTask(task.id);
   }
 
   private changeTaskPositions(oldIndex: number, newIndex: number): void {
@@ -119,7 +123,10 @@ export class DayViewComponent implements OnInit, OnDestroy {
   }
 
   public openEditTakDialog(task: Task) {
-    let a = this.editTaskDialog.open(EditTaskDialogComponent, { data: task });
+    this.editTaskDialog.open(EditTaskDialogComponent, {
+      data: task,
+      panelClass: 'kairos-edit-task-dialog'
+    });
   }
 
   get isToday(): boolean {

@@ -108,15 +108,15 @@ export class DayService {
   }
 
   // tk use delete {date}/tasks/{id}
-  deleteTask(task: Task): void {
+  deleteTask(taskId: number): void {
     this.http
       .delete<DeleteTaskDto>(
-        `${environment.backendRootURL}/schedule/tasks/${task.id}`
+        `${environment.backendRootURL}/schedule/tasks/${taskId}`
       )
       .pipe(
         catchError(error => {
           console.error(error);
-          return throwError(`Could not delete task with ID ${task.id}`);
+          return throwError(`Could not delete task with ID ${taskId}`);
         })
       )
       .subscribe(response => {

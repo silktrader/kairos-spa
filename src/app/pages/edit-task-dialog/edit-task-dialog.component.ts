@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { Task } from 'src/app/models/task';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 import { DayService } from 'src/app/services/day.service';
 
@@ -21,9 +21,11 @@ export class EditTaskDialogComponent implements OnInit {
   );
 
   private readonly subscription = new Subscription();
+  private changed = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public initialTask: Task,
+    public dialogRef: MatDialogRef<EditTaskDialogComponent>,
     private readonly formBuilder: FormBuilder,
     private readonly ds: DayService
   ) {}
@@ -32,7 +34,10 @@ export class EditTaskDialogComponent implements OnInit {
     this.resetForm();
 
     this.subscription.add(
-      this.taskForm.valueChanges.subscribe(() => this.saveTask())
+      this.taskForm.valueChanges.subscribe(() => {
+        this.saveTask();
+        this.changed = true;
+      })
     );
   }
 
@@ -47,5 +52,17 @@ export class EditTaskDialogComponent implements OnInit {
   saveTask(): void {
     // merge data with spread operator
     this.ds.updateTask({ ...this.initialTask, ...this.taskForm.value });
+  }
+
+  deleteTask(): void {
+    // the ID of a task won't ever change since inception
+    this.ds.deleteTask(this.initialTask.id);
+
+    // tk should check for effective deletion by listening to observable?
+    this.dialogRef.close();
+  }
+
+  public get hasChanged(): boolean {
+    return this.changed;
   }
 }

@@ -6,9 +6,10 @@
   </header>
   <div class="tasks" sortablejs [sortablejsOptions]="options">
 
-    <mat-card *ngFor="let task of tasks" class="mat-elevation-z2" matRipple>
-      <span [matMenuTriggerFor]="appMenu">{{task.title}}</span>
-      <mat-menu #appMenu="matMenu" yPosition="below">
+    <mat-card *ngFor="let task of tasks" class="mat-elevation-z2 task-card" matRipple (click)="openEditTakDialog(task)">
+      <span>{{task.title}}</span>
+      <!-- <span [matMenuTriggerFor]="appMenu">{{task.title}}</span> -->
+      <!-- <mat-menu #appMenu="matMenu" yPosition="below">
         <button mat-menu-item>
           <mat-icon>done</mat-icon>
           <span>Mark as Done</span>
@@ -21,7 +22,7 @@
           <mat-icon>delete</mat-icon>
           <span>Delete</span>
         </button>
-      </mat-menu>
+      </mat-menu> -->
     </mat-card>
 
     <mat-form-field appearance="outline" class="add-task">
