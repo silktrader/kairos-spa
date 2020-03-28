@@ -5,7 +5,7 @@
       <span class="status-notice">{{changeNotice$ | async}}</span>
     </section>
     <section class="actions">
-      <button mat-icon-button [disabled]="!hasChanged">
+      <button mat-icon-button [disabled]="!(canRevert$ | async)" (click)="revertChanges()">
         <mat-icon>restore</mat-icon>
       </button>
       <button mat-icon-button mat-dialog-close>

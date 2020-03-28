@@ -32,10 +32,12 @@ export class EditTaskDialogComponent implements OnInit {
   );
 
   task$ = this.store.pipe(select(selectTaskById, { id: this.initialTask.id }));
-  changeNotice$ = new BehaviorSubject<string>('');
+  readonly changeNotice$ = new BehaviorSubject<string>('');
+  readonly canRevert$ = new BehaviorSubject<boolean>(false);
+
+  private task: Task;
 
   private readonly subscription = new Subscription();
-  private changed = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public initialTask: Task,
@@ -46,38 +48,46 @@ export class EditTaskDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.resetForm();
-
     this.subscription.add(
-      this.taskForm.valueChanges.subscribe(() => this.saveTask())
+      this.taskForm.valueChanges.subscribe(changes => {
+        // as soon as changes between the form's values and the task are detected save them
+        for (const property in changes) {
+          if ((this.task as any)[property] !== changes[property]) {
+            this.saveTask();
+          }
+        }
+      })
     );
 
-    this.task$.subscribe(task => {
-      if (this.changed) {
-        this.changeNotice$.next('... changes saved');
-        setTimeout(() => this.changeNotice$.next(''), 8000);
-      }
-    });
+    this.subscription.add(
+      this.task$.subscribe(task => {
+        if (task === undefined) {
+          return;
+        }
+        this.task = task;
+        this.taskForm.patchValue(task);
 
-    this.taskForm
-      .get('title')
-      ?.statusChanges.subscribe(change => console.log(change));
-  }
-
-  public resetForm() {
-    if (this.initialTask) {
-      this.taskForm.patchValue(this.initialTask);
-    } else {
-      this.taskForm.reset();
-    }
+        // got a new value from the store; signal the changes
+        // though these could originate from other sources
+        if (this.canRevert$.value) {
+          this.changeNotice$.next('... changes saved');
+          setTimeout(() => this.changeNotice$.next(''), 1000);
+        }
+      })
+    );
   }
 
   saveTask(): void {
-    this.changed = true;
     // merge data with spread operator
     this.store.dispatch(
       updateTask({ task: { ...this.initialTask, ...this.taskForm.value } })
     );
+    this.canRevert$.next(true);
+  }
+
+  revertChanges(): void {
+    this.store.dispatch(updateTask({ task: this.initialTask }));
+    this.canRevert$.next(false);
   }
 
   deleteTask(): void {
@@ -86,9 +96,5 @@ export class EditTaskDialogComponent implements OnInit {
 
     // tk should check for effective deletion by listening to observable?
     this.dialogRef.close();
-  }
-
-  public get hasChanged(): boolean {
-    return this.changed;
   }
 }
