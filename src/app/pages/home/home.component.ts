@@ -3,6 +3,9 @@ import { AuthService } from 'auth';
 import { addDays } from 'date-fns';
 import { DayService } from 'src/app/services/day.service';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { ScheduleState } from 'src/app/models/schedule';
+import { getDatesTasks } from 'src/app/store/schedule.actions';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +22,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly ds: DayService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly store: Store<ScheduleState>
   ) {
     this.visibleDates$$ = new BehaviorSubject<ReadonlyArray<Date>>(
       this.currentDates()
@@ -33,10 +37,16 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // tk should be conditional on sign in
+
     this.subscriptions.add(
-      this.visibleDates$$.subscribe(dates =>
-        this.ds.getTasksBetweenDates(dates[0], dates[dates.length - 1])
-      )
+      this.visibleDates$.subscribe(dates => {
+        this.store.dispatch(
+          getDatesTasks({
+            startDate: dates[0],
+            endDate: dates[dates.length - 1]
+          })
+        );
+      })
     );
   }
 

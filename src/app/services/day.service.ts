@@ -10,11 +10,11 @@ import {
   repositionTasks,
   updateTask
 } from '../store/schedule.actions';
-import { Schedule } from '../models/schedule';
+import { ScheduleState } from '../models/schedule';
 import { HttpClient } from '@angular/common/http';
 import { TaskDto } from '../models/dtos/task.dto';
 import { environment } from 'src/environments/environment';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 import { selectTasksByDay } from '../store/schedule.selectors';
 import { DeleteTaskDto } from '../models/dtos/deleteTask.dto';
@@ -26,7 +26,7 @@ import { NewTasksPositionsDto } from '../models/dtos/newTaskPositions.dto';
 export class DayService {
   constructor(
     private readonly http: HttpClient,
-    private readonly store: Store<Schedule>
+    private readonly store: Store<ScheduleState>
   ) {}
 
   getDayName(date: Date): string {
@@ -61,8 +61,11 @@ export class DayService {
     return this.store.pipe(select(selectTasksByDay, { date }));
   }
 
-  getTasksBetweenDates(startDate: Date, endDate: Date) {
-    this.http
+  getTasksBetweenDates(
+    startDate: Date,
+    endDate: Date
+  ): Observable<ReadonlyArray<Task>> {
+    return this.http
       .get<ReadonlyArray<TaskDto>>(
         `${environment.backendRootURL}/schedule/tasks`,
         {
@@ -72,14 +75,15 @@ export class DayService {
           }
         }
       )
-      .subscribe({
-        next: (tasks: TaskDto[]) => {
-          this.store.dispatch(setTasks({ tasks: tasks.map(this.mapTask) }));
-        },
-        error: () => {
-          console.log('Couldnt get dates');
-        }
-      });
+      .pipe(map(taskDtos => taskDtos.map(this.mapTask)));
+    // .subscribe({
+    //   next: (tasks: TaskDto[]) => {
+    //     this.store.dispatch(setTasks({ tasks: tasks.map(this.mapTask) }));
+    //   },
+    //   error: () => {
+    //     console.log('Couldnt get dates');
+    //   }
+    // });
   }
 
   addTask(taskDto: TaskDto): void {

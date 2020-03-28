@@ -1,5 +1,6 @@
 import { Task } from './task';
 
-export interface Schedule {
+export interface ScheduleState {
   readonly tasks: ReadonlyArray<Task>;
+  readonly loading: boolean;
 }

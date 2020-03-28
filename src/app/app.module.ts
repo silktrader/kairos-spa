@@ -17,6 +17,8 @@ import { AuthComponent } from './pages/auth/auth.component';
 import { SigninComponent } from './pages/auth/signin/signin.component';
 import { SortablejsModule } from 'ngx-sortablejs';
 import { EditTaskDialogComponent } from './pages/edit-task-dialog/edit-task-dialog.component';
+import { EffectsModule } from '@ngrx/effects';
+import { ScheduleEffects } from './store/schedule.effects';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,8 @@ import { EditTaskDialogComponent } from './pages/edit-task-dialog/edit-task-dial
     HttpClientModule,
     ReactiveFormsModule,
     AuthModule.forRoot({ backendUrl: 'http://localhost:3000/auth/' }),
-    SortablejsModule.forRoot({ animation: 150 })
+    SortablejsModule.forRoot({ animation: 150 }),
+    EffectsModule.forRoot([ScheduleEffects])
   ],
   entryComponents: [EditTaskDialogComponent],
   providers: [],

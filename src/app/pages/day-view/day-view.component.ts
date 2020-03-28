@@ -2,11 +2,14 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DayService } from 'src/app/services/day.service';
 import { Task } from 'src/app/models/task';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { Options } from 'sortablejs';
 import { NewTasksPositionsDto } from 'src/app/models/dtos/newTaskPositions.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
+import { Store, select } from '@ngrx/store';
+import { ScheduleState } from 'src/app/models/schedule';
+import { selectLoading } from 'src/app/store/schedule.selectors';
 
 @Component({
   selector: 'app-day-view',
@@ -17,6 +20,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
   @Input() date: Date;
 
   tasks: ReadonlyArray<Task>;
+  loading: Observable<boolean> = this.store.pipe(select(selectLoading));
 
   private subscriptions = new Subscription();
 
@@ -25,6 +29,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
   options: Options;
 
   constructor(
+    private readonly store: Store<ScheduleState>,
     private readonly ds: DayService,
     private editTaskDialog: MatDialog
   ) {}
@@ -66,10 +71,6 @@ export class DayViewComponent implements OnInit, OnDestroy {
       previousId
     });
     this.newTaskControl.reset();
-  }
-
-  deleteTask(task: Task): void {
-    this.ds.deleteTask(task.id);
   }
 
   private changeTaskPositions(oldIndex: number, newIndex: number): void {

@@ -1,16 +1,18 @@
 import { createSelector } from '@ngrx/store';
 import { Task } from '../models/task';
 import { isSameDay } from 'date-fns';
-
-export interface FeatureState {
-  tasks: ReadonlyArray<Task>;
-}
+import { ScheduleState } from '../models/schedule';
 
 export const selectFeature = (state: any) => state.schedule;
 
+export const selectLoading = createSelector(
+  selectFeature,
+  (state: ScheduleState) => state.loading
+);
+
 export const selectAllTasks = createSelector(
   selectFeature,
-  (state: FeatureState) => state.tasks
+  (state: ScheduleState) => state.tasks
 );
 
 export const selectTasksByDay = createSelector(

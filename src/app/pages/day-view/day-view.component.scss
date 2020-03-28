@@ -19,6 +19,12 @@ h3 {
   font-variant: small-caps;
 }
 
+.day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .date-header {
   margin-bottom: 2rem;
 }
@@ -42,6 +48,7 @@ h3 {
 .tasks {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .add-task {
@@ -62,4 +69,8 @@ mat-card {
   span {
     width: 100%;
   }
+}
+
+mat-spinner {
+  margin: auto;
 }
