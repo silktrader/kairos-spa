@@ -7,7 +7,7 @@ export const selectFeature = (state: any) => state.schedule;
 
 export const selectLoading = createSelector(
   selectFeature,
-  (state: ScheduleState) => state.loading
+  (state: ScheduleState) => state.loadingTasks
 );
 
 export const selectAllTasks = createSelector(
@@ -67,3 +67,15 @@ export const sortTasks = (tasks: ReadonlyArray<Task>) => {
 
   return sortedTasks;
 };
+
+export const selectTaskById = createSelector(
+  selectAllTasks,
+  (tasks: ReadonlyArray<Task>, props: { id: number }) =>
+    tasks.find(task => task.id === props.id)
+);
+
+export const selectTaskUpdating = createSelector(
+  selectFeature,
+  (state: ScheduleState, props: { id: number }) =>
+    state.updatingTasks.find(id => id === props.id)
+);

@@ -1,21 +1,13 @@
 <main>
   <mat-toolbar>
     <section class="status">
-      <span></span>
+      <mat-spinner *ngIf="taskUpdating$ | async" [diameter]="20"></mat-spinner>
+      <span class="status-notice">{{changeNotice$ | async}}</span>
     </section>
     <section class="actions">
       <button mat-icon-button [disabled]="!hasChanged">
         <mat-icon>restore</mat-icon>
       </button>
-      <!-- <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Task Actions">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item color="warn">
-          <mat-icon>delete</mat-icon>
-          <span>Delete Task</span>
-        </button>
-      </mat-menu> -->
       <button mat-icon-button mat-dialog-close>
         <mat-icon>close</mat-icon>
       </button>
@@ -26,12 +18,12 @@
 
     <main>
       <mat-form-field class="title-input">
-        <input type="text" formControlName="title" matInput>
+        <input type="text" formControlName="title" matInput autocomplete="off">
       </mat-form-field>
 
       <mat-form-field class="details-input" appearance="outline">
         <mat-label>Details</mat-label>
-        <textarea formControlName="details" matInput></textarea>
+        <textarea formControlName="details" matInput autocomplete="off"></textarea>
       </mat-form-field>
 
       <mat-checkbox>Completed</mat-checkbox>

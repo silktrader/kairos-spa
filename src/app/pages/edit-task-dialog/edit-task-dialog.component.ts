@@ -1,9 +1,16 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { Task } from 'src/app/models/task';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
+import { Subscription, BehaviorSubject } from 'rxjs';
 import { DayService } from 'src/app/services/day.service';
+import { Store, select } from '@ngrx/store';
+import { ScheduleState } from 'src/app/models/schedule';
+import { updateTask } from 'src/app/store/schedule.actions';
+import {
+  selectTaskUpdating,
+  selectTaskById
+} from 'src/app/store/schedule.selectors';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -20,6 +27,13 @@ export class EditTaskDialogComponent implements OnInit {
     { updateOn: 'blur' }
   );
 
+  taskUpdating$ = this.store.pipe(
+    select(selectTaskUpdating, { id: this.initialTask.id })
+  );
+
+  task$ = this.store.pipe(select(selectTaskById, { id: this.initialTask.id }));
+  changeNotice$ = new BehaviorSubject<string>('');
+
   private readonly subscription = new Subscription();
   private changed = false;
 
@@ -27,18 +41,27 @@ export class EditTaskDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public initialTask: Task,
     public dialogRef: MatDialogRef<EditTaskDialogComponent>,
     private readonly formBuilder: FormBuilder,
-    private readonly ds: DayService
+    private readonly ds: DayService,
+    private readonly store: Store<ScheduleState>
   ) {}
 
   ngOnInit(): void {
     this.resetForm();
 
     this.subscription.add(
-      this.taskForm.valueChanges.subscribe(() => {
-        this.saveTask();
-        this.changed = true;
-      })
+      this.taskForm.valueChanges.subscribe(() => this.saveTask())
     );
+
+    this.task$.subscribe(task => {
+      if (this.changed) {
+        this.changeNotice$.next('... changes saved');
+        setTimeout(() => this.changeNotice$.next(''), 8000);
+      }
+    });
+
+    this.taskForm
+      .get('title')
+      ?.statusChanges.subscribe(change => console.log(change));
   }
 
   public resetForm() {
@@ -50,8 +73,11 @@ export class EditTaskDialogComponent implements OnInit {
   }
 
   saveTask(): void {
+    this.changed = true;
     // merge data with spread operator
-    this.ds.updateTask({ ...this.initialTask, ...this.taskForm.value });
+    this.store.dispatch(
+      updateTask({ task: { ...this.initialTask, ...this.taskForm.value } })
+    );
   }
 
   deleteTask(): void {

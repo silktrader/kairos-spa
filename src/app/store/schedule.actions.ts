@@ -16,11 +16,17 @@ export const getDatesTasksFailed = createAction(
 );
 
 export const addTask = createAction('Add Task', props<{ task: Task }>());
-export const updateTask = createAction('Update Task', props<{ task: Task }>());
-export const setTasks = createAction(
-  'Set Tasks',
-  props<{ tasks: ReadonlyArray<Task> }>()
+
+export const updateTask = createAction(
+  '[SCHEDULE] Update Task',
+  props<{ task: Task }>()
 );
+
+export const updateTaskSuccess = createAction(
+  '[SCHEDULE] Update Task Success',
+  props<{ task: Task }>()
+);
+
 export const deleteTask = createAction(
   'Delete Task',
   props<{ deletedTaskId: number; affectedTask: Task | null }>()

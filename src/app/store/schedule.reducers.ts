@@ -3,7 +3,11 @@ import { ScheduleState } from '../models/schedule';
 import * as ScheduleActions from './schedule.actions';
 import { Task } from '../models/task';
 
-export const initialState: ScheduleState = { tasks: [], loading: false };
+export const initialState: ScheduleState = {
+  tasks: [],
+  loadingTasks: false,
+  updatingTasks: []
+};
 
 export const removeTasksByIds = (
   tasks: ReadonlyArray<Task>,
@@ -36,21 +40,22 @@ export const taskReducer = createReducer(
   on(ScheduleActions.updateTask, (schedule, { task }) => {
     return {
       ...schedule,
-      tasks: [...removeTasksByIds(schedule.tasks, task.id), task]
+      updatingTasks: [...schedule.updatingTasks, task.id]
     };
   }),
 
-  on(ScheduleActions.setTasks, (schedule, { tasks }) => {
+  on(ScheduleActions.updateTaskSuccess, (schedule, { task }) => {
     return {
       ...schedule,
-      tasks
+      tasks: [...removeTasksByIds(schedule.tasks, task.id), task],
+      updatingTasks: schedule.updatingTasks.filter(taskId => taskId !== task.id)
     };
   }),
 
-  on(ScheduleActions.getDatesTasks, (schedule, { startDate, endDate }) => {
+  on(ScheduleActions.getDatesTasks, schedule => {
     return {
       ...schedule,
-      loading: true
+      loadingTasks: true
     };
   }),
 
@@ -58,7 +63,7 @@ export const taskReducer = createReducer(
     return {
       ...schedule,
       tasks,
-      loading: false
+      loadingTasks: false
     };
   }),
 

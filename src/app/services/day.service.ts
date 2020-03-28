@@ -6,7 +6,6 @@ import { Store, select } from '@ngrx/store';
 import {
   addTask,
   deleteTask,
-  setTasks,
   repositionTasks,
   updateTask
 } from '../store/schedule.actions';
@@ -14,7 +13,7 @@ import { ScheduleState } from '../models/schedule';
 import { HttpClient } from '@angular/common/http';
 import { TaskDto } from '../models/dtos/task.dto';
 import { environment } from 'src/environments/environment';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, delay } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 import { selectTasksByDay } from '../store/schedule.selectors';
 import { DeleteTaskDto } from '../models/dtos/deleteTask.dto';
@@ -76,14 +75,6 @@ export class DayService {
         }
       )
       .pipe(map(taskDtos => taskDtos.map(this.mapTask)));
-    // .subscribe({
-    //   next: (tasks: TaskDto[]) => {
-    //     this.store.dispatch(setTasks({ tasks: tasks.map(this.mapTask) }));
-    //   },
-    //   error: () => {
-    //     console.log('Couldnt get dates');
-    //   }
-    // });
   }
 
   addTask(taskDto: TaskDto): void {
@@ -135,21 +126,13 @@ export class DayService {
       });
   }
 
-  updateTask(task: Task): void {
-    this.http
+  updateTask(task: Task): Observable<Task> {
+    return this.http
       .put<TaskDto>(
         `${environment.backendRootURL}/schedule/tasks/${task.id}`,
         task
       )
-      .pipe(
-        catchError(error => {
-          console.error(error);
-          return throwError(`Could not update task #${task.id}`);
-        })
-      )
-      .subscribe(taskDto => {
-        this.store.dispatch(updateTask({ task: this.mapTask(taskDto) }));
-      });
+      .pipe(map(this.mapTask));
   }
 
   updateTaskPositions(newPositions: NewTasksPositionsDto): void {

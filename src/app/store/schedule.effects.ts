@@ -4,6 +4,7 @@ import { DayService } from '../services/day.service';
 import * as ScheduleActions from './schedule.actions';
 import { mergeMap, switchMap, map, catchError } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
+import { Task } from '../models/task';
 
 @Injectable()
 export class ScheduleEffects {
@@ -15,6 +16,17 @@ export class ScheduleEffects {
           map(tasks => ScheduleActions.getDatesTasksSuccess({ tasks })),
           catchError(() => EMPTY)
         )
+      )
+    )
+  );
+
+  updateTask$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ScheduleActions.updateTask),
+      mergeMap((action: { task: Task }) =>
+        this.ds
+          .updateTask(action.task)
+          .pipe(map(task => ScheduleActions.updateTaskSuccess({ task })))
       )
     )
   );
