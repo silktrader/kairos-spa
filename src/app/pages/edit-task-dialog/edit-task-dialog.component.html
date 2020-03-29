@@ -23,10 +23,18 @@
 
       <mat-form-field class="details-input" appearance="outline">
         <mat-label>Details</mat-label>
-        <textarea formControlName="details" matInput autocomplete="off"></textarea>
+        <textarea formControlName="details" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+          cdkAutosizeMinRows="2" autocomplete="off"></textarea>
       </mat-form-field>
 
-      <mat-checkbox color="primary" formControlName="complete">Complete</mat-checkbox>
+      <div class="complete-controls">
+        <mat-checkbox color="primary" formControlName="complete">Complete</mat-checkbox>
+        <mat-form-field class="duration-input">
+          <mat-label>Duration</mat-label>
+          <input type="number" matInput formControlName="duration" autocomplete="off">
+          <span matSuffix>min.</span>
+        </mat-form-field>
+      </div>
     </main>
 
   </form>

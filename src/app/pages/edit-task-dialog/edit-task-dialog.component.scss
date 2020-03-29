@@ -38,3 +38,21 @@ form {
   min-width: 20rem;
   font-size: large;
 }
+
+.complete-controls {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.duration-input {
+  width: 6rem;
+}
+
+// turn off the number spinners
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

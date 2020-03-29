@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, OnInit, Inject, ViewChild, NgZone } from '@angular/core';
+import { FormBuilder, FormControl } from '@angular/forms';
 import { Task } from 'src/app/models/task';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, BehaviorSubject } from 'rxjs';
@@ -11,6 +11,8 @@ import {
   selectTaskUpdating,
   selectTaskById
 } from 'src/app/store/schedule.selectors';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -18,21 +20,28 @@ import {
   styleUrls: ['./edit-task-dialog.component.scss']
 })
 export class EditTaskDialogComponent implements OnInit {
-  taskForm = this.formBuilder.group(
-    {
-      title: undefined,
-      details: undefined,
-      date: undefined,
-      complete: false
-    },
-    { updateOn: 'blur' }
-  );
+  @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
-  taskUpdating$ = this.store.pipe(
+  private readonly durationControl = new FormControl(undefined, {
+    updateOn: 'blur'
+  });
+  private readonly completeControl = new FormControl(false);
+
+  readonly taskForm = this.formBuilder.group({
+    title: [undefined, { updateOn: 'blur' }],
+    details: [undefined, { updateOn: 'blur' }],
+    date: [undefined, { updateOn: 'blur' }],
+    complete: this.completeControl,
+    duration: this.durationControl
+  });
+
+  readonly taskUpdating$ = this.store.pipe(
     select(selectTaskUpdating, { id: this.initialTask.id })
   );
 
-  task$ = this.store.pipe(select(selectTaskById, { id: this.initialTask.id }));
+  readonly task$ = this.store.pipe(
+    select(selectTaskById, { id: this.initialTask.id })
+  );
   readonly changeNotice$ = new BehaviorSubject<string>('');
   readonly canRevert$ = new BehaviorSubject<boolean>(false);
 
@@ -45,7 +54,8 @@ export class EditTaskDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<EditTaskDialogComponent>,
     private readonly formBuilder: FormBuilder,
     private readonly ds: DayService,
-    private readonly store: Store<ScheduleState>
+    private readonly store: Store<ScheduleState>,
+    private readonly ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -66,7 +76,16 @@ export class EditTaskDialogComponent implements OnInit {
           return;
         }
         this.task = task;
+
+        // the backend can perform changes depending on values sent
+        // duration is set to null when tasks are marked as incomplete
         this.taskForm.patchValue(task);
+
+        if (this.task.complete) {
+          this.durationControl.enable();
+        } else {
+          this.durationControl.disable();
+        }
 
         // got a new value from the store; signal the changes
         // though these could originate from other sources
@@ -97,5 +116,11 @@ export class EditTaskDialogComponent implements OnInit {
 
     // tk should check for effective deletion by listening to observable?
     this.dialogRef.close();
+  }
+
+  resizeDetailsTextarea() {
+    this.ngZone.onStable
+      .pipe(take(1))
+      .subscribe(() => this.autosize.resizeToFitContent(true));
   }
 }

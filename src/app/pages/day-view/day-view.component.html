@@ -14,7 +14,8 @@
         (click)="openEditTakDialog(task)" [ngClass]="{'task-complete': task.complete}">
         <span>{{task.title}}</span>
       </mat-card>
-
+    </div>
+    <div class="tasks">
       <mat-form-field appearance="outline" class="add-task">
         <!-- <mat-label>Add Task</mat-label> -->
         <input type="text" autocomplete="off" placeholder="Add Task" matInput [formControl]="newTaskControl" #newTask

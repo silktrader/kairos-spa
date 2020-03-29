@@ -98,6 +98,7 @@ export class DayService {
       taskDto.title,
       taskDto.details ?? '',
       taskDto.complete,
+      taskDto.duration,
       taskDto.previousId
     );
   }

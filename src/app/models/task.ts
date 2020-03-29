@@ -5,6 +5,7 @@ export class Task {
     public readonly title: string,
     public readonly details: string,
     public readonly complete: boolean,
+    public readonly duration?: number,
     public readonly previousId?: number
   ) {}
 }

@@ -3,6 +3,7 @@ export interface TaskDto {
   date: Date;
   title: string;
   complete: boolean;
+  duration?: number;
   details?: string;
   previousId?: number;
 }
