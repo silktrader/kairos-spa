@@ -21,6 +21,14 @@ main {
   flex: 1 1 30%;
 }
 
+// Form
+
+form {
+  margin-left: 2rem;
+  margin-right: 2rem;
+  margin-bottom: 1rem;
+}
+
 .title-input {
   min-width: 20rem;
   font-size: larger;
@@ -29,10 +37,4 @@ main {
 .details-input {
   min-width: 20rem;
   font-size: large;
-}
-
-form {
-  margin-left: 2rem;
-  margin-right: 2rem;
-  margin-bottom: 1rem;
 }

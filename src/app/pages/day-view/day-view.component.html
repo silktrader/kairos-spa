@@ -11,7 +11,7 @@
     <div class="tasks" sortablejs [sortablejsOptions]="options">
 
       <mat-card *ngFor="let task of tasks" class="mat-elevation-z2 task-card" matRipple
-        (click)="openEditTakDialog(task)">
+        (click)="openEditTakDialog(task)" [ngClass]="{'task-complete': task.complete}">
         <span>{{task.title}}</span>
       </mat-card>
 

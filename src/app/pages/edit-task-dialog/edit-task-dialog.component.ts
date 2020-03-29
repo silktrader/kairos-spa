@@ -22,7 +22,8 @@ export class EditTaskDialogComponent implements OnInit {
     {
       title: undefined,
       details: undefined,
-      date: undefined
+      date: undefined,
+      complete: false
     },
     { updateOn: 'blur' }
   );

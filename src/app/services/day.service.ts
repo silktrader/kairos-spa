@@ -6,8 +6,7 @@ import { Store, select } from '@ngrx/store';
 import {
   addTask,
   deleteTask,
-  repositionTasks,
-  updateTask
+  repositionTasks
 } from '../store/schedule.actions';
 import { ScheduleState } from '../models/schedule';
 import { HttpClient } from '@angular/common/http';
@@ -94,10 +93,11 @@ export class DayService {
   // might create an adapter service or use class-transformer later tk
   private mapTask(taskDto: TaskDto): Task {
     return new Task(
+      taskDto.id,
       new Date(taskDto.date),
       taskDto.title,
       taskDto.details ?? '',
-      taskDto.id,
+      taskDto.complete,
       taskDto.previousId
     );
   }

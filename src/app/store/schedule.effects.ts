@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { DayService } from '../services/day.service';
 import * as ScheduleActions from './schedule.actions';
-import { mergeMap, switchMap, map, catchError } from 'rxjs/operators';
+import { mergeMap, map, catchError } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { Task } from '../models/task';
 

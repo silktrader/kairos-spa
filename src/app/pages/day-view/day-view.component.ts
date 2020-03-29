@@ -64,9 +64,11 @@ export class DayViewComponent implements OnInit, OnDestroy {
     const previousId =
       this.tasks.length > 0 ? this.tasks[this.tasks.length - 1].id : undefined;
 
+    // tk use the store
     this.ds.addTask({
       date: this.date,
       title,
+      complete: false,
       id: 0, // tk diff between get and post dto,
       previousId
     });
