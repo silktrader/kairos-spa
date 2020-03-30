@@ -1,4 +1,11 @@
-import { Component, OnInit, Inject, ViewChild, NgZone } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  ViewChild,
+  NgZone,
+  OnDestroy
+} from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Task } from 'src/app/models/task';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -13,13 +20,14 @@ import {
 } from 'src/app/store/schedule.selectors';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { take } from 'rxjs/operators';
+import { formatISO } from 'date-fns';
 
 @Component({
   selector: 'app-edit-task-dialog',
   templateUrl: './edit-task-dialog.component.html',
   styleUrls: ['./edit-task-dialog.component.scss']
 })
-export class EditTaskDialogComponent implements OnInit {
+export class EditTaskDialogComponent implements OnInit, OnDestroy {
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
   private readonly durationControl = new FormControl(undefined, {
@@ -45,7 +53,7 @@ export class EditTaskDialogComponent implements OnInit {
   readonly changeNotice$ = new BehaviorSubject<string>('');
   readonly canRevert$ = new BehaviorSubject<boolean>(false);
 
-  private task: Task;
+  public task: Task;
 
   private readonly subscription = new Subscription();
 
@@ -61,11 +69,16 @@ export class EditTaskDialogComponent implements OnInit {
   ngOnInit(): void {
     this.subscription.add(
       this.taskForm.valueChanges.subscribe(changes => {
-        // as soon as changes between the form's values and the task are detected save them
-        for (const property in changes) {
-          if ((this.task as any)[property] !== changes[property]) {
-            this.saveTask();
-          }
+        // as soon as changes between the form and the task are detected save them
+        if (this.task.hasDifferentContents(changes)) {
+          this.saveTask();
+        }
+
+        // when the original task value and the form's contents differ allow changes to be reverted
+        if (this.initialTask.hasDifferentContents(changes)) {
+          this.canRevert$.next(true);
+        } else {
+          this.canRevert$.next(false);
         }
       })
     );
@@ -78,9 +91,9 @@ export class EditTaskDialogComponent implements OnInit {
         this.task = task;
 
         // the backend can perform changes depending on values sent
-        // duration is set to null when tasks are marked as incomplete
         this.taskForm.patchValue(task);
 
+        // duration is set to null when tasks are marked as incomplete
         if (this.task.complete) {
           this.durationControl.enable();
         } else {
@@ -97,17 +110,30 @@ export class EditTaskDialogComponent implements OnInit {
     );
   }
 
-  saveTask(): void {
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
+  private saveTask(): void {
+    // ensure that the date is set to UTC
+    const date = new Date(
+      formatISO(this.taskForm.value.date, { representation: 'date' })
+    );
+
     // merge data with spread operator
     this.store.dispatch(
-      updateTask({ task: { ...this.initialTask, ...this.taskForm.value } })
+      updateTask({
+        task: {
+          ...this.initialTask,
+          ...this.taskForm.value,
+          date
+        }
+      })
     );
-    this.canRevert$.next(true);
   }
 
   revertChanges(): void {
     this.store.dispatch(updateTask({ task: this.initialTask }));
-    this.canRevert$.next(false);
   }
 
   deleteTask(): void {

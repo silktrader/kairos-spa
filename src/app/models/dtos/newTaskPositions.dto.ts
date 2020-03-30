@@ -1,3 +1,3 @@
 export class NewTasksPositionsDto {
-  tasks: ReadonlyArray<{ taskId: number; previousId: number | undefined }>;
+  tasks: ReadonlyArray<{ taskId: number; previousId: number | null }>;
 }

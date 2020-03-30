@@ -12,7 +12,7 @@ import { ScheduleState } from '../models/schedule';
 import { HttpClient } from '@angular/common/http';
 import { TaskDto } from '../models/dtos/task.dto';
 import { environment } from 'src/environments/environment';
-import { catchError, map, delay } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { throwError, Observable } from 'rxjs';
 import { selectTasksByDay } from '../store/schedule.selectors';
 import { DeleteTaskDto } from '../models/dtos/deleteTask.dto';
@@ -94,12 +94,12 @@ export class DayService {
   private mapTask(taskDto: TaskDto): Task {
     return new Task(
       taskDto.id,
+      taskDto.previousId,
       new Date(taskDto.date),
       taskDto.title,
-      taskDto.details ?? '',
+      taskDto.details,
       taskDto.complete,
-      taskDto.duration,
-      taskDto.previousId
+      taskDto.duration
     );
   }
 

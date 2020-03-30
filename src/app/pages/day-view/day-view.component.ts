@@ -62,15 +62,17 @@ export class DayViewComponent implements OnInit, OnDestroy {
   addTask(title: string): void {
     // check whether this is the first task
     const previousId =
-      this.tasks.length > 0 ? this.tasks[this.tasks.length - 1].id : undefined;
+      this.tasks.length > 0 ? this.tasks[this.tasks.length - 1].id : null;
 
     // tk use the store
     this.ds.addTask({
+      id: 0, // tk diff between get and post dto,
+      previousId,
       date: this.date,
       title,
+      details: null,
       complete: false,
-      id: 0, // tk diff between get and post dto,
-      previousId
+      duration: null
     });
     this.newTaskControl.reset();
   }
@@ -97,7 +99,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   private calcNewTaskPositions(
     movingTask: Task,
-    newPreviousId: number | undefined
+    newPreviousId: number | null
   ): NewTasksPositionsDto {
     const changedTaskPositions = [
       { taskId: movingTask.id, previousId: newPreviousId }

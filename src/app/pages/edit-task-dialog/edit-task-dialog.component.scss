@@ -29,14 +29,35 @@ form {
   margin-bottom: 1rem;
 }
 
+.title-section,
+.details-section {
+  display: flex;
+  align-items: center;
+
+  mat-icon {
+    margin-right: 1rem;
+  }
+}
+
 .title-input {
   min-width: 20rem;
   font-size: larger;
 }
 
+.date {
+  text-indent: 20px;
+  font-style: italic;
+  font-size: small;
+  opacity: 0.8;
+}
+
+em {
+  text-decoration: underline;
+}
+
 .details-input {
   min-width: 20rem;
-  font-size: large;
+  font-size: medium;
 }
 
 .complete-controls {
