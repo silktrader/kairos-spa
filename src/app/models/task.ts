@@ -28,4 +28,11 @@ export class Task {
 
     return false;
   }
+
+  // tk move to mapper or use class-transformer
+  toDto(): TaskDto {
+    return {
+      ...this
+    };
+  }
 }

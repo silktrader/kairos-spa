@@ -52,6 +52,27 @@ export const taskReducer = createReducer(
     };
   }),
 
+  on(ScheduleActions.updateTasks, (schedule, { tasksDtos }) => {
+    return {
+      ...schedule,
+      updatingTasks: [
+        ...schedule.updatingTasks,
+        ...tasksDtos.map(task => task.id)
+      ]
+    };
+  }),
+
+  on(ScheduleActions.updateTasksSuccess, (schedule, { tasks }) => {
+    return {
+      ...schedule,
+      tasks: [
+        ...removeTasksByIds(schedule.tasks, ...tasks.map(task => task.id)),
+        ...tasks
+      ],
+      updatingTasks: []
+    };
+  }),
+
   on(ScheduleActions.getDatesTasks, schedule => {
     return {
       ...schedule,

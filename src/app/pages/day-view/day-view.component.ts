@@ -9,7 +9,18 @@ import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { ScheduleState } from 'src/app/models/schedule';
-import { selectLoading } from 'src/app/store/schedule.selectors';
+import {
+  selectLoading,
+  selectTasksByDay
+} from 'src/app/store/schedule.selectors';
+import { take, map } from 'rxjs/operators';
+import { TaskDto } from 'src/app/models/dtos/task.dto';
+import { parseISO } from 'date-fns';
+import {
+  updateTask,
+  updateTaskSuccess,
+  updateTasks
+} from 'src/app/store/schedule.actions';
 
 @Component({
   selector: 'app-day-view',
@@ -42,12 +53,60 @@ export class DayViewComponent implements OnInit, OnDestroy {
     );
 
     this.options = {
-      group: 'normal-group',
-      onAdd: (event: any) => {
-        console.log(event);
-      },
+      group: 'draggable-tasks',
       onRemove: (event: any) => {
-        console.log(event);
+        const movedTask = this.tasks[event.oldIndex];
+        const targetDate: Date = parseISO(event.to.id);
+        let targetTasks: ReadonlyArray<Task> = [];
+
+        // get the target date's sorted tasks
+        this.store
+          .pipe(
+            select(selectTasksByDay, {
+              date: targetDate
+            }),
+            take(1)
+          )
+          .subscribe(tasks => {
+            targetTasks = tasks;
+          });
+
+        // pick the ID above the moved task
+        const antecedentId =
+          targetTasks.length === 0 || event.newIndex === 0
+            ? null
+            : targetTasks[event.newIndex - 1].id;
+
+        const updatedTasks = [movedTask.toDto()];
+
+        // change the task that references the one being changed
+        const orphanTask = this.tasks
+          .find(task => task.previousId === movedTask.id)
+          ?.toDto();
+        if (orphanTask) {
+          orphanTask.previousId = movedTask.previousId;
+          updatedTasks.push(orphanTask);
+        }
+
+        // replace the task whose previous ID matches the new reference
+        const pushedDown = targetTasks
+          .find(task => task.previousId === antecedentId)
+          ?.toDto();
+        if (pushedDown) {
+          pushedDown.previousId = movedTask.id;
+          updatedTasks.push(pushedDown);
+        }
+
+        // finally change the moved task
+        updatedTasks[0].date = targetDate;
+        updatedTasks[0].previousId = antecedentId;
+
+        // dispatch the effect
+        this.store.dispatch(
+          updateTasks({
+            tasksDtos: updatedTasks
+          })
+        );
       },
       onUpdate: (event: any) => {
         this.changeTaskPositions(event.oldIndex, event.newIndex);
@@ -115,6 +174,8 @@ export class DayViewComponent implements OnInit, OnDestroy {
         });
       }
 
+      // tk can actually skip iteration above once found with 'continue'
+
       // change the task that referenced the one on top of the moving task
       if (task.previousId === newPreviousId) {
         changedTaskPositions.push({
@@ -144,5 +205,9 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   get daySubtitle(): string {
     return this.ds.getDaySubtitle(this.date);
+  }
+
+  get dayUrl(): string {
+    return this.ds.getUrl(this.date);
   }
 }

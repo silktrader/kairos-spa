@@ -1,5 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { Task } from '../models/task';
+import { TaskDto } from '../models/dtos/task.dto';
 
 export const getDatesTasks = createAction(
   '[SCHEDULE] Get Dates Tasks',
@@ -25,6 +26,16 @@ export const updateTask = createAction(
 export const updateTaskSuccess = createAction(
   '[SCHEDULE] Update Task Success',
   props<{ task: Task }>()
+);
+
+export const updateTasks = createAction(
+  '[SCHEDULE] Update Tasks',
+  props<{ tasksDtos: ReadonlyArray<TaskDto> }>()
+);
+
+export const updateTasksSuccess = createAction(
+  '[SCHEDULE] Update Tasks Success',
+  props<{ tasks: ReadonlyArray<Task> }>()
 );
 
 export const deleteTask = createAction(

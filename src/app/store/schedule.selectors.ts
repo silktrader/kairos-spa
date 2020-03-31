@@ -21,6 +21,7 @@ export const selectTasksByDay = createSelector(
     sortTasks(tasks.filter(task => isSameDay(task.date, props.date)))
 );
 
+// tk look into simplifying this
 export const sortTasks = (tasks: ReadonlyArray<Task>) => {
   if (tasks.length === 0) {
     return [];

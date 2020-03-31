@@ -8,7 +8,7 @@
   <mat-spinner *ngIf="loading | async; else tasksList"></mat-spinner>
 
   <ng-template #tasksList>
-    <div class="tasks" sortablejs [sortablejsOptions]="options">
+    <div id="{{dayUrl}}" class="tasks" sortablejs [sortablejsOptions]="options">
 
       <mat-card *ngFor="let task of tasks" class="mat-elevation-z2 task-card" matRipple
         (click)="openEditTakDialog(task)" [ngClass]="{'task-complete': task.complete}">

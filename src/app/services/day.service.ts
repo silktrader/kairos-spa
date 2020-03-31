@@ -136,6 +136,15 @@ export class DayService {
       .pipe(map(this.mapTask));
   }
 
+  updateTasks(tasks: ReadonlyArray<TaskDto>): Observable<ReadonlyArray<Task>> {
+    return this.http
+      .put<ReadonlyArray<TaskDto>>(
+        `${environment.backendRootURL}/schedule/tasks/`,
+        { tasks }
+      )
+      .pipe(map(tasksDtos => tasksDtos.map(this.mapTask)));
+  }
+
   updateTaskPositions(newPositions: NewTasksPositionsDto): void {
     this.http
       .patch<ReadonlyArray<TaskDto>>(
