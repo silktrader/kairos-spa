@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   private currentDates(): ReadonlyArray<Date> {
-    const initialDate = addDays(new Date(), -2);
+    const initialDate = addDays(new Date().setUTCHours(0, 0, 0, 0), -2);
     const currentDates: Array<Date> = [];
 
     for (let index = 0; index < 5; index++) {

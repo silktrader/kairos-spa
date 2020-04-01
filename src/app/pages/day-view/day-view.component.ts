@@ -13,14 +13,8 @@ import {
   selectLoading,
   selectTasksByDay
 } from 'src/app/store/schedule.selectors';
-import { take, map } from 'rxjs/operators';
-import { TaskDto } from 'src/app/models/dtos/task.dto';
-import { parseISO } from 'date-fns';
-import {
-  updateTask,
-  updateTaskSuccess,
-  updateTasks
-} from 'src/app/store/schedule.actions';
+import { take } from 'rxjs/operators';
+import { updateTasks } from 'src/app/store/schedule.actions';
 
 @Component({
   selector: 'app-day-view',
@@ -56,7 +50,9 @@ export class DayViewComponent implements OnInit, OnDestroy {
       group: 'draggable-tasks',
       onRemove: (event: any) => {
         const movedTask = this.tasks[event.oldIndex];
-        const targetDate: Date = parseISO(event.to.id);
+
+        // watch out for the date's timezone
+        const targetDate: Date = new Date(event.to.id);
         let targetTasks: ReadonlyArray<Task> = [];
 
         // get the target date's sorted tasks

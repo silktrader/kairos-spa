@@ -140,7 +140,7 @@ export class DayService {
     return this.http
       .put<ReadonlyArray<TaskDto>>(
         `${environment.backendRootURL}/schedule/tasks/`,
-        { tasks }
+        tasks
       )
       .pipe(map(tasksDtos => tasksDtos.map(this.mapTask)));
   }
