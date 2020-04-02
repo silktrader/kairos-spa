@@ -47,9 +47,15 @@ export const updateTasksSuccess = createAction(
 );
 
 export const deleteTask = createAction(
-  'Delete Task',
+  '[SCHEDULE] Delete Task',
+  props<{ deletedTaskId: number }>()
+);
+
+export const deleteTaskSuccess = createAction(
+  '[SCHEDULE] Delete Task Success',
   props<{ deletedTaskId: number; affectedTask: Task | null }>()
 );
+
 export const completeTask = createAction('Complete Task');
 
 export const repositionTasks = createAction(

@@ -107,7 +107,7 @@ export const taskReducer = createReducer(
   }),
 
   on(
-    ScheduleActions.deleteTask,
+    ScheduleActions.deleteTaskSuccess,
     (schedule, { deletedTaskId, affectedTask }) => {
       // replace the affected task and filter out the removed one
       const newTasks = schedule.tasks.filter(

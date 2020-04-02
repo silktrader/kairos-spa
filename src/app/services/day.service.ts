@@ -95,27 +95,21 @@ export class DayService {
     );
   }
 
-  deleteTask(taskId: number): void {
-    this.http
-      .delete<DeleteTaskDto>(
+  deleteTask(taskId: number): Observable<DeleteTaskDto> {
+    return this.http
+      .delete<{ deletedTaskId: number; affectedTask: TaskDto | null }>(
         `${environment.backendRootURL}/schedule/tasks/${taskId}`
       )
       .pipe(
-        catchError(error => {
-          console.error(error);
-          return throwError(`Could not delete task with ID ${taskId}`);
-        })
-      )
-      .subscribe(response => {
-        this.store.dispatch(
-          deleteTask({
+        map(response => {
+          return {
             deletedTaskId: response.deletedTaskId,
             affectedTask: response.affectedTask
               ? this.mapTask(response.affectedTask)
               : null
-          })
-        );
-      });
+          };
+        })
+      );
   }
 
   updateTask(task: Task): Observable<Task> {

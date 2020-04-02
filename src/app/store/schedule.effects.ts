@@ -54,5 +54,23 @@ export class ScheduleEffects {
     )
   );
 
+  deleteTask$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ScheduleActions.deleteTask),
+      mergeMap((action: { deletedTaskId: number }) =>
+        this.ds
+          .deleteTask(action.deletedTaskId)
+          .pipe(
+            map(response =>
+              ScheduleActions.deleteTaskSuccess({
+                deletedTaskId: response.deletedTaskId,
+                affectedTask: response.affectedTask
+              })
+            )
+          )
+      )
+    )
+  );
+
   constructor(private actions$: Actions, private ds: DayService) {}
 }

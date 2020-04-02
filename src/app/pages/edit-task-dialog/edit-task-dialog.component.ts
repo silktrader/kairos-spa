@@ -13,7 +13,7 @@ import { Subscription, BehaviorSubject } from 'rxjs';
 import { DayService } from 'src/app/services/day.service';
 import { Store, select } from '@ngrx/store';
 import { ScheduleState } from 'src/app/models/schedule';
-import { updateTask } from 'src/app/store/schedule.actions';
+import { updateTask, deleteTask } from 'src/app/store/schedule.actions';
 import {
   selectTaskUpdating,
   selectTaskById
@@ -138,7 +138,14 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
 
   deleteTask(): void {
     // the ID of a task won't ever change since inception
-    this.ds.deleteTask(this.initialTask.id);
+    // this.store.dispatch(
+    //       deleteTask({
+    //         deletedTaskId: response.deletedTaskId,
+    //         affectedTask: response.affectedTask
+    //           ? this.mapTask(response.affectedTask)
+    //           : null
+    //       })
+    this.store.dispatch(deleteTask({ deletedTaskId: this.initialTask.id }));
 
     // tk should check for effective deletion by listening to observable?
     this.dialogRef.close();

@@ -1,6 +1,6 @@
-import { TaskDto } from './task.dto';
+import { Task } from '../task';
 
 export interface DeleteTaskDto {
   deletedTaskId: number;
-  affectedTask: TaskDto | null;
+  affectedTask: Task | null;
 }
