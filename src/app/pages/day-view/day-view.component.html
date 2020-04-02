@@ -8,20 +8,31 @@
   <mat-spinner *ngIf="loading | async; else tasksList"></mat-spinner>
 
   <ng-template #tasksList>
+    <div class="tasks-actions">
+      <button mat-stroked-button (click)="promptAddTask()">Add Task</button>
+      <!-- <button mat-icon-button>
+        <mat-icon>done_all</mat-icon>
+      </button> -->
+    </div>
+
+    <div class="add-task-card">
+      <mat-card [hidden]="!(addingTask$ | async)">
+        <mat-form-field class="add-task-field">
+          <mat-label></mat-label>
+          <input type="text" #addTaskInput autocomplete="off" placeholder="Enter task title" matInput
+            [formControl]="newTaskControl" (keyup.enter)="leavePromptAddTask()" (blur)="leavePromptAddTask()">
+        </mat-form-field>
+      </mat-card>
+    </div>
+
     <div id="{{dayUrl}}" class="tasks" sortablejs [sortablejsOptions]="options">
 
-      <mat-card *ngFor="let task of tasks" class="mat-elevation-z2 task-card" matRipple
-        (click)="openEditTakDialog(task)" [ngClass]="{'task-complete': task.complete}">
+      <mat-card *ngFor="let task of tasks" class="mat-elevation-z2" matRipple (click)="openEditTakDialog(task)"
+        [ngClass]="{'task-complete': task.complete}">
         <span>{{task.title}}</span>
       </mat-card>
     </div>
-    <div class="tasks">
-      <mat-form-field appearance="outline" class="add-task">
-        <!-- <mat-label>Add Task</mat-label> -->
-        <input type="text" autocomplete="off" placeholder="Add Task" matInput [formControl]="newTaskControl" #newTask
-          (keyup.enter)="addTask(newTask.value)">
-      </mat-form-field>
-    </div>
+
   </ng-template>
 
 </section>

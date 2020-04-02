@@ -1,8 +1,15 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  OnDestroy,
+  ViewChild,
+  ElementRef
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DayService } from 'src/app/services/day.service';
 import { Task } from 'src/app/models/task';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, BehaviorSubject } from 'rxjs';
 import { Options } from 'sortablejs';
 import { NewTasksPositionsDto } from 'src/app/models/dtos/newTaskPositions.dto';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,9 +30,11 @@ import { updateTasks } from 'src/app/store/schedule.actions';
 })
 export class DayViewComponent implements OnInit, OnDestroy {
   @Input() date: Date;
+  @ViewChild('addTaskInput') addTaskInput: ElementRef;
 
   tasks: ReadonlyArray<Task>;
   loading: Observable<boolean> = this.store.pipe(select(selectLoading));
+  addingTask$ = new BehaviorSubject<boolean>(false);
 
   private subscriptions = new Subscription();
 
@@ -114,6 +123,26 @@ export class DayViewComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 
+  promptAddTask(): void {
+    this.addingTask$.next(true);
+    setTimeout(() => {
+      this.addTaskInput.nativeElement.focus();
+    }, 0);
+  }
+
+  leavePromptAddTask(): void {
+    const title = this.newTaskControl.value;
+    this.cancelPromptAddTask();
+    if (title) {
+      this.addTask(title);
+    }
+  }
+
+  cancelPromptAddTask(): void {
+    this.newTaskControl.reset();
+    this.addingTask$.next(false);
+  }
+
   addTask(title: string): void {
     // check whether this is the first task
     const previousId =
@@ -129,7 +158,6 @@ export class DayViewComponent implements OnInit, OnDestroy {
       complete: false,
       duration: null
     });
-    this.newTaskControl.reset();
   }
 
   private changeTaskPositions(oldIndex: number, newIndex: number): void {
