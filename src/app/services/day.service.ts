@@ -76,18 +76,10 @@ export class DayService {
       .pipe(map(taskDtos => taskDtos.map(this.mapTask)));
   }
 
-  addTask(taskDto: TaskDto): void {
-    this.http
+  addTask(taskDto: Omit<TaskDto, 'id'>): Observable<Task> {
+    return this.http
       .post<TaskDto>(`${environment.backendRootURL}/schedule/tasks`, taskDto)
-      .pipe(
-        catchError(error => {
-          console.log(error);
-          return throwError('Couldnt add task');
-        })
-      )
-      .subscribe(response => {
-        this.store.dispatch(addTask({ task: this.mapTask(response) }));
-      });
+      .pipe(map(this.mapTask));
   }
 
   // might create an adapter service or use class-transformer later tk
@@ -103,7 +95,6 @@ export class DayService {
     );
   }
 
-  // tk use delete {date}/tasks/{id}
   deleteTask(taskId: number): void {
     this.http
       .delete<DeleteTaskDto>(

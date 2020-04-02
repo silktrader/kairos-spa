@@ -32,6 +32,12 @@ export const taskReducer = createReducer(
 
   on(ScheduleActions.addTask, (schedule, { task }) => {
     return {
+      ...schedule
+    };
+  }),
+
+  on(ScheduleActions.addTaskSuccess, (schedule, { task }) => {
+    return {
       ...schedule,
       tasks: [...schedule.tasks, task]
     };

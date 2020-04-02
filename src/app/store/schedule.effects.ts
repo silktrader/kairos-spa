@@ -21,6 +21,17 @@ export class ScheduleEffects {
     )
   );
 
+  addTask$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ScheduleActions.addTask),
+      mergeMap((action: { task: Omit<TaskDto, 'id'> }) =>
+        this.ds
+          .addTask(action.task)
+          .pipe(map(task => ScheduleActions.addTaskSuccess({ task })))
+      )
+    )
+  );
+
   updateTask$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ScheduleActions.updateTask),

@@ -16,7 +16,15 @@ export const getDatesTasksFailed = createAction(
   '[SCHEDULE] Get Dates Tasks Failed'
 );
 
-export const addTask = createAction('Add Task', props<{ task: Task }>());
+export const addTask = createAction(
+  '[SCHEDULE] Add Task',
+  props<{ task: Omit<TaskDto, 'id'> }>()
+);
+
+export const addTaskSuccess = createAction(
+  '[SCHEDULE] Add Task Success',
+  props<{ task: Task }>()
+);
 
 export const updateTask = createAction(
   '[SCHEDULE] Update Task',

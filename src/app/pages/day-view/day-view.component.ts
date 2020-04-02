@@ -21,7 +21,7 @@ import {
   selectTasksByDay
 } from 'src/app/store/schedule.selectors';
 import { take } from 'rxjs/operators';
-import { updateTasks } from 'src/app/store/schedule.actions';
+import { updateTasks, addTask } from 'src/app/store/schedule.actions';
 
 @Component({
   selector: 'app-day-view',
@@ -148,16 +148,18 @@ export class DayViewComponent implements OnInit, OnDestroy {
     const previousId =
       this.tasks.length > 0 ? this.tasks[this.tasks.length - 1].id : null;
 
-    // tk use the store
-    this.ds.addTask({
-      id: 0, // tk diff between get and post dto,
-      previousId,
-      date: this.date,
-      title,
-      details: null,
-      complete: false,
-      duration: null
-    });
+    this.store.dispatch(
+      addTask({
+        task: {
+          title,
+          previousId,
+          date: this.date,
+          details: null,
+          complete: false,
+          duration: null
+        }
+      })
+    );
   }
 
   private changeTaskPositions(oldIndex: number, newIndex: number): void {
