@@ -3,16 +3,14 @@ import { Day } from 'src/app/models/day';
 import { Task } from '../models/task';
 import { addDays, format, isToday } from 'date-fns';
 import { Store, select } from '@ngrx/store';
-import { repositionTasks } from '../store/schedule.actions';
 import { ScheduleState } from '../models/schedule';
 import { HttpClient } from '@angular/common/http';
 import { TaskDto } from '../models/dtos/task.dto';
 import { environment } from 'src/environments/environment';
-import { catchError, map } from 'rxjs/operators';
-import { throwError, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { selectTasksByDay } from '../store/schedule.selectors';
 import { DeleteTaskDto } from '../models/dtos/deleteTask.dto';
-import { NewTasksPositionsDto } from '../models/dtos/newTaskPositions.dto';
 import { NotificationService } from './notification.service';
 
 @Injectable({
@@ -131,24 +129,5 @@ export class DayService {
         tasks
       )
       .pipe(map((tasksDtos) => tasksDtos.map(this.mapTask)));
-  }
-
-  updateTaskPositions(newPositions: NewTasksPositionsDto): void {
-    this.http
-      .patch<ReadonlyArray<TaskDto>>(
-        `${environment.backendRootURL}/schedule/tasks/positions`,
-        newPositions
-      )
-      .pipe(
-        catchError((error) => {
-          console.error(error);
-          return throwError(error);
-        })
-      )
-      .subscribe((tasks) => {
-        this.store.dispatch(
-          repositionTasks({ tasks: tasks.map(this.mapTask) })
-        );
-      });
   }
 }

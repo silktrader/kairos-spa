@@ -12,7 +12,7 @@ export const initialState: ScheduleState = {
   taskEvents: [],
 };
 
-export const removeTasksByIds = (
+export const filteredTasks = (
   tasks: ReadonlyArray<Task>,
   ...removedTasksIds: Array<number>
 ): Array<Task> => {
@@ -65,7 +65,7 @@ export const taskReducer = createReducer(
   on(ScheduleActions.updateTaskSuccess, (schedule, { task }) => {
     return {
       ...schedule,
-      tasks: [...removeTasksByIds(schedule.tasks, task.id), task],
+      tasks: [...filteredTasks(schedule.tasks, task.id), task],
       updatingTasks: schedule.updatingTasks.filter(
         (taskId) => taskId !== task.id
       ),
@@ -95,7 +95,7 @@ export const taskReducer = createReducer(
     return {
       ...schedule,
       tasks: [
-        ...removeTasksByIds(schedule.tasks, ...tasks.map((task) => task.id)),
+        ...filteredTasks(schedule.tasks, ...tasks.map((task) => task.id)),
         ...tasks,
       ],
       updatingTasks: [],
@@ -125,19 +125,6 @@ export const taskReducer = createReducer(
       ...schedule,
       tasks,
       loadingTasks: false,
-    };
-  }),
-
-  on(ScheduleActions.repositionTasks, (schedule, { tasks }) => {
-    // mark the tasks which are being replaced
-    const substitutedTasksIds = new Set<number>(tasks.map((task) => task.id));
-    return {
-      ...schedule,
-      tasks: [
-        // tk review this
-        ...schedule.tasks.filter((task) => !substitutedTasksIds.has(task.id)),
-        ...tasks,
-      ],
     };
   }),
 

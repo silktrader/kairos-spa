@@ -4,21 +4,20 @@ import {
   Input,
   OnDestroy,
   ViewChild,
-  ElementRef
+  ElementRef,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DayService } from 'src/app/services/day.service';
 import { Task } from 'src/app/models/task';
 import { Subscription, Observable, BehaviorSubject } from 'rxjs';
 import { Options } from 'sortablejs';
-import { NewTasksPositionsDto } from 'src/app/models/dtos/newTaskPositions.dto';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { ScheduleState } from 'src/app/models/schedule';
 import {
   selectLoading,
-  selectTasksByDay
+  selectTasksByDay,
 } from 'src/app/store/schedule.selectors';
 import { take } from 'rxjs/operators';
 import { updateTasks, addTask } from 'src/app/store/schedule.actions';
@@ -26,7 +25,7 @@ import { updateTasks, addTask } from 'src/app/store/schedule.actions';
 @Component({
   selector: 'app-day-view',
   templateUrl: './day-view.component.html',
-  styleUrls: ['./day-view.component.scss']
+  styleUrls: ['./day-view.component.scss'],
 })
 export class DayViewComponent implements OnInit, OnDestroy {
   @Input() date: Date;
@@ -50,7 +49,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.add(
-      this.ds.getDayTasks(this.date).subscribe(tasks => {
+      this.ds.getDayTasks(this.date).subscribe((tasks) => {
         this.tasks = tasks;
       })
     );
@@ -68,11 +67,11 @@ export class DayViewComponent implements OnInit, OnDestroy {
         this.store
           .pipe(
             select(selectTasksByDay, {
-              date: targetDate
+              date: targetDate,
             }),
             take(1)
           )
-          .subscribe(tasks => {
+          .subscribe((tasks) => {
             targetTasks = tasks;
           });
 
@@ -86,7 +85,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
         // change the task that references the one being changed
         const orphanTask = this.tasks
-          .find(task => task.previousId === movedTask.id)
+          .find((task) => task.previousId === movedTask.id)
           ?.toDto();
         if (orphanTask) {
           orphanTask.previousId = movedTask.previousId;
@@ -95,7 +94,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
         // replace the task whose previous ID matches the new reference
         const pushedDown = targetTasks
-          .find(task => task.previousId === antecedentId)
+          .find((task) => task.previousId === antecedentId)
           ?.toDto();
         if (pushedDown) {
           pushedDown.previousId = movedTask.id;
@@ -109,13 +108,14 @@ export class DayViewComponent implements OnInit, OnDestroy {
         // dispatch the effect
         this.store.dispatch(
           updateTasks({
-            tasksDtos: updatedTasks
+            tasksDtos: updatedTasks,
           })
         );
       },
       onUpdate: (event: any) => {
-        this.changeTaskPositions(event.oldIndex, event.newIndex);
-      }
+        //this.changeTaskPosition(event.oldIndex, event.newIndex);
+        this.changeTaskPosition(event.oldIndex, event.newIndex);
+      },
     };
   }
 
@@ -156,68 +156,55 @@ export class DayViewComponent implements OnInit, OnDestroy {
           date: this.date,
           details: null,
           complete: false,
-          duration: null
-        }
+          duration: null,
+        },
       })
     );
   }
 
-  private changeTaskPositions(oldIndex: number, newIndex: number): void {
-    let newPositions;
+  private changeTaskPosition(oldIndex: number, newIndex: number): void {
+    // the original task being moved around
+    const mainTask = this.tasks[oldIndex];
 
-    if (oldIndex > newIndex) {
-      // going upwards, so decreasing indices
-      newPositions = this.calcNewTaskPositions(
-        this.tasks[oldIndex],
-        this.tasks[newIndex].previousId
-      );
-    } else {
-      // going downwards
-      newPositions = this.calcNewTaskPositions(
-        this.tasks[oldIndex],
-        this.tasks[newIndex].id
-      );
-    }
+    // when moving down assign the [newIndex].id, when moving up assing the [newIndex - 1].id
+    const updatedMainTask = {
+      ...mainTask.toDto(),
+      previousId:
+        oldIndex < newIndex
+          ? this.tasks[newIndex].id
+          : newIndex === 0
+          ? null
+          : this.tasks[newIndex - 1].id,
+    };
 
-    this.ds.updateTaskPositions(newPositions);
-  }
+    // initialise the list of updated tasks with new positions
+    const updatedTasks = [updatedMainTask];
 
-  private calcNewTaskPositions(
-    movingTask: Task,
-    newPreviousId: number | null
-  ): NewTasksPositionsDto {
-    const changedTaskPositions = [
-      { taskId: movingTask.id, previousId: newPreviousId }
-    ];
-
-    // browse the tasks and mark those whose previous IDs need to be changed
+    // browse the tasks and mark those whose previous IDs needs to be changed
     for (const task of this.tasks) {
-      // change the task that referenced the moving task
-      if (task.previousId === movingTask.id) {
-        changedTaskPositions.push({
-          taskId: task.id,
-          previousId: movingTask.previousId
-        });
+      // change the task that referenced the moved task
+      if (task.previousId === mainTask.id) {
+        updatedTasks.push({ ...task.toDto(), previousId: mainTask.previousId });
+        continue;
       }
-
-      // tk can actually skip iteration above once found with 'continue'
 
       // change the task that referenced the one on top of the moving task
-      if (task.previousId === newPreviousId) {
-        changedTaskPositions.push({
-          taskId: task.id,
-          previousId: movingTask.id
-        });
+      if (task.previousId === updatedMainTask.previousId) {
+        updatedTasks.push({ ...task.toDto(), previousId: mainTask.id });
       }
     }
 
-    return { tasks: changedTaskPositions };
+    this.store.dispatch(
+      updateTasks({
+        tasksDtos: updatedTasks,
+      })
+    );
   }
 
   public openEditTakDialog(task: Task) {
     this.editTaskDialog.open(EditTaskDialogComponent, {
       data: task,
-      panelClass: 'kairos-edit-task-dialog'
+      panelClass: 'kairos-edit-task-dialog',
     });
   }
 

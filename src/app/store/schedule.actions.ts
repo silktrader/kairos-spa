@@ -58,12 +58,6 @@ export const deleteTaskSuccess = createAction(
 
 export const completeTask = createAction('Complete Task');
 
-// tk remove?
-export const repositionTasks = createAction(
-  'Reposition Tasks',
-  props<{ tasks: ReadonlyArray<Task> }>()
-);
-
 export const readTaskEvent = createAction(
   '[SCHEDULE] Read Task Event',
   props<{ id: string }>()
