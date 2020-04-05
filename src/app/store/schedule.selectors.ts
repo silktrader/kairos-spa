@@ -10,6 +10,11 @@ export const selectLoading = createSelector(
   (state: ScheduleState) => state.loadingTasks
 );
 
+export const selectEvents = createSelector(
+  selectFeature,
+  (state: ScheduleState) => state.taskEvents
+);
+
 export const selectAllTasks = createSelector(
   selectFeature,
   (state: ScheduleState) => state.tasks
@@ -18,7 +23,7 @@ export const selectAllTasks = createSelector(
 export const selectTasksByDay = createSelector(
   selectAllTasks,
   (tasks: ReadonlyArray<Task>, props: { date: Date }) =>
-    sortTasks(tasks.filter(task => isSameDay(task.date, props.date)))
+    sortTasks(tasks.filter((task) => isSameDay(task.date, props.date)))
 );
 
 // tk look into simplifying this
@@ -72,11 +77,11 @@ export const sortTasks = (tasks: ReadonlyArray<Task>) => {
 export const selectTaskById = createSelector(
   selectAllTasks,
   (tasks: ReadonlyArray<Task>, props: { id: number }) =>
-    tasks.find(task => task.id === props.id)
+    tasks.find((task) => task.id === props.id)
 );
 
 export const selectTaskUpdating = createSelector(
   selectFeature,
   (state: ScheduleState, props: { id: number }) =>
-    state.updatingTasks.find(id => id === props.id)
+    state.updatingTasks.find((id) => id === props.id)
 );

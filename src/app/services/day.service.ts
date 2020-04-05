@@ -3,11 +3,7 @@ import { Day } from 'src/app/models/day';
 import { Task } from '../models/task';
 import { addDays, format, isToday } from 'date-fns';
 import { Store, select } from '@ngrx/store';
-import {
-  addTask,
-  deleteTask,
-  repositionTasks
-} from '../store/schedule.actions';
+import { repositionTasks } from '../store/schedule.actions';
 import { ScheduleState } from '../models/schedule';
 import { HttpClient } from '@angular/common/http';
 import { TaskDto } from '../models/dtos/task.dto';
@@ -17,14 +13,16 @@ import { throwError, Observable } from 'rxjs';
 import { selectTasksByDay } from '../store/schedule.selectors';
 import { DeleteTaskDto } from '../models/dtos/deleteTask.dto';
 import { NewTasksPositionsDto } from '../models/dtos/newTaskPositions.dto';
+import { NotificationService } from './notification.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class DayService {
   constructor(
     private readonly http: HttpClient,
-    private readonly store: Store<ScheduleState>
+    private readonly store: Store<ScheduleState>,
+    private readonly ns: NotificationService
   ) {}
 
   getDayName(date: Date): string {
@@ -69,17 +67,22 @@ export class DayService {
         {
           params: {
             startDate: startDate.toISOString(),
-            endDate: endDate.toISOString()
-          }
+            endDate: endDate.toISOString(),
+          },
         }
       )
-      .pipe(map(taskDtos => taskDtos.map(this.mapTask)));
+      .pipe(map((taskDtos) => taskDtos.map(this.mapTask)));
   }
 
   addTask(taskDto: Omit<TaskDto, 'id'>): Observable<Task> {
     return this.http
       .post<TaskDto>(`${environment.backendRootURL}/schedule/tasks`, taskDto)
-      .pipe(map(this.mapTask));
+      .pipe(
+        map(this.mapTask)
+        // catchError(error => {
+        //   this.ns.alert(error);
+        // })
+      );
   }
 
   // might create an adapter service or use class-transformer later tk
@@ -101,12 +104,12 @@ export class DayService {
         `${environment.backendRootURL}/schedule/tasks/${taskId}`
       )
       .pipe(
-        map(response => {
+        map((response) => {
           return {
             deletedTaskId: response.deletedTaskId,
             affectedTask: response.affectedTask
               ? this.mapTask(response.affectedTask)
-              : null
+              : null,
           };
         })
       );
@@ -127,7 +130,7 @@ export class DayService {
         `${environment.backendRootURL}/schedule/tasks/`,
         tasks
       )
-      .pipe(map(tasksDtos => tasksDtos.map(this.mapTask)));
+      .pipe(map((tasksDtos) => tasksDtos.map(this.mapTask)));
   }
 
   updateTaskPositions(newPositions: NewTasksPositionsDto): void {
@@ -137,12 +140,12 @@ export class DayService {
         newPositions
       )
       .pipe(
-        catchError(error => {
+        catchError((error) => {
           console.error(error);
           return throwError(error);
         })
       )
-      .subscribe(tasks => {
+      .subscribe((tasks) => {
         this.store.dispatch(
           repositionTasks({ tasks: tasks.map(this.mapTask) })
         );

@@ -14,7 +14,7 @@ export class ScheduleEffects {
       ofType(ScheduleActions.getDatesTasks),
       mergeMap((action: { startDate: Date; endDate: Date }) =>
         this.ds.getTasksBetweenDates(action.startDate, action.endDate).pipe(
-          map(tasks => ScheduleActions.getDatesTasksSuccess({ tasks })),
+          map((tasks) => ScheduleActions.getDatesTasksSuccess({ tasks })),
           catchError(() => EMPTY)
         )
       )
@@ -27,7 +27,7 @@ export class ScheduleEffects {
       mergeMap((action: { task: Omit<TaskDto, 'id'> }) =>
         this.ds
           .addTask(action.task)
-          .pipe(map(task => ScheduleActions.addTaskSuccess({ task })))
+          .pipe(map((task) => ScheduleActions.addTaskSuccess({ task })))
       )
     )
   );
@@ -38,7 +38,7 @@ export class ScheduleEffects {
       mergeMap((action: { task: Task }) =>
         this.ds
           .updateTask(action.task)
-          .pipe(map(task => ScheduleActions.updateTaskSuccess({ task })))
+          .pipe(map((task) => ScheduleActions.updateTaskSuccess({ task })))
       )
     )
   );
@@ -49,7 +49,7 @@ export class ScheduleEffects {
       mergeMap((action: { tasksDtos: ReadonlyArray<TaskDto> }) =>
         this.ds
           .updateTasks(action.tasksDtos)
-          .pipe(map(tasks => ScheduleActions.updateTasksSuccess({ tasks })))
+          .pipe(map((tasks) => ScheduleActions.updateTasksSuccess({ tasks })))
       )
     )
   );
@@ -58,16 +58,14 @@ export class ScheduleEffects {
     this.actions$.pipe(
       ofType(ScheduleActions.deleteTask),
       mergeMap((action: { deletedTaskId: number }) =>
-        this.ds
-          .deleteTask(action.deletedTaskId)
-          .pipe(
-            map(response =>
-              ScheduleActions.deleteTaskSuccess({
-                deletedTaskId: response.deletedTaskId,
-                affectedTask: response.affectedTask
-              })
-            )
+        this.ds.deleteTask(action.deletedTaskId).pipe(
+          map((response) =>
+            ScheduleActions.deleteTaskSuccess({
+              deletedTaskId: response.deletedTaskId,
+              affectedTask: response.affectedTask,
+            })
           )
+        )
       )
     )
   );
