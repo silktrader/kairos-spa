@@ -28,9 +28,9 @@ export class NotificationService {
         this.snackBar
           .open(
             `${this.actionName(unread.operation)} ${unread.taskDto.title}`,
-            '',
+            'View',
             {
-              duration: 1500,
+              duration: 2000,
             }
           )
           .afterDismissed()

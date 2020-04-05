@@ -3,6 +3,7 @@ import { ScheduleState, TaskEventOperation } from '../models/schedule';
 import * as ScheduleActions from './schedule.actions';
 import { Task } from '../models/task';
 import { generate } from 'shortid';
+import { TaskDto } from '../models/dtos/task.dto';
 
 export const initialState: ScheduleState = {
   tasks: [],
@@ -133,6 +134,7 @@ export const taskReducer = createReducer(
     return {
       ...schedule,
       tasks: [
+        // tk review this
         ...schedule.tasks.filter((task) => !substitutedTasksIds.has(task.id)),
         ...tasks,
       ],
@@ -142,19 +144,38 @@ export const taskReducer = createReducer(
   on(
     ScheduleActions.deleteTaskSuccess,
     (schedule, { deletedTaskId, affectedTask }) => {
-      // replace the affected task and filter out the removed one
-      const newTasks = schedule.tasks.filter(
-        (task) => task.id !== deletedTaskId && task.id !== affectedTask?.id
-      );
+      const newTasks: Array<Task> = [];
+
+      let deletedTaskDto;
+      for (const task of schedule.tasks) {
+        // cache the deleted task dto to allow for it to be restored later
+        if (task.id === deletedTaskId) {
+          deletedTaskDto = task.toDto();
+          continue;
+        }
+
+        // skip the affected task which needs to be updated
+        if (task.id === affectedTask?.id) continue;
+
+        newTasks.push(task);
+      }
 
       // the affected task will be null when the first element is deleted
-      if (affectedTask) {
-        newTasks.push(affectedTask);
-      }
+      if (affectedTask) newTasks.push(affectedTask);
 
       return {
         ...schedule,
         tasks: newTasks,
+        taskEvents: [
+          ...schedule.taskEvents,
+          // purposedly not signaling the affected task's move
+          {
+            id: generate(),
+            operation: TaskEventOperation.Removal,
+            taskDto: deletedTaskDto as TaskDto,
+            read: false,
+          },
+        ],
       };
     }
   ),
