@@ -1,0 +1,16 @@
+main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.event-column-toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+mat-accordion {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}

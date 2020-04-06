@@ -19,6 +19,7 @@ import { SortablejsModule } from 'ngx-sortablejs';
 import { EditTaskDialogComponent } from './pages/edit-task-dialog/edit-task-dialog.component';
 import { EffectsModule } from '@ngrx/effects';
 import { ScheduleEffects } from './store/schedule.effects';
+import { EventsComponent } from './pages/events/events.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ScheduleEffects } from './store/schedule.effects';
     DayViewComponent,
     AuthComponent,
     SigninComponent,
-    EditTaskDialogComponent
+    EditTaskDialogComponent,
+    EventsComponent
   ],
   imports: [
     BrowserModule,

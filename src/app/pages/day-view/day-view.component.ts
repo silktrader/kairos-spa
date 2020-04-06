@@ -113,7 +113,6 @@ export class DayViewComponent implements OnInit, OnDestroy {
         );
       },
       onUpdate: (event: any) => {
-        //this.changeTaskPosition(event.oldIndex, event.newIndex);
         this.changeTaskPosition(event.oldIndex, event.newIndex);
       },
     };
@@ -180,7 +179,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
     // initialise the list of updated tasks with new positions
     const updatedTasks = [updatedMainTask];
 
-    // browse the tasks and mark those whose previous IDs needs to be changed
+    // browse the tasks and mark those whose previous ID needs to be changed
     for (const task of this.tasks) {
       // change the task that referenced the moved task
       if (task.previousId === mainTask.id) {

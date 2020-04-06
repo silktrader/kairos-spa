@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
 import { Task } from '../models/task';
 import { isSameDay } from 'date-fns';
-import { ScheduleState } from '../models/schedule';
+import { ScheduleState, TaskEventOperation } from '../models/schedule';
 
 export const selectFeature = (state: any) => state.schedule;
 
@@ -10,10 +10,22 @@ export const selectLoading = createSelector(
   (state: ScheduleState) => state.loadingTasks
 );
 
+// Events selectors
+
 export const selectEvents = createSelector(
   selectFeature,
   (state: ScheduleState) => state.taskEvents
 );
+
+export const selectAdditionEvents = createSelector(selectEvents, (events) =>
+  events.filter((event) => event.operation === TaskEventOperation.Addition)
+);
+
+export const selectDeletionEvents = createSelector(selectEvents, (events) =>
+  events.filter((event) => event.operation === TaskEventOperation.Deletion)
+);
+
+// Tasks selectors
 
 export const selectAllTasks = createSelector(
   selectFeature,

@@ -1,3 +1,5 @@
+// Toolbar
+
 .mat-toolbar {
   height: 6vh;
   justify-content: center;
@@ -26,6 +28,14 @@
   font-style: italic;
   font-size: medium;
 }
+
+// Sidenav
+
+.sidenav {
+  min-width: 400px; // that's about 20% at 1080p
+}
+
+// Schedule
 
 .container {
   display: flex;

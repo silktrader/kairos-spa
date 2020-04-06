@@ -1,6 +1,9 @@
 <mat-toolbar color="primary" class="mat-elevation-z4">
 
   <section class="header">
+    <button mat-icon-button (click)="sidenav.toggle()">
+      <mat-icon>menu</mat-icon>
+    </button>
     <h2>Kairos</h2>
   </section>
 
@@ -31,19 +34,29 @@
       </button>
       <mat-menu #userMenu="matMenu">
         <button mat-menu-item (click)="handleSignout()">Logout</button>
+        <button mat-menu-item (click)="viewEvents()">Session Events</button>
       </mat-menu>
     </ng-container>
   </section>
 
 </mat-toolbar>
 
-<div class="container">
+<mat-sidenav-container>
+  <mat-sidenav #sidenav mode="side" opened class="sidenav">
 
-  <main *ngIf="user$ | async; else authPrompt" class="visible-days">
-    <app-day-view *ngFor="let date of (visibleDates$ | async)" [date]="date" class="day"></app-day-view>
-  </main>
+    <app-events></app-events>
+  </mat-sidenav>
 
-  <ng-template #authPrompt>
-    <app-auth></app-auth>
-  </ng-template>
-</div>
+  <mat-sidenav-content>
+    <div class="container">
+
+      <main *ngIf="user$ | async; else authPrompt" class="visible-days">
+        <app-day-view *ngFor="let date of (visibleDates$ | async)" [date]="date" class="day"></app-day-view>
+      </main>
+
+      <ng-template #authPrompt>
+        <app-auth></app-auth>
+      </ng-template>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

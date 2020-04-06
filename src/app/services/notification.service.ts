@@ -4,6 +4,7 @@ import { ScheduleState, TaskEventOperation } from '../models/schedule';
 import { Store, select } from '@ngrx/store';
 import { selectEvents } from '../store/schedule.selectors';
 import { readTaskEvent } from '../store/schedule.actions';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,8 @@ export class NotificationService {
 
   constructor(
     private readonly store: Store<ScheduleState>,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private readonly router: Router
   ) {
     this.store.pipe(select(selectEvents)).subscribe((events) => {
       // ignore new events until the one being read is dismissed
@@ -25,20 +27,23 @@ export class NotificationService {
       const unread = events.find((event) => !event.read);
       if (unread) {
         this.readingEvent = true;
-        this.snackBar
-          .open(
-            `${this.actionName(unread.operation)} ${unread.taskDto.title}`,
-            'View',
-            {
-              duration: 2000,
-            }
-          )
-          .afterDismissed()
-          .subscribe(() => {
-            this.readingEvent = false;
-            // will trigger again the parent subscription
-            this.store.dispatch(readTaskEvent({ id: unread.id }));
-          });
+        const snackBarRef = this.snackBar.open(
+          `${this.actionName(unread.operation)} ${unread.taskDto.title}`,
+          'View',
+          {
+            duration: 2000,
+          }
+        );
+
+        snackBarRef.afterDismissed().subscribe(() => {
+          this.readingEvent = false;
+          // will trigger again the parent subscription
+          this.store.dispatch(readTaskEvent({ id: unread.id }));
+        });
+
+        snackBarRef.onAction().subscribe(() => {
+          this.router.navigate(['events']);
+        });
       }
     });
   }

@@ -158,7 +158,7 @@ export const taskReducer = createReducer(
           // purposedly not signaling the affected task's move
           {
             id: generate(),
-            operation: TaskEventOperation.Removal,
+            operation: TaskEventOperation.Deletion,
             taskDto: deletedTaskDto as TaskDto,
             read: false,
           },

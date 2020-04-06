@@ -17,6 +17,6 @@ export interface TaskEvent {
 
 export enum TaskEventOperation {
   Addition = 'addition',
-  Removal = 'removal',
+  Deletion = 'removal',
   Update = 'update',
 }

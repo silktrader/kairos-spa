@@ -6,11 +6,12 @@ import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { ScheduleState } from 'src/app/models/schedule';
 import { getDatesTasks } from 'src/app/store/schedule.actions';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private readonly visibleDates$$: BehaviorSubject<ReadonlyArray<Date>>;
@@ -23,7 +24,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private readonly ds: DayService,
     private readonly authService: AuthService,
-    private readonly store: Store<ScheduleState>
+    private readonly store: Store<ScheduleState>,
+    private readonly router: Router
   ) {
     this.visibleDates$$ = new BehaviorSubject<ReadonlyArray<Date>>(
       this.currentDates()
@@ -39,11 +41,11 @@ export class HomeComponent implements OnInit, OnDestroy {
     // tk should be conditional on sign in
 
     this.subscriptions.add(
-      this.visibleDates$.subscribe(dates => {
+      this.visibleDates$.subscribe((dates) => {
         this.store.dispatch(
           getDatesTasks({
             startDate: dates[0],
-            endDate: dates[dates.length - 1]
+            endDate: dates[dates.length - 1],
           })
         );
       })
@@ -58,14 +60,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   public showPrevious(): void {
     this.visibleDates$$.next([
       this.ds.getDateBefore(this.visibleDates[0]),
-      ...this.visibleDates.slice(0, this.visibleDates.length - 1)
+      ...this.visibleDates.slice(0, this.visibleDates.length - 1),
     ]);
   }
 
   public showNext(): void {
     this.visibleDates$$.next([
       ...this.visibleDates.slice(1),
-      this.ds.getDateAfter(this.visibleDates[this.visibleDates.length - 1])
+      this.ds.getDateAfter(this.visibleDates[this.visibleDates.length - 1]),
     ]);
   }
 
@@ -86,5 +88,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   handleSignout(): void {
     this.authService.signout();
+  }
+
+  viewEvents(): void {
+    this.router.navigate(['events']);
   }
 }
