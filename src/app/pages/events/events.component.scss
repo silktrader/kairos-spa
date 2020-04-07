@@ -1,8 +1,18 @@
 main {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 300px;
   align-items: center;
+}
+
+header {
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  h2 {
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+  }
 }
 
 .event-column-toolbar {
@@ -11,6 +21,49 @@ main {
 }
 
 mat-accordion {
-  margin-left: 1rem;
-  margin-right: 1rem;
+  width: 90%;
+}
+
+// must be used in combination with "collapsedHeight="*" expandedHeight="*""
+mat-expansion-panel-header {
+  height: auto !important;
+}
+
+.event-header {
+  width: 15rem;
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.event-header-time {
+  font-style: italic;
+  font-size: small;
+  opacity: 0.6;
+}
+
+.event-header-title {
+  font-weight: 500;
+  text-align: center;
+}
+
+.event-task-details {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.event-task-date {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.event-task-date-item {
+  display: flex;
+  align-items: center;
+
+  mat-icon {
+    margin-right: 0.5rem;
+  }
 }

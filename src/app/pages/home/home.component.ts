@@ -89,8 +89,4 @@ export class HomeComponent implements OnInit, OnDestroy {
   handleSignout(): void {
     this.authService.signout();
   }
-
-  viewEvents(): void {
-    this.router.navigate(['events']);
-  }
 }

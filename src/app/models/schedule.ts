@@ -10,6 +10,7 @@ export interface ScheduleState {
 
 export interface TaskEvent {
   id: string;
+  timestamp: number;
   operation: TaskEventOperation;
   taskDto: TaskDto;
   read: boolean;

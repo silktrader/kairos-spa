@@ -1,9 +1,6 @@
 <mat-toolbar color="primary" class="mat-elevation-z4">
 
   <section class="header">
-    <button mat-icon-button (click)="sidenav.toggle()">
-      <mat-icon>menu</mat-icon>
-    </button>
     <h2>Kairos</h2>
   </section>
 
@@ -34,7 +31,6 @@
       </button>
       <mat-menu #userMenu="matMenu">
         <button mat-menu-item (click)="handleSignout()">Logout</button>
-        <button mat-menu-item (click)="viewEvents()">Session Events</button>
       </mat-menu>
     </ng-container>
   </section>
@@ -42,7 +38,7 @@
 </mat-toolbar>
 
 <mat-sidenav-container>
-  <mat-sidenav #sidenav mode="side" opened class="sidenav">
+  <mat-sidenav #sidenav mode="side" position="end" class="sidebar">
 
     <app-events></app-events>
   </mat-sidenav>
@@ -52,6 +48,12 @@
 
       <main *ngIf="user$ | async; else authPrompt" class="visible-days">
         <app-day-view *ngFor="let date of (visibleDates$ | async)" [date]="date" class="day"></app-day-view>
+
+        <section class="sidebar-controls">
+          <button mat-icon-button color="accent" (click)="sidenav.toggle()">
+            <mat-icon>restore_page</mat-icon>
+          </button>
+        </section>
       </main>
 
       <ng-template #authPrompt>

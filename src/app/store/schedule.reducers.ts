@@ -47,6 +47,7 @@ export const taskReducer = createReducer(
         ...schedule.taskEvents,
         {
           id: generate(),
+          timestamp: Date.now(),
           operation: TaskEventOperation.Addition,
           taskDto: task.toDto(),
           read: false,
@@ -73,6 +74,7 @@ export const taskReducer = createReducer(
         ...schedule.taskEvents,
         {
           id: generate(),
+          timestamp: Date.now(),
           operation: TaskEventOperation.Update,
           taskDto: task.toDto(),
           read: false,
@@ -104,6 +106,7 @@ export const taskReducer = createReducer(
         ...tasks.map((task) => {
           return {
             id: generate(),
+            timestamp: Date.now(),
             operation: TaskEventOperation.Update,
             taskDto: task.toDto(),
             read: false,
@@ -158,6 +161,7 @@ export const taskReducer = createReducer(
           // purposedly not signaling the affected task's move
           {
             id: generate(),
+            timestamp: Date.now(),
             operation: TaskEventOperation.Deletion,
             taskDto: deletedTaskDto as TaskDto,
             read: false,
