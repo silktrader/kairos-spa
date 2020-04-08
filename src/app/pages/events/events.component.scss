@@ -24,6 +24,12 @@ mat-accordion {
   width: 90%;
 }
 
+.no-results {
+  margin-top: 2rem;
+  font-style: italic;
+  text-align: center;
+}
+
 // must be used in combination with "collapsedHeight="*" expandedHeight="*""
 mat-expansion-panel-header {
   height: auto !important;

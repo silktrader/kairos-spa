@@ -70,16 +70,10 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.taskForm.valueChanges.subscribe((changes) => {
         // as soon as changes between the form and the task are detected save them
-        if (this.task.hasDifferentContents(changes)) {
-          this.saveTask();
-        }
+        if (this.task.hasDifferentContents(changes)) this.saveTask();
 
         // when the original task value and the form's contents differ allow changes to be reverted
-        if (this.initialTask.hasDifferentContents(changes)) {
-          this.canRevert$.next(true);
-        } else {
-          this.canRevert$.next(false);
-        }
+        this.canRevert$.next(this.initialTask.hasDifferentContents(changes));
       })
     );
 

@@ -20,7 +20,7 @@
       <section class="title-section">
         <mat-icon>title</mat-icon>
         <mat-form-field class="title-input">
-          <input type="text" formControlName="title" matInput autocomplete="off">
+          <input type="text" formControlName="title" matInput autocomplete="off" (keyup.enter)="$event.target.blur()">
         </mat-form-field>
       </section>
 
