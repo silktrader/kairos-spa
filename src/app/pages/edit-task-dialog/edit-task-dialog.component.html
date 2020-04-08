@@ -20,7 +20,8 @@
       <section class="title-section">
         <mat-icon>title</mat-icon>
         <mat-form-field class="title-input">
-          <input type="text" formControlName="title" matInput autocomplete="off" (keyup.enter)="$event.target.blur()">
+          <input type="text" formControlName="title" matInput autocomplete="off" (keyup.enter)="$event.target.blur()"
+            maxlength="50">
         </mat-form-field>
       </section>
 
@@ -37,12 +38,12 @@
         <mat-checkbox color="primary" formControlName="complete">Complete</mat-checkbox>
         <mat-form-field class="duration-input">
           <mat-label>Duration</mat-label>
-          <input type="number" matInput formControlName="duration" autocomplete="off">
+          <input type="number" matInput formControlName="duration" autocomplete="off"
+            (keyup.enter)="$event.target.blur()">
           <span matSuffix>min.</span>
         </mat-form-field>
       </div>
 
-      <!-- <span class="date">on <em>{{task.date | date}}</em></span> -->
       <mat-form-field>
         <mat-label>Date</mat-label>
         <input matInput [matDatepicker]="taskDate" formControlName="date">
