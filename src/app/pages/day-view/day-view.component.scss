@@ -35,12 +35,19 @@ h3 {
   color: darkred;
 }
 
+// Tasks
+
 .tasks {
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100%;
   // tk export min height to match cards max heights so that nothing's shifted down when drag and dropping
+}
+
+.task-title {
+  text-align: center;
+  font-weight: 500;
 }
 
 .add-task-card {

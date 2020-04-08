@@ -14,7 +14,7 @@ import { Options } from 'sortablejs';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
-import { ScheduleState } from 'src/app/models/schedule';
+import { ScheduleState } from 'src/app/store/schedule';
 import {
   selectLoading,
   selectTasksByDay,

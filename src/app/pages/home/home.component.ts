@@ -4,7 +4,7 @@ import { addDays } from 'date-fns';
 import { DayService } from 'src/app/services/day.service';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { ScheduleState } from 'src/app/models/schedule';
+import { ScheduleState } from 'src/app/store/schedule';
 import { getDatesTasks } from 'src/app/store/schedule.actions';
 import { Router } from '@angular/router';
 

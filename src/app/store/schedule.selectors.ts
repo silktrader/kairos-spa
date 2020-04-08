@@ -1,7 +1,13 @@
 import { createSelector } from '@ngrx/store';
 import { Task } from '../models/task';
 import { isSameDay } from 'date-fns';
-import { ScheduleState, TaskEventOperation } from '../models/schedule';
+import { ScheduleState } from './schedule';
+import { TaskEventOperation } from './task-event-operation.enum';
+import {
+  AddTaskEvent,
+  RemoveTaskEvent,
+  EditTaskEvent,
+} from './task-event.interface';
 
 export const selectFeature = (state: any) => state.schedule;
 
@@ -17,12 +23,22 @@ export const selectEvents = createSelector(
   (state: ScheduleState) => state.taskEvents
 );
 
-export const selectAdditionEvents = createSelector(selectEvents, (events) =>
-  events.filter((event) => event.operation === TaskEventOperation.Addition)
+export const selectAddEvents = createSelector(
+  selectEvents,
+  (events: ReadonlyArray<AddTaskEvent>) =>
+    events.filter((event) => event.operation === TaskEventOperation.Add)
 );
 
-export const selectDeletionEvents = createSelector(selectEvents, (events) =>
-  events.filter((event) => event.operation === TaskEventOperation.Deletion)
+export const selectRemoveEvents = createSelector(
+  selectEvents,
+  (events: ReadonlyArray<RemoveTaskEvent>) =>
+    events.filter((event) => event.operation === TaskEventOperation.Remove)
+);
+
+export const selectEditEvents = createSelector(
+  selectEvents,
+  (events: ReadonlyArray<EditTaskEvent>) =>
+    events.filter((event) => event.operation === TaskEventOperation.Edit)
 );
 
 // Tasks selectors

@@ -27,13 +27,13 @@ export const addTaskSuccess = createAction(
 );
 
 export const updateTask = createAction(
-  '[SCHEDULE] Update Task',
-  props<{ task: Task }>()
+  '[SCHEDULE] Edit Task',
+  props<{ originalTask: TaskDto; updatedTask: TaskDto }>()
 );
 
 export const updateTaskSuccess = createAction(
-  '[SCHEDULE] Update Task Success',
-  props<{ task: Task }>()
+  '[SCHEDULE] Edit Task Success',
+  props<{ originalTask: TaskDto; updatedTask: Task }>()
 );
 
 export const updateTasks = createAction(

@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { ScheduleState, TaskEvent } from 'src/app/models/schedule';
 import {
-  selectAdditionEvents,
-  selectDeletionEvents,
+  selectAddEvents,
+  selectRemoveEvents,
+  selectEditEvents,
 } from 'src/app/store/schedule.selectors';
 import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { formatDistanceToNow } from 'date-fns';
-import { DayService } from 'src/app/services/day.service';
+import { deleteTask, updateTask } from 'src/app/store/schedule.actions';
+import { ScheduleState } from 'src/app/store/schedule';
+import { TaskEvent } from 'src/app/store/task-event.interface';
+import { TaskDto } from 'src/app/models/dtos/task.dto';
 
 @Component({
   selector: 'app-events',
@@ -16,19 +19,17 @@ import { DayService } from 'src/app/services/day.service';
   styleUrls: ['./events.component.scss'],
 })
 export class EventsComponent implements OnInit {
-  visibleEvents$ = new BehaviorSubject<EventsView>('additions');
+  visibleEvents$ = new BehaviorSubject<EventsView>('added');
 
-  additions$ = this.store.pipe(select(selectAdditionEvents));
-  deletions$ = this.store.pipe(select(selectDeletionEvents));
+  additions$ = this.store.pipe(select(selectAddEvents));
+  deletions$ = this.store.pipe(select(selectRemoveEvents));
+  edits$ = this.store.pipe(select(selectEditEvents));
 
   referenceNow: Date;
 
-  eventsSwitcher = new FormControl('additions');
+  eventsSwitcher = new FormControl('added');
 
-  constructor(
-    private readonly store: Store<ScheduleState>,
-    private readonly ds: DayService
-  ) {}
+  constructor(private readonly store: Store<ScheduleState>) {}
 
   ngOnInit(): void {
     this.eventsSwitcher.valueChanges.subscribe((value) => {
@@ -41,6 +42,16 @@ export class EventsComponent implements OnInit {
   timeAgo(taskEvent: TaskEvent): string {
     return formatDistanceToNow(taskEvent.timestamp);
   }
+
+  delete(id: number): void {
+    this.store.dispatch(deleteTask({ deletedTaskId: id }));
+  }
+
+  restoreEdit(currentDto: TaskDto, restoredDto: TaskDto): void {
+    this.store.dispatch(
+      updateTask({ originalTask: currentDto, updatedTask: restoredDto })
+    );
+  }
 }
 
-export type EventsView = 'additions' | 'deletions';
+export type EventsView = 'added' | 'removed' | 'edited';

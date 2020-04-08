@@ -1,9 +1,16 @@
 import { createReducer, on } from '@ngrx/store';
-import { ScheduleState, TaskEventOperation } from '../models/schedule';
 import * as ScheduleActions from './schedule.actions';
 import { Task } from '../models/task';
-import { generate } from 'shortid';
+
 import { TaskDto } from '../models/dtos/task.dto';
+import { ScheduleState } from './schedule';
+import { TaskEventOperation } from './task-event-operation.enum';
+import {
+  TaskEvent,
+  AddTaskEvent,
+  RemoveTaskEvent,
+  EditTaskEvent,
+} from './task-event.interface';
 
 export const initialState: ScheduleState = {
   tasks: [],
@@ -43,45 +50,33 @@ export const taskReducer = createReducer(
     return {
       ...schedule,
       tasks: [...schedule.tasks, task],
-      taskEvents: [
-        ...schedule.taskEvents,
-        {
-          id: generate(),
-          timestamp: Date.now(),
-          operation: TaskEventOperation.Addition,
-          taskDto: task.toDto(),
-          read: false,
-        },
-      ],
+      taskEvents: [...schedule.taskEvents, new AddTaskEvent(task.toDto())],
     };
   }),
 
-  on(ScheduleActions.updateTask, (schedule, { task }) => {
+  on(ScheduleActions.updateTask, (schedule, { updatedTask: task }) => {
     return {
       ...schedule,
       updatingTasks: [...schedule.updatingTasks, task.id],
     };
   }),
 
-  on(ScheduleActions.updateTaskSuccess, (schedule, { task }) => {
-    return {
-      ...schedule,
-      tasks: [...filteredTasks(schedule.tasks, task.id), task],
-      updatingTasks: schedule.updatingTasks.filter(
-        (taskId) => taskId !== task.id
-      ),
-      taskEvents: [
-        ...schedule.taskEvents,
-        {
-          id: generate(),
-          timestamp: Date.now(),
-          operation: TaskEventOperation.Update,
-          taskDto: task.toDto(),
-          read: false,
-        },
-      ],
-    };
-  }),
+  on(
+    ScheduleActions.updateTaskSuccess,
+    (schedule, { originalTask, updatedTask }) => {
+      return {
+        ...schedule,
+        tasks: [...filteredTasks(schedule.tasks, updatedTask.id), updatedTask],
+        updatingTasks: schedule.updatingTasks.filter(
+          (taskId) => taskId !== updatedTask.id
+        ),
+        taskEvents: [
+          ...schedule.taskEvents,
+          new EditTaskEvent(updatedTask, originalTask),
+        ],
+      };
+    }
+  ),
 
   on(ScheduleActions.updateTasks, (schedule, { tasksDtos }) => {
     return {
@@ -101,18 +96,19 @@ export const taskReducer = createReducer(
         ...tasks,
       ],
       updatingTasks: [],
-      taskEvents: [
-        ...schedule.taskEvents,
-        ...tasks.map((task) => {
-          return {
-            id: generate(),
-            timestamp: Date.now(),
-            operation: TaskEventOperation.Update,
-            taskDto: task.toDto(),
-            read: false,
-          };
-        }),
-      ],
+      // taskEvents: [
+      //   ...schedule.taskEvents,
+      //   ...tasks.map((task) => {
+      //     return {
+      //       id: generate(),
+      //       timestamp: Date.now(),
+      //       operation: TaskEventOperation.Update,
+      //       taskDto: task.toDto(),
+      //       read: false,
+      //       undoable: true,
+      //     };
+      //   }),
+      // ],
     };
   }),
 
@@ -159,13 +155,7 @@ export const taskReducer = createReducer(
         taskEvents: [
           ...schedule.taskEvents,
           // purposedly not signaling the affected task's move
-          {
-            id: generate(),
-            timestamp: Date.now(),
-            operation: TaskEventOperation.Deletion,
-            taskDto: deletedTaskDto as TaskDto,
-            read: false,
-          },
+          new RemoveTaskEvent(deletedTaskDto as TaskDto),
         ],
       };
     }

@@ -3,7 +3,7 @@ import { Day } from 'src/app/models/day';
 import { Task } from '../models/task';
 import { addDays, format, isToday } from 'date-fns';
 import { Store, select } from '@ngrx/store';
-import { ScheduleState } from '../models/schedule';
+import { ScheduleState } from '../store/schedule';
 import { HttpClient } from '@angular/common/http';
 import { TaskDto } from '../models/dtos/task.dto';
 import { environment } from 'src/environments/environment';
@@ -113,7 +113,7 @@ export class DayService {
       );
   }
 
-  updateTask(task: Task): Observable<Task> {
+  updateTask(task: TaskDto): Observable<Task> {
     return this.http
       .put<TaskDto>(
         `${environment.backendRootURL}/schedule/tasks/${task.id}`,

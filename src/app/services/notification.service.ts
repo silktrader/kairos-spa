@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ScheduleState, TaskEventOperation } from '../models/schedule';
 import { Store, select } from '@ngrx/store';
 import { selectEvents } from '../store/schedule.selectors';
 import { readTaskEvent } from '../store/schedule.actions';
 import { Router } from '@angular/router';
+import { ScheduleState } from '../store/schedule';
+import { TaskEventOperation } from '../store/task-event-operation.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -50,9 +51,9 @@ export class NotificationService {
 
   private actionName(taskEventOperation: TaskEventOperation) {
     switch (taskEventOperation) {
-      case TaskEventOperation.Addition:
+      case TaskEventOperation.Add:
         return 'Added';
-      case TaskEventOperation.Update:
+      case TaskEventOperation.Edit:
         return 'Updated';
       default:
         return 'Removed';

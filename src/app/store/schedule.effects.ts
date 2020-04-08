@@ -35,10 +35,15 @@ export class ScheduleEffects {
   updateTask$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ScheduleActions.updateTask),
-      mergeMap((action: { task: Task }) =>
-        this.ds
-          .updateTask(action.task)
-          .pipe(map((task) => ScheduleActions.updateTaskSuccess({ task })))
+      mergeMap((action: { originalTask: TaskDto; updatedTask: TaskDto }) =>
+        this.ds.updateTask(action.updatedTask).pipe(
+          map((task) =>
+            ScheduleActions.updateTaskSuccess({
+              originalTask: action.originalTask,
+              updatedTask: task,
+            })
+          )
+        )
       )
     )
   );
