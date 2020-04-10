@@ -1,12 +1,9 @@
 import { createReducer, on } from '@ngrx/store';
 import * as ScheduleActions from './schedule.actions';
 import { Task } from '../models/task';
-
 import { TaskDto } from '../models/dtos/task.dto';
 import { ScheduleState } from './schedule';
-import { TaskEventOperation } from './task-event-operation.enum';
 import {
-  TaskEvent,
   AddTaskEvent,
   RemoveTaskEvent,
   EditTaskEvent,
@@ -14,6 +11,7 @@ import {
 
 export const initialState: ScheduleState = {
   tasks: [],
+  habits: [],
   loadingTasks: false,
   updatingTasks: [],
   taskEvents: [],
@@ -172,6 +170,20 @@ export const taskReducer = createReducer(
     return {
       ...schedule,
       taskEvents: newEvents,
+    };
+  }),
+
+  on(ScheduleActions.addHabitSuccess, (schedule, { habit }) => {
+    return {
+      ...schedule,
+      habits: [...schedule.habits, habit],
+    };
+  }),
+
+  on(ScheduleActions.getHabitsSuccess, (schedule, { habits }) => {
+    return {
+      ...schedule,
+      habits,
     };
   })
 );

@@ -4,8 +4,9 @@ import { DayService } from '../services/day.service';
 import * as ScheduleActions from './schedule.actions';
 import { mergeMap, map, catchError } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
-import { Task } from '../models/task';
 import { TaskDto } from '../models/dtos/task.dto';
+import { HabitDto } from '../models/dtos/habit-dto';
+import { HabitsService } from '../services/habits.service';
 
 @Injectable()
 export class ScheduleEffects {
@@ -75,5 +76,32 @@ export class ScheduleEffects {
     )
   );
 
-  constructor(private actions$: Actions, private ds: DayService) {}
+  addHabit$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ScheduleActions.addHabit),
+      mergeMap((action: { habit: Omit<HabitDto, 'id'> }) =>
+        this.hs
+          .addHabit(action.habit)
+          .pipe(map((habit) => ScheduleActions.addHabitSuccess({ habit })))
+      )
+    )
+  );
+
+  getHabits$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ScheduleActions.getHabits),
+      mergeMap(() =>
+        this.hs.getHabits().pipe(
+          map((habits) => ScheduleActions.getHabitsSuccess({ habits })),
+          catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
+  constructor(
+    private actions$: Actions,
+    private ds: DayService,
+    private hs: HabitsService
+  ) {}
 }

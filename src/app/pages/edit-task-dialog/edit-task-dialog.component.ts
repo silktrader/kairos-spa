@@ -61,7 +61,6 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public initialTask: Task,
     public dialogRef: MatDialogRef<EditTaskDialogComponent>,
     private readonly formBuilder: FormBuilder,
-    private readonly ds: DayService,
     private readonly store: Store<ScheduleState>,
     private readonly ngZone: NgZone
   ) {}

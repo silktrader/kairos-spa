@@ -1,0 +1,15 @@
+<main>
+
+  <header>
+    <h2>Session Events</h2>
+  </header>
+
+  <ul>
+    <li *ngFor="let habit of (habits$ | async)">
+      {{habit.title}}
+    </li>
+  </ul>
+
+  <button mat-button (click)="openAddHabitDialog()">Add Habit</button>
+
+</main>

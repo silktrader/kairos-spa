@@ -20,6 +20,8 @@ import { EditTaskDialogComponent } from './pages/edit-task-dialog/edit-task-dial
 import { EffectsModule } from '@ngrx/effects';
 import { ScheduleEffects } from './store/schedule.effects';
 import { EventsComponent } from './pages/events/events.component';
+import { AddHabitDialogComponent } from './pages/add-habit-dialog/add-habit-dialog.component';
+import { HabitsSidebarComponent } from './pages/habits-sidebar/habits-sidebar.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +31,9 @@ import { EventsComponent } from './pages/events/events.component';
     AuthComponent,
     SigninComponent,
     EditTaskDialogComponent,
-    EventsComponent
+    EventsComponent,
+    AddHabitDialogComponent,
+    HabitsSidebarComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,7 +41,7 @@ import { EventsComponent } from './pages/events/events.component';
     StoreModule.forRoot({ schedule: Reducers.taskReducer }),
     StoreDevtoolsModule.instrument({
       maxAge: 10,
-      logOnly: environment.production
+      logOnly: environment.production,
     }),
     BrowserAnimationsModule,
     MaterialModule,
@@ -46,10 +50,10 @@ import { EventsComponent } from './pages/events/events.component';
     ReactiveFormsModule,
     AuthModule.forRoot({ backendUrl: 'http://localhost:3000/auth/' }),
     SortablejsModule.forRoot({ animation: 150 }),
-    EffectsModule.forRoot([ScheduleEffects])
+    EffectsModule.forRoot([ScheduleEffects]),
   ],
-  entryComponents: [EditTaskDialogComponent],
+  entryComponents: [EditTaskDialogComponent, AddHabitDialogComponent],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

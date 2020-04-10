@@ -1,0 +1,22 @@
+// Toolbar
+.title {
+  display: flex;
+  flex: 1 1 70%;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1 1 30%;
+}
+
+// Form
+
+.step {
+  display: flex;
+  flex-direction: column;
+}
+
+.habit-title {
+  width: 50ch;
+}

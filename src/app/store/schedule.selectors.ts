@@ -113,3 +113,8 @@ export const selectTaskUpdating = createSelector(
   (state: ScheduleState, props: { id: number }) =>
     state.updatingTasks.find((id) => id === props.id)
 );
+
+export const selectHabits = createSelector(
+  selectFeature,
+  (state: ScheduleState) => state.habits
+);

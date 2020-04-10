@@ -1,0 +1,55 @@
+<mat-toolbar>
+  <section class="title">Add New Habit</section>
+  <section class="actions">
+    <button mat-icon-button (click)="saveHabit()">
+      <mat-icon>save</mat-icon>
+    </button>
+    <button mat-icon-button mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </section>
+</mat-toolbar>
+
+<mat-vertical-stepper [linear]="true" #stepper>
+  <mat-step [stepControl]="detailsFormGroup">
+    <form [formGroup]="detailsFormGroup" class="step">
+      <ng-template matStepLabel>Describe the habit</ng-template>
+      <mat-form-field class="habit-title">
+        <mat-label>Title</mat-label>
+        <input type="text" maxlength="50" matInput formControlName="title" autocomplete="off">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description"></textarea>
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="appearanceFormGroup">
+    <form [formGroup]="appearanceFormGroup" class="step">
+      <ng-template matStepLabel>Customise its appearance</ng-template>
+      <mat-form-field>
+        <mat-label>Colour</mat-label>
+        <input matInput formControlName="colour" type="text" autocomplete="off">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Rank</mat-label>
+        <input matInput formControlName="rank" type="number" autocomplete="off">
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <p>You are now done.</p>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper>

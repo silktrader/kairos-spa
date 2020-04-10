@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { AuthService } from 'auth';
 import { addDays } from 'date-fns';
 import { DayService } from 'src/app/services/day.service';
@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { ScheduleState } from 'src/app/store/schedule';
 import { getDatesTasks } from 'src/app/store/schedule.actions';
 import { Router } from '@angular/router';
+import { MatSidenav } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-home',
@@ -14,6 +15,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  @ViewChild('sidenav') sidenav: MatSidenav;
+
   private readonly visibleDates$$: BehaviorSubject<ReadonlyArray<Date>>;
   public readonly visibleDates$: Observable<ReadonlyArray<Date>>;
 
@@ -21,11 +24,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private readonly subscriptions = new Subscription();
 
+  // tk move into store
+  public sidebarSelection: 'events' | 'habits' = 'events';
+
   constructor(
     private readonly ds: DayService,
     private readonly authService: AuthService,
-    private readonly store: Store<ScheduleState>,
-    private readonly router: Router
+    private readonly store: Store<ScheduleState>
   ) {
     this.visibleDates$$ = new BehaviorSubject<ReadonlyArray<Date>>(
       this.currentDates()
@@ -88,5 +93,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   handleSignout(): void {
     this.authService.signout();
+  }
+
+  toggleEventsSidebar(): void {
+    this.sidebarSelection = 'events';
+    this.sidenav.toggle();
+  }
+
+  toggleHabitsSidebar(): void {
+    this.sidebarSelection = 'habits';
+    this.sidenav.toggle();
   }
 }
