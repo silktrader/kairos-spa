@@ -14,7 +14,7 @@ import { Options } from 'sortablejs';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
-import { ScheduleState } from 'src/app/store/schedule';
+import { AppState } from 'src/app/store/app-state';
 import {
   selectLoading,
   selectTasksByDay,
@@ -42,7 +42,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
   options: Options;
 
   constructor(
-    private readonly store: Store<ScheduleState>,
+    private readonly store: Store<AppState>,
     private readonly ds: DayService,
     private editTaskDialog: MatDialog
   ) {}

@@ -12,7 +12,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, BehaviorSubject } from 'rxjs';
 import { DayService } from 'src/app/services/day.service';
 import { Store, select } from '@ngrx/store';
-import { ScheduleState } from 'src/app/store/schedule';
+import { AppState } from 'src/app/store/app-state';
 import { updateTask, deleteTask } from 'src/app/store/schedule.actions';
 import {
   selectTaskUpdating,
@@ -61,7 +61,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public initialTask: Task,
     public dialogRef: MatDialogRef<EditTaskDialogComponent>,
     private readonly formBuilder: FormBuilder,
-    private readonly store: Store<ScheduleState>,
+    private readonly store: Store<AppState>,
     private readonly ngZone: NgZone
   ) {}
 

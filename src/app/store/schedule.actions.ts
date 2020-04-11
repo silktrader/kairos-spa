@@ -2,6 +2,9 @@ import { createAction, props } from '@ngrx/store';
 import { Task } from '../models/task';
 import { TaskDto } from '../models/dtos/task.dto';
 import { HabitDto } from '../models/dtos/habit-dto';
+import { SidebarSection } from './app-state';
+
+/* Tasks */
 
 export const getDatesTasks = createAction(
   '[SCHEDULE] Get Dates Tasks',
@@ -64,6 +67,8 @@ export const readTaskEvent = createAction(
   props<{ id: string }>()
 );
 
+/* Habits */
+
 export const addHabit = createAction(
   'Add Habbit',
   props<{ habit: HabitDto }>()
@@ -79,4 +84,11 @@ export const getHabits = createAction('Get Habits');
 export const getHabitsSuccess = createAction(
   'Get Habits Success',
   props<{ habits: ReadonlyArray<HabitDto> }>()
+);
+
+/* Interface Controls */
+
+export const toggleSidebar = createAction(
+  'Toggle Sidebar',
+  props<{ opened: boolean; section: SidebarSection }>()
 );

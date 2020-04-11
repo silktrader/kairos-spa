@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ScheduleState } from 'src/app/store/schedule';
+import { AppState } from 'src/app/store/app-state';
 import { Store } from '@ngrx/store';
 import { addHabit } from 'src/app/store/schedule.actions';
 
@@ -27,7 +27,7 @@ export class AddHabitDialogComponent implements OnInit {
 
   constructor(
     private readonly fb: FormBuilder,
-    private readonly store: Store<ScheduleState>
+    private readonly store: Store<AppState>
   ) {}
 
   ngOnInit(): void {}

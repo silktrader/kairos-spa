@@ -1,21 +1,27 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
 import { AuthService } from 'auth';
 import { addDays } from 'date-fns';
 import { DayService } from 'src/app/services/day.service';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { ScheduleState } from 'src/app/store/schedule';
-import { getDatesTasks } from 'src/app/store/schedule.actions';
-import { Router } from '@angular/router';
+import { Store, select } from '@ngrx/store';
+import { AppState, SidebarSection } from 'src/app/store/app-state';
+import { getDatesTasks, toggleSidebar } from 'src/app/store/schedule.actions';
 import { MatSidenav } from '@angular/material/sidenav';
+import { selectSidebar } from 'src/app/store/schedule.selectors';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit, OnDestroy {
-  @ViewChild('sidenav') sidenav: MatSidenav;
+export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('sidebar') sidebar: MatSidenav;
 
   private readonly visibleDates$$: BehaviorSubject<ReadonlyArray<Date>>;
   public readonly visibleDates$: Observable<ReadonlyArray<Date>>;
@@ -24,18 +30,22 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private readonly subscriptions = new Subscription();
 
-  // tk move into store
-  public sidebarSelection: 'events' | 'habits' = 'events';
+  public sidebarState$: Observable<{
+    opened: boolean;
+    section: SidebarSection;
+  }>;
+  private previousSidebarState: { opened: boolean; section: SidebarSection };
 
   constructor(
     private readonly ds: DayService,
     private readonly authService: AuthService,
-    private readonly store: Store<ScheduleState>
+    private readonly store: Store<AppState>
   ) {
     this.visibleDates$$ = new BehaviorSubject<ReadonlyArray<Date>>(
       this.currentDates()
     );
     this.visibleDates$ = this.visibleDates$$.asObservable();
+    this.sidebarState$ = this.store.pipe(select(selectSidebar));
   }
 
   private get visibleDates() {
@@ -53,6 +63,16 @@ export class HomeComponent implements OnInit, OnDestroy {
             endDate: dates[dates.length - 1],
           })
         );
+      })
+    );
+  }
+
+  ngAfterViewInit(): void {
+    // must run after the onInit cycle to catch the sidenav element
+    this.subscriptions.add(
+      this.sidebarState$.subscribe((sidebarState) => {
+        sidebarState.opened ? this.sidebar.open() : this.sidebar.close();
+        this.previousSidebarState = sidebarState;
       })
     );
   }
@@ -96,12 +116,34 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   toggleEventsSidebar(): void {
-    this.sidebarSelection = 'events';
-    this.sidenav.toggle();
+    if (
+      this.previousSidebarState.opened &&
+      this.previousSidebarState.section === SidebarSection.Events
+    ) {
+      this.store.dispatch(
+        toggleSidebar({ opened: false, section: SidebarSection.Events })
+      );
+      return;
+    }
+
+    this.store.dispatch(
+      toggleSidebar({ opened: true, section: SidebarSection.Events })
+    );
   }
 
   toggleHabitsSidebar(): void {
-    this.sidebarSelection = 'habits';
-    this.sidenav.toggle();
+    if (
+      this.previousSidebarState.opened &&
+      this.previousSidebarState.section === SidebarSection.Habits
+    ) {
+      this.store.dispatch(
+        toggleSidebar({ opened: false, section: SidebarSection.Habits })
+      );
+      return;
+    }
+
+    this.store.dispatch(
+      toggleSidebar({ opened: true, section: SidebarSection.Habits })
+    );
   }
 }

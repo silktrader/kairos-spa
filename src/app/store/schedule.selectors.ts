@@ -1,7 +1,7 @@
 import { createSelector } from '@ngrx/store';
 import { Task } from '../models/task';
 import { isSameDay } from 'date-fns';
-import { ScheduleState } from './schedule';
+import { AppState } from './app-state';
 import { TaskEventOperation } from './task-event-operation.enum';
 import {
   AddTaskEvent,
@@ -13,14 +13,19 @@ export const selectFeature = (state: any) => state.schedule;
 
 export const selectLoading = createSelector(
   selectFeature,
-  (state: ScheduleState) => state.loadingTasks
+  (state: AppState) => state.loadingTasks
+);
+
+export const selectSidebar = createSelector(
+  selectFeature,
+  (state: AppState) => state.sidebar
 );
 
 // Events selectors
 
 export const selectEvents = createSelector(
   selectFeature,
-  (state: ScheduleState) => state.taskEvents
+  (state: AppState) => state.taskEvents
 );
 
 export const selectAddEvents = createSelector(
@@ -45,7 +50,7 @@ export const selectEditEvents = createSelector(
 
 export const selectAllTasks = createSelector(
   selectFeature,
-  (state: ScheduleState) => state.tasks
+  (state: AppState) => state.tasks
 );
 
 export const selectTasksByDay = createSelector(
@@ -110,11 +115,11 @@ export const selectTaskById = createSelector(
 
 export const selectTaskUpdating = createSelector(
   selectFeature,
-  (state: ScheduleState, props: { id: number }) =>
+  (state: AppState, props: { id: number }) =>
     state.updatingTasks.find((id) => id === props.id)
 );
 
 export const selectHabits = createSelector(
   selectFeature,
-  (state: ScheduleState) => state.habits
+  (state: AppState) => state.habits
 );

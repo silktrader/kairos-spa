@@ -4,7 +4,7 @@ import { Store, select } from '@ngrx/store';
 import { selectEvents } from '../store/schedule.selectors';
 import { readTaskEvent } from '../store/schedule.actions';
 import { Router } from '@angular/router';
-import { ScheduleState } from '../store/schedule';
+import { AppState } from '../store/app-state';
 import { TaskEventOperation } from '../store/task-event-operation.enum';
 
 @Injectable({
@@ -15,7 +15,7 @@ export class NotificationService {
   private readingEvent = false;
 
   constructor(
-    private readonly store: Store<ScheduleState>,
+    private readonly store: Store<AppState>,
     private snackBar: MatSnackBar,
     private readonly router: Router
   ) {

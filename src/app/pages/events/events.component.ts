@@ -9,7 +9,7 @@ import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { formatDistanceToNow } from 'date-fns';
 import { deleteTask, updateTask } from 'src/app/store/schedule.actions';
-import { ScheduleState } from 'src/app/store/schedule';
+import { AppState } from 'src/app/store/app-state';
 import { TaskEvent } from 'src/app/store/task-event.interface';
 import { TaskDto } from 'src/app/models/dtos/task.dto';
 
@@ -29,7 +29,7 @@ export class EventsComponent implements OnInit {
 
   eventsSwitcher = new FormControl('added');
 
-  constructor(private readonly store: Store<ScheduleState>) {}
+  constructor(private readonly store: Store<AppState>) {}
 
   ngOnInit(): void {
     this.eventsSwitcher.valueChanges.subscribe((value) => {

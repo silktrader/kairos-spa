@@ -38,9 +38,9 @@
 </mat-toolbar>
 
 <mat-sidenav-container>
-  <mat-sidenav #sidenav mode="side" position="end" class="sidebar mat-elevation-z4">
+  <mat-sidenav #sidebar mode="side" position="end" class="sidebar mat-elevation-z4">
 
-    <ng-container [ngSwitch]="sidebarSelection">
+    <ng-container [ngSwitch]="(sidebarState$ | async)?.section">
       <app-events *ngSwitchCase="'events'"></app-events>
       <app-habits-sidebar *ngSwitchCase="'habits'"></app-habits-sidebar>
     </ng-container>

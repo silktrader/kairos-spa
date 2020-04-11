@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddHabitDialogComponent } from '../add-habit-dialog/add-habit-dialog.component';
 import { Store, select } from '@ngrx/store';
-import { ScheduleState } from 'src/app/store/schedule';
+import { AppState } from 'src/app/store/app-state';
 import { selectHabits } from 'src/app/store/schedule.selectors';
 import { getHabits } from 'src/app/store/schedule.actions';
 
@@ -14,7 +14,7 @@ import { getHabits } from 'src/app/store/schedule.actions';
 export class HabitsSidebarComponent implements OnInit {
   habits$ = this.store.pipe(select(selectHabits));
   constructor(
-    private readonly store: Store<ScheduleState>,
+    private readonly store: Store<AppState>,
     private addHabitDialog: MatDialog
   ) {}
 

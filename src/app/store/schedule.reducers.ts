@@ -2,19 +2,20 @@ import { createReducer, on } from '@ngrx/store';
 import * as ScheduleActions from './schedule.actions';
 import { Task } from '../models/task';
 import { TaskDto } from '../models/dtos/task.dto';
-import { ScheduleState } from './schedule';
+import { AppState, SidebarSection } from './app-state';
 import {
   AddTaskEvent,
   RemoveTaskEvent,
   EditTaskEvent,
 } from './task-event.interface';
 
-export const initialState: ScheduleState = {
+export const initialState: AppState = {
   tasks: [],
   habits: [],
   loadingTasks: false,
   updatingTasks: [],
   taskEvents: [],
+  sidebar: { opened: false, section: SidebarSection.Events },
 };
 
 export const filteredTasks = (
@@ -94,19 +95,6 @@ export const taskReducer = createReducer(
         ...tasks,
       ],
       updatingTasks: [],
-      // taskEvents: [
-      //   ...schedule.taskEvents,
-      //   ...tasks.map((task) => {
-      //     return {
-      //       id: generate(),
-      //       timestamp: Date.now(),
-      //       operation: TaskEventOperation.Update,
-      //       taskDto: task.toDto(),
-      //       read: false,
-      //       undoable: true,
-      //     };
-      //   }),
-      // ],
     };
   }),
 
@@ -185,5 +173,9 @@ export const taskReducer = createReducer(
       ...schedule,
       habits,
     };
+  }),
+
+  on(ScheduleActions.toggleSidebar, (state, { opened, section }) => {
+    return { ...state, sidebar: { opened, section } };
   })
 );
