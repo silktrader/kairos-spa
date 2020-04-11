@@ -113,10 +113,9 @@ export const selectTaskById = createSelector(
     tasks.find((task) => task.id === props.id)
 );
 
-export const selectTaskUpdating = createSelector(
+export const selectTaskEditingId = createSelector(
   selectFeature,
-  (state: AppState, props: { id: number }) =>
-    state.updatingTasks.find((id) => id === props.id)
+  (state: AppState) => state.editingTaskId
 );
 
 export const selectHabits = createSelector(

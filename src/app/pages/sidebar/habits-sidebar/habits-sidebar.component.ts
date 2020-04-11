@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AddHabitDialogComponent } from '../add-habit-dialog/add-habit-dialog.component';
+import { AddHabitDialogComponent } from '../../add-habit-dialog/add-habit-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { selectHabits } from 'src/app/store/schedule.selectors';

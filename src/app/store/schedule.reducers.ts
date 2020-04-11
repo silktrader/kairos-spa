@@ -13,7 +13,7 @@ export const initialState: AppState = {
   tasks: [],
   habits: [],
   loadingTasks: false,
-  updatingTasks: [],
+  editingTaskId: undefined,
   taskEvents: [],
   sidebar: { opened: false, section: SidebarSection.Events },
 };
@@ -56,7 +56,7 @@ export const taskReducer = createReducer(
   on(ScheduleActions.updateTask, (schedule, { updatedTask: task }) => {
     return {
       ...schedule,
-      updatingTasks: [...schedule.updatingTasks, task.id],
+      editingTaskId: task.id,
     };
   }),
 
@@ -66,9 +66,7 @@ export const taskReducer = createReducer(
       return {
         ...schedule,
         tasks: [...filteredTasks(schedule.tasks, updatedTask.id), updatedTask],
-        updatingTasks: schedule.updatingTasks.filter(
-          (taskId) => taskId !== updatedTask.id
-        ),
+        editingTaskId: undefined,
         taskEvents: [
           ...schedule.taskEvents,
           new EditTaskEvent(updatedTask, originalTask),
@@ -80,10 +78,7 @@ export const taskReducer = createReducer(
   on(ScheduleActions.updateTasks, (schedule, { tasksDtos }) => {
     return {
       ...schedule,
-      updatingTasks: [
-        ...schedule.updatingTasks,
-        ...tasksDtos.map((task) => task.id),
-      ],
+      updatingTasks: [...tasksDtos.map((task) => task.id)],
     };
   }),
 
@@ -94,7 +89,6 @@ export const taskReducer = createReducer(
         ...filteredTasks(schedule.tasks, ...tasks.map((task) => task.id)),
         ...tasks,
       ],
-      updatingTasks: [],
     };
   }),
 

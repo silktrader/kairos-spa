@@ -19,9 +19,9 @@ import { SortablejsModule } from 'ngx-sortablejs';
 import { EditTaskDialogComponent } from './pages/edit-task-dialog/edit-task-dialog.component';
 import { EffectsModule } from '@ngrx/effects';
 import { ScheduleEffects } from './store/schedule.effects';
-import { EventsComponent } from './pages/events/events.component';
+import { EventsComponent } from './pages/sidebar/events-sidebar/events.component';
 import { AddHabitDialogComponent } from './pages/add-habit-dialog/add-habit-dialog.component';
-import { HabitsSidebarComponent } from './pages/habits-sidebar/habits-sidebar.component';
+import { HabitsSidebarComponent } from './pages/sidebar/habits-sidebar/habits-sidebar.component';
 import { SidebarSectionTitleComponent } from './pages/sidebar/sidebar-section-title/sidebar-section-title.component';
 
 @NgModule({

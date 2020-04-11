@@ -6,7 +6,7 @@ export interface AppState {
   readonly tasks: ReadonlyArray<Task>;
   readonly habits: ReadonlyArray<HabitDto>;
   readonly loadingTasks: boolean;
-  readonly updatingTasks: ReadonlyArray<number>;
+  readonly editingTaskId: number | undefined;
   readonly taskEvents: ReadonlyArray<TaskEvent>;
   readonly sidebar: { opened: boolean; section: SidebarSection };
 }

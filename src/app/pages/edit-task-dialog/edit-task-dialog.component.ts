@@ -15,7 +15,7 @@ import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { updateTask, deleteTask } from 'src/app/store/schedule.actions';
 import {
-  selectTaskUpdating,
+  selectTaskEditingId,
   selectTaskById,
 } from 'src/app/store/schedule.selectors';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
@@ -43,9 +43,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     duration: this.durationControl,
   });
 
-  readonly taskUpdating$ = this.store.pipe(
-    select(selectTaskUpdating, { id: this.initialTask.id })
-  );
+  readonly taskUpdating$ = this.store.pipe(select(selectTaskEditingId));
 
   readonly task$ = this.store.pipe(
     select(selectTaskById, { id: this.initialTask.id })
