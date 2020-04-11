@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Day } from 'src/app/models/day';
 import { Task } from '../models/task';
 import { addDays, format, isToday } from 'date-fns';
 import { Store, select } from '@ngrx/store';
@@ -37,10 +36,6 @@ export class DayService {
 
   getUrl(date: Date): string {
     return format(date, 'yyyy-MM-dd');
-  }
-
-  getDay(date: Date): Day {
-    return new Day(date, []);
   }
 
   getDateBefore(date: Date): Date {

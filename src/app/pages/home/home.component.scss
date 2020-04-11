@@ -1,10 +1,11 @@
 // Toolbar
 
 .mat-toolbar {
-  // height: 6vh;
   justify-content: center;
   padding-left: 3rem;
   padding-right: 3rem;
+  position: relative; // must be used in conjunction with z-index so the latter isn't set to 'auto'
+  z-index: 2;
 }
 
 .header,
