@@ -1,23 +1,8 @@
 main {
   display: flex;
   flex-direction: column;
-  width: 300px;
-  align-items: center;
-}
-
-header {
-  margin-top: 2rem;
-  margin-bottom: 1.5rem;
-  h2 {
-    text-transform: uppercase;
-    text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    font-weight: bold;
-  }
-}
-
-.event-column-toolbar {
-  display: flex;
-  justify-content: space-between;
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 mat-accordion {

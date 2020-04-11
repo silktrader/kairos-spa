@@ -1,8 +1,6 @@
 <main>
 
-  <header>
-    <h2>Session Events</h2>
-  </header>
+  <app-sidebar-section-title [title]="'Habits'"></app-sidebar-section-title>
 
   <ul>
     <li *ngFor="let habit of (habits$ | async)">

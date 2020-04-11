@@ -90,5 +90,5 @@ export const getHabitsSuccess = createAction(
 
 export const toggleSidebar = createAction(
   'Toggle Sidebar',
-  props<{ opened: boolean; section: SidebarSection }>()
+  props<{ opened: boolean; section?: SidebarSection }>()
 );

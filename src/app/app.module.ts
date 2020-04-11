@@ -22,6 +22,7 @@ import { ScheduleEffects } from './store/schedule.effects';
 import { EventsComponent } from './pages/events/events.component';
 import { AddHabitDialogComponent } from './pages/add-habit-dialog/add-habit-dialog.component';
 import { HabitsSidebarComponent } from './pages/habits-sidebar/habits-sidebar.component';
+import { SidebarSectionTitleComponent } from './pages/sidebar/sidebar-section-title/sidebar-section-title.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { HabitsSidebarComponent } from './pages/habits-sidebar/habits-sidebar.co
     EventsComponent,
     AddHabitDialogComponent,
     HabitsSidebarComponent,
+    SidebarSectionTitleComponent,
   ],
   imports: [
     BrowserModule,

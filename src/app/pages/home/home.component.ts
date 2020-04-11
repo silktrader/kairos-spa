@@ -115,35 +115,23 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.authService.signout();
   }
 
-  toggleEventsSidebar(): void {
+  private toggleSidebarSection(section: SidebarSection): void {
     if (
       this.previousSidebarState.opened &&
-      this.previousSidebarState.section === SidebarSection.Events
+      this.previousSidebarState.section === section
     ) {
-      this.store.dispatch(
-        toggleSidebar({ opened: false, section: SidebarSection.Events })
-      );
+      this.store.dispatch(toggleSidebar({ opened: false, section }));
       return;
     }
 
-    this.store.dispatch(
-      toggleSidebar({ opened: true, section: SidebarSection.Events })
-    );
+    this.store.dispatch(toggleSidebar({ opened: true, section }));
+  }
+
+  toggleEventsSidebar(): void {
+    this.toggleSidebarSection(SidebarSection.Events);
   }
 
   toggleHabitsSidebar(): void {
-    if (
-      this.previousSidebarState.opened &&
-      this.previousSidebarState.section === SidebarSection.Habits
-    ) {
-      this.store.dispatch(
-        toggleSidebar({ opened: false, section: SidebarSection.Habits })
-      );
-      return;
-    }
-
-    this.store.dispatch(
-      toggleSidebar({ opened: true, section: SidebarSection.Habits })
-    );
+    this.toggleSidebarSection(SidebarSection.Habits);
   }
 }
