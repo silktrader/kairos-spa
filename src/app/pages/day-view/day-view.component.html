@@ -33,6 +33,13 @@
       </mat-card>
     </div>
 
+    <ul class="habits">
+      <li *ngFor="let habit of (habitsDetails$ | async)">
+        <mat-checkbox [checked]="habit.entry !== undefined" (change)="toggleHabit(habit.id, habit.entry)">
+          <span>{{habit.title}}</span></mat-checkbox>
+      </li>
+    </ul>
+
   </ng-template>
 
 </section>

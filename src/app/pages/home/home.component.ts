@@ -11,7 +11,12 @@ import { DayService } from 'src/app/services/day.service';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { AppState, SidebarSection } from 'src/app/store/app-state';
-import { getDatesTasks, toggleSidebar } from 'src/app/store/schedule.actions';
+import {
+  getDatesTasks,
+  toggleSidebar,
+  getHabitsEntries,
+  getHabits,
+} from 'src/app/store/schedule.actions';
 import { MatSidenav } from '@angular/material/sidenav';
 import { selectSidebar } from 'src/app/store/schedule.selectors';
 
@@ -52,17 +57,21 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.visibleDates$$?.value;
   }
 
+  // tk should be conditional on sign in
   ngOnInit(): void {
-    // tk should be conditional on sign in
+    // get the available habits, needs not be tied with the dates' changes
+    this.store.dispatch(getHabits());
 
     this.subscriptions.add(
       this.visibleDates$.subscribe((dates) => {
-        this.store.dispatch(
-          getDatesTasks({
-            startDate: dates[0],
-            endDate: dates[dates.length - 1],
-          })
-        );
+        const dateRange = {
+          startDate: dates[0],
+          endDate: dates[dates.length - 1],
+        };
+
+        this.store.dispatch(getDatesTasks(dateRange));
+
+        this.store.dispatch(getHabitsEntries(dateRange));
       })
     );
   }

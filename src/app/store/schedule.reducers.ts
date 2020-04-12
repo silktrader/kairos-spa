@@ -12,6 +12,7 @@ import {
 export const initialState: AppState = {
   tasks: [],
   habits: [],
+  habitsEntries: [],
   loadingTasks: false,
   editingTaskId: undefined,
   taskEvents: [],
@@ -155,19 +156,47 @@ export const taskReducer = createReducer(
     };
   }),
 
-  on(ScheduleActions.addHabitSuccess, (schedule, { habit }) => {
+  /* Habits */
+
+  on(ScheduleActions.addHabitSuccess, (state, { habit }) => {
     return {
-      ...schedule,
-      habits: [...schedule.habits, habit],
+      ...state,
+      habits: [...state.habits, habit],
     };
   }),
 
-  on(ScheduleActions.getHabitsSuccess, (schedule, { habits }) => {
+  on(ScheduleActions.getHabitsSuccess, (state, { habits }) => {
     return {
-      ...schedule,
+      ...state,
       habits,
     };
   }),
+
+  on(ScheduleActions.getHabitsEntriesSuccess, (state, { habitsEntries }) => {
+    return {
+      ...state,
+      habitsEntries,
+    };
+  }),
+
+  on(ScheduleActions.addHabitEntrySuccess, (state, { habitEntry }) => {
+    return {
+      ...state,
+      habitsEntries: [...state.habitsEntries, habitEntry],
+    };
+  }),
+
+  on(ScheduleActions.deleteHabitEntrySuccess, (state, { habitEntry }) => {
+    return {
+      ...state,
+      habitsEntries: state.habitsEntries.filter(
+        (entry) =>
+          entry.date !== habitEntry.date || entry.habitId !== habitEntry.habitId
+      ),
+    };
+  }),
+
+  /* User Interface Controls */
 
   on(ScheduleActions.toggleSidebar, (state, { opened, section }) => {
     return { ...state, sidebar: { opened, section } };

@@ -1,8 +1,9 @@
 import { createAction, props } from '@ngrx/store';
 import { Task } from '../models/task';
 import { TaskDto } from '../models/dtos/task.dto';
-import { HabitDto } from '../models/dtos/habit-dto';
+import { HabitDto } from '../models/dtos/habit.dto';
 import { SidebarSection } from './app-state';
+import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
 
 /* Tasks */
 
@@ -60,8 +61,6 @@ export const deleteTaskSuccess = createAction(
   props<{ deletedTaskId: number; affectedTask: Task | null }>()
 );
 
-export const completeTask = createAction('Complete Task');
-
 export const readTaskEvent = createAction(
   '[SCHEDULE] Read Task Event',
   props<{ id: string }>()
@@ -85,6 +84,36 @@ export const getHabitsSuccess = createAction(
   'Get Habits Success',
   props<{ habits: ReadonlyArray<HabitDto> }>()
 );
+
+export const getHabitsEntries = createAction(
+  'Get Habits Entries',
+  props<{ startDate: Date; endDate: Date }>()
+);
+
+export const getHabitsEntriesSuccess = createAction(
+  'Get Habits Entries Success',
+  props<{ habitsEntries: ReadonlyArray<HabitEntryDto> }>()
+);
+
+export const addHabitEntry = createAction(
+  'Add Habit Entry',
+  props<{ habitEntry: Omit<HabitEntryDto, 'id'> }>()
+);
+
+export const addHabitEntrySuccess = createAction(
+  'Add Habit Entry Success',
+  props<{ habitEntry: HabitEntryDto }>()
+);
+
+export const deleteHabitEntry = createAction(
+  'Delete Habit Entry',
+  props<{ habitEntry: HabitEntryDto }>()
+);
+
+export const deleteHabitEntrySuccess = createAction(
+         'Delete Habit Entry Success',
+         props<{ habitEntry: HabitEntryDto }>()
+       );
 
 /* Interface Controls */
 

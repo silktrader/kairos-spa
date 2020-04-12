@@ -5,8 +5,9 @@ import * as ScheduleActions from './schedule.actions';
 import { mergeMap, map, catchError } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { TaskDto } from '../models/dtos/task.dto';
-import { HabitDto } from '../models/dtos/habit-dto';
+import { HabitDto } from '../models/dtos/habit.dto';
 import { HabitsService } from '../services/habits.service';
+import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
 
 @Injectable()
 export class ScheduleEffects {
@@ -94,6 +95,51 @@ export class ScheduleEffects {
         this.hs.getHabits().pipe(
           map((habits) => ScheduleActions.getHabitsSuccess({ habits })),
           catchError(() => EMPTY)
+        )
+      )
+    )
+  );
+
+  getHabitsEntries$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ScheduleActions.getHabitsEntries),
+      mergeMap((action: { startDate: Date; endDate: Date }) =>
+        this.hs
+          .getHabitsEntries(action.startDate, action.endDate)
+          .pipe(
+            map((habitsEntries) =>
+              ScheduleActions.getHabitsEntriesSuccess({ habitsEntries })
+            )
+          )
+      )
+    )
+  );
+
+  setHabitEntry$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ScheduleActions.addHabitEntry),
+      mergeMap((action: { habitEntry: Omit<HabitEntryDto, 'id'> }) =>
+        this.hs
+          .addHabitEntry(action.habitEntry)
+          .pipe(
+            map((habitEntry) =>
+              ScheduleActions.addHabitEntrySuccess({ habitEntry })
+            )
+          )
+      )
+    )
+  );
+
+  deleteHabitEntry$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ScheduleActions.deleteHabitEntry),
+      mergeMap((action: { habitEntry: HabitEntryDto }) =>
+        this.hs.deleteHabitEntry(action.habitEntry).pipe(
+          map(() =>
+            ScheduleActions.deleteHabitEntrySuccess({
+              habitEntry: action.habitEntry,
+            })
+          )
         )
       )
     )

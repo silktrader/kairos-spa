@@ -4,7 +4,6 @@ import { AddHabitDialogComponent } from '../../add-habit-dialog/add-habit-dialog
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { selectHabits } from 'src/app/store/schedule.selectors';
-import { getHabits } from 'src/app/store/schedule.actions';
 
 @Component({
   selector: 'app-habits-sidebar',
@@ -18,9 +17,7 @@ export class HabitsSidebarComponent implements OnInit {
     private addHabitDialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
-    this.store.dispatch(getHabits());
-  }
+  ngOnInit(): void {}
 
   public openAddHabitDialog() {
     this.addHabitDialog.open(AddHabitDialogComponent, {

@@ -5,11 +5,19 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DayService } from 'src/app/services/day.service';
 import { Task } from 'src/app/models/task';
-import { Subscription, Observable, BehaviorSubject } from 'rxjs';
+import {
+  Subscription,
+  Observable,
+  BehaviorSubject,
+  throwError,
+  combineLatest,
+  of,
+} from 'rxjs';
 import { Options } from 'sortablejs';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
@@ -18,14 +26,24 @@ import { AppState } from 'src/app/store/app-state';
 import {
   selectLoading,
   selectTasksByDay,
+  selectHabits,
+  selectHabitsEntries,
 } from 'src/app/store/schedule.selectors';
-import { take } from 'rxjs/operators';
-import { updateTasks, addTask } from 'src/app/store/schedule.actions';
+import { take, map } from 'rxjs/operators';
+import {
+  updateTasks,
+  addTask,
+  addHabitEntry,
+  deleteHabitEntry,
+} from 'src/app/store/schedule.actions';
+import { HabitEntryDto } from 'src/app/models/dtos/habit-entry.dto';
+import { HabitDto, HabitDetails } from 'src/app/models/dtos/habit.dto';
 
 @Component({
   selector: 'app-day-view',
   templateUrl: './day-view.component.html',
   styleUrls: ['./day-view.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DayViewComponent implements OnInit, OnDestroy {
   @Input() date: Date;
@@ -34,12 +52,13 @@ export class DayViewComponent implements OnInit, OnDestroy {
   tasks: ReadonlyArray<Task>;
   loading: Observable<boolean> = this.store.pipe(select(selectLoading));
   addingTask$ = new BehaviorSubject<boolean>(false);
+  habitsDetails$: Observable<ReadonlyArray<HabitDetails>>;
 
   private subscriptions = new Subscription();
 
   newTaskControl = new FormControl('');
 
-  options: Options;
+  options: Options; // SortableJs options
 
   constructor(
     private readonly store: Store<AppState>,
@@ -49,8 +68,26 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.subscriptions.add(
-      this.ds.getDayTasks(this.date).subscribe((tasks) => {
-        this.tasks = tasks;
+      this.store
+        .pipe(select(selectTasksByDay, { date: this.date }))
+        .subscribe((tasks) => {
+          this.tasks = tasks;
+        })
+    );
+
+    this.habitsDetails$ = combineLatest([
+      this.store.pipe(select(selectHabits)),
+      this.store.pipe(select(selectHabitsEntries, { date: this.date })),
+    ]).pipe(
+      map(([habits, entries]) => {
+        const habitsDetails: Array<HabitDetails> = [];
+        for (const habit of habits) {
+          habitsDetails.push({
+            ...habit,
+            entry: entries.find((item) => item.habitId === habit.id),
+          });
+        }
+        return habitsDetails;
       })
     );
 
@@ -221,5 +258,20 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   get dayUrl(): string {
     return this.ds.getUrl(this.date);
+  }
+
+  toggleHabit(habitId: number, habitEntry: HabitEntryDto): void {
+    if (habitEntry) {
+      console.log(habitEntry);
+      this.store.dispatch(
+        deleteHabitEntry({
+          habitEntry,
+        })
+      );
+    } else {
+      this.store.dispatch(
+        addHabitEntry({ habitEntry: { date: this.date, habitId, comment: '' } })
+      );
+    }
   }
 }

@@ -88,3 +88,14 @@ mat-card[hidden] {
   display: flex;
   margin-bottom: 1.5rem;
 }
+
+/* Habits */
+.habits {
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+
+  li {
+    list-style-type: none;
+  }
+}

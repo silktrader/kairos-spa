@@ -46,10 +46,6 @@ export class DayService {
     return addDays(date, 1);
   }
 
-  getDayTasks(date: Date): Observable<ReadonlyArray<Task>> {
-    return this.store.pipe(select(selectTasksByDay, { date }));
-  }
-
   getTasksBetweenDates(
     startDate: Date,
     endDate: Date
