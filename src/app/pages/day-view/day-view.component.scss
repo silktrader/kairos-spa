@@ -90,12 +90,27 @@ mat-card[hidden] {
 }
 
 /* Habits */
-.habits {
-  width: 100%;
+.habits-panel {
+  width: 90%;
+  overflow: initial;
+}
+
+mat-panel-title {
+  font-weight: 500;
+  font-size: large;
+}
+
+.habits-list {
   padding: 0px;
   margin: 0px;
 
   li {
     list-style-type: none;
   }
+}
+
+.habit {
+  font-weight: 500;
+  font-variant: small-caps;
+  font-size: large;
 }

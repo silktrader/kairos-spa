@@ -1,6 +1,6 @@
-<section [ngClass]="{'day': true, 'current-day': isToday}">
+<section class="day">
 
-  <header class="date-header">
+  <header class="date-header" [ngClass]="{'current-day': isToday}">
     <h2>{{dayName}}</h2>
     <h3>{{daySubtitle}}</h3>
   </header>
@@ -33,12 +33,21 @@
       </mat-card>
     </div>
 
-    <ul class="habits">
-      <li *ngFor="let habit of (habitsDetails$ | async)">
-        <mat-checkbox [checked]="habit.entry !== undefined" (change)="toggleHabit(habit.id, habit.entry)">
-          <span>{{habit.title}}</span></mat-checkbox>
-      </li>
-    </ul>
+    <mat-expansion-panel class="habits-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Habits
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <ul class="habits-list">
+        <li class="habit" *ngFor="let habit of (habitsDetails$ | async)" [ngStyle]="{'color': habit.colour}">
+          <mat-checkbox [checked]="habit.entry !== undefined" (change)="toggleHabit(habit.id, habit.entry)"
+            color="primary">
+            <span>{{habit.title}}</span></mat-checkbox>
+        </li>
+      </ul>
+    </mat-expansion-panel>
 
   </ng-template>
 

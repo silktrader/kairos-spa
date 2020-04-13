@@ -262,7 +262,6 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   toggleHabit(habitId: number, habitEntry: HabitEntryDto): void {
     if (habitEntry) {
-      console.log(habitEntry);
       this.store.dispatch(
         deleteHabitEntry({
           habitEntry,
