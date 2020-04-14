@@ -78,6 +78,16 @@ export const addHabitSuccess = createAction(
   props<{ habit: HabitDto }>()
 );
 
+export const updateHabit = createAction(
+  'Update Habbit',
+  props<{ habit: HabitDto }>()
+);
+
+export const updateHabitSuccess = createAction(
+  'Update Habit Success',
+  props<{ habit: HabitDto }>()
+);
+
 export const getHabits = createAction('Get Habits');
 
 export const getHabitsSuccess = createAction(
@@ -111,9 +121,9 @@ export const deleteHabitEntry = createAction(
 );
 
 export const deleteHabitEntrySuccess = createAction(
-         'Delete Habit Entry Success',
-         props<{ habitEntry: HabitEntryDto }>()
-       );
+  'Delete Habit Entry Success',
+  props<{ habitEntry: HabitEntryDto }>()
+);
 
 /* Interface Controls */
 

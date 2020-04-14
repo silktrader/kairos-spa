@@ -165,6 +165,13 @@ export const taskReducer = createReducer(
     };
   }),
 
+  on(ScheduleActions.updateHabitSuccess, (state, { habit }) => {
+    return {
+      ...state,
+      habits: [...state.habits.filter((item) => item.id !== habit.id), habit],
+    };
+  }),
+
   on(ScheduleActions.getHabitsSuccess, (state, { habits }) => {
     return {
       ...state,

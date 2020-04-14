@@ -1,0 +1,52 @@
+<main>
+  <form [formGroup]="habitGroup">
+    <mat-toolbar>
+      <mat-toolbar-row class="dialog-actions">
+        <button class="close-button" mat-icon-button mat-dialog-close>
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-toolbar-row>
+
+      <mat-toolbar-row class="title">
+        <mat-form-field class="title-input">
+          <input type="text" formControlName="title" matInput autocomplete="off" maxlength="30">
+        </mat-form-field>
+      </mat-toolbar-row>
+    </mat-toolbar>
+
+    <div class="habit-details">
+
+      <section class="description">
+        <mat-icon>notes</mat-icon>
+        <mat-form-field class="description-input">
+          <mat-label>Description</mat-label>
+          <textarea formControlName="description" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1" autocomplete="off"></textarea>
+        </mat-form-field>
+      </section>
+
+      <section class="colour">
+        <mat-icon>palette</mat-icon>
+        <mat-form-field class="colour-input">
+          <input type="text" formControlName="colour" matInput autocomplete="off" maxlength="20">
+        </mat-form-field>
+      </section>
+
+    </div>
+
+  </form>
+
+  <section class="controls">
+    <button class="delete" mat-button [mat-dialog-close] color="warn">Delete</button>
+    <button mat-raised-button [mat-dialog-close] cdkFocusInitial color="primary" (click)="updateHabit()">Save</button>
+  </section>
+</main>
+
+
+<!-- <mat-toolbar>
+    <section class="actions">
+      <button mat-icon-button color="warn" (click)="deleteTask()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </section>
+  </mat-toolbar> -->

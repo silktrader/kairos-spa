@@ -39,8 +39,8 @@ h3 {
 .tasks {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   width: 100%;
-  height: 100%;
   // tk export min height to match cards max heights so that nothing's shifted down when drag and dropping
 }
 
@@ -92,7 +92,6 @@ mat-card[hidden] {
 /* Habits */
 .habits-panel {
   width: 90%;
-  overflow: initial;
 }
 
 mat-panel-title {

@@ -1,0 +1,62 @@
+mat-toolbar {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1rem;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.title {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.title-input {
+  width: 30ch;
+  margin-right: 1.5rem;
+  margin-left: 1.5rem;
+}
+
+.close-button {
+  justify-self: end;
+}
+
+.habit-details {
+  margin: 1rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.colour,
+.description {
+  display: flex;
+  align-items: center;
+
+  mat-icon {
+    margin-right: 1rem;
+  }
+}
+
+.description-input {
+  width: 40ch;
+}
+
+.colour-input {
+  width: 8ch;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 1rem;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+}

@@ -4,7 +4,9 @@
 
   <ul>
     <li *ngFor="let habit of (habits$ | async)">
-      {{habit.title}}
+      {{habit.title}} <button mat-icon-button (click)="openEditHabitDialog(habit)">
+        <mat-icon>edit</mat-icon>
+      </button>
     </li>
   </ul>
 

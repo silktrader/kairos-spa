@@ -88,6 +88,17 @@ export class ScheduleEffects {
     )
   );
 
+  updateHabit$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ScheduleActions.updateHabit),
+      mergeMap((action: { habit: HabitDto }) =>
+        this.hs
+          .updateHabit(action.habit)
+          .pipe(map((habit) => ScheduleActions.updateHabitSuccess({ habit })))
+      )
+    )
+  );
+
   getHabits$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ScheduleActions.getHabits),

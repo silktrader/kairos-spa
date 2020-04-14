@@ -10,14 +10,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { DayService } from 'src/app/services/day.service';
 import { Task } from 'src/app/models/task';
-import {
-  Subscription,
-  Observable,
-  BehaviorSubject,
-  throwError,
-  combineLatest,
-  of,
-} from 'rxjs';
+import { Subscription, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { Options } from 'sortablejs';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
@@ -37,7 +30,7 @@ import {
   deleteHabitEntry,
 } from 'src/app/store/schedule.actions';
 import { HabitEntryDto } from 'src/app/models/dtos/habit-entry.dto';
-import { HabitDto, HabitDetails } from 'src/app/models/dtos/habit.dto';
+import { HabitDetails } from 'src/app/models/dtos/habit.dto';
 
 @Component({
   selector: 'app-day-view',

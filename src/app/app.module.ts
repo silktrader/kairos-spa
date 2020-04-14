@@ -23,6 +23,7 @@ import { EventsComponent } from './pages/sidebar/events-sidebar/events.component
 import { AddHabitDialogComponent } from './pages/add-habit-dialog/add-habit-dialog.component';
 import { HabitsSidebarComponent } from './pages/sidebar/habits-sidebar/habits-sidebar.component';
 import { SidebarSectionTitleComponent } from './pages/sidebar/sidebar-section-title/sidebar-section-title.component';
+import { EditHabitDialogComponent } from './dialogs/edit-habit-dialog/edit-habit-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { SidebarSectionTitleComponent } from './pages/sidebar/sidebar-section-ti
     AddHabitDialogComponent,
     HabitsSidebarComponent,
     SidebarSectionTitleComponent,
+    EditHabitDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,7 +56,11 @@ import { SidebarSectionTitleComponent } from './pages/sidebar/sidebar-section-ti
     SortablejsModule.forRoot({ animation: 150 }),
     EffectsModule.forRoot([ScheduleEffects]),
   ],
-  entryComponents: [EditTaskDialogComponent, AddHabitDialogComponent],
+  entryComponents: [
+    EditTaskDialogComponent,
+    AddHabitDialogComponent,
+    EditHabitDialogComponent,
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })

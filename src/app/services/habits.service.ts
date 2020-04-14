@@ -20,6 +20,13 @@ export class HabitsService {
     return this.http.post<HabitDto>(this.habitsUrl, habitDto);
   }
 
+  updateHabit(habitDto: HabitDto): Observable<HabitDto> {
+    return this.http.put<HabitDto>(
+      `${this.habitsUrl}/${habitDto.id}`,
+      habitDto
+    );
+  }
+
   getHabits(): Observable<ReadonlyArray<HabitDto>> {
     return this.http.get<ReadonlyArray<HabitDto>>(this.habitsUrl);
   }
