@@ -4,13 +4,14 @@ import {
   selectAddEvents,
   selectRemoveEvents,
   selectEditEvents,
+  selectHabitEvents,
 } from 'src/app/store/schedule.selectors';
 import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { formatDistanceToNow } from 'date-fns';
 import { deleteTask, updateTask } from 'src/app/store/schedule.actions';
 import { AppState } from 'src/app/store/app-state';
-import { TaskEvent } from 'src/app/store/task-event.interface';
+import { AppEvent } from 'src/app/store/task-event.interface';
 import { TaskDto } from 'src/app/models/dtos/task.dto';
 
 @Component({
@@ -24,6 +25,7 @@ export class EventsComponent implements OnInit {
   additions$ = this.store.pipe(select(selectAddEvents));
   deletions$ = this.store.pipe(select(selectRemoveEvents));
   edits$ = this.store.pipe(select(selectEditEvents));
+  habits$ = this.store.pipe(select(selectHabitEvents));
 
   referenceNow: Date;
 
@@ -39,7 +41,7 @@ export class EventsComponent implements OnInit {
     });
   }
 
-  timeAgo(taskEvent: TaskEvent): string {
+  timeAgo(taskEvent: AppEvent): string {
     return formatDistanceToNow(taskEvent.timestamp);
   }
 
@@ -54,4 +56,4 @@ export class EventsComponent implements OnInit {
   }
 }
 
-export type EventsView = 'added' | 'removed' | 'edited';
+export type EventsView = 'added' | 'removed' | 'edited' | 'habits';

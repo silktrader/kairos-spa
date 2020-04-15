@@ -7,6 +7,7 @@
       <mat-option value="added">Added Tasks</mat-option>
       <mat-option value="removed">Deleted Tasks</mat-option>
       <mat-option value="edited">Edited Tasks</mat-option>
+      <mat-option value="habits">Habits Events</mat-option>
     </mat-select>
   </mat-form-field>
 
@@ -112,7 +113,6 @@
               </aside>
             </section>
           </div>
-
           <mat-divider></mat-divider>
 
           <div class="edited-details">
@@ -134,6 +134,39 @@
           <mat-action-row>
             <button mat-button color="primary" (click)="restoreEdit(event.taskDto, event.originalDto)">Restore</button>
           </mat-action-row>
+        </mat-expansion-panel>
+      </ng-container>
+    </mat-accordion>
+
+    <!-- Habits Events -->
+    <mat-accordion *ngIf="visibleEvents === 'habits'">
+      <ng-container *ngIf="habits$ | async as habits">
+        <aside class="no-results" *ngIf="!habits.length">
+          No tasks were edited so far.
+        </aside>
+        <mat-expansion-panel *ngFor="let event of habits">
+          <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*">
+            <header class="event-header">
+              <span class="event-header-time">{{timeAgo(event)}} ago</span> <span
+                class="event-header-title">{{event.habit.title}}</span>
+            </header>
+          </mat-expansion-panel-header>
+
+          <!-- <div class="original-details">
+                      <p class="event-task-details line-through">{{event.originalDto.title}}</p>
+                      <p class="event-task-details line-through">{{event.originalDto.details}}</p>
+                      <section class="event-task-date">
+                        <time class="event-task-date-item">
+                          <mat-icon>event_note</mat-icon><span class="line-through">{{event.originalDto.date | date}}</span>
+                        </time>
+                        <time *ngIf="event.originalDto.duration" class="event-task-date-item">
+                          <mat-icon>schedule</mat-icon><span class="line-through">{{event.originalDto.duration}}</span>
+                        </time>
+                        <aside *ngIf="event.originalDto.complete" class="event-task-date-item">
+                          <mat-icon>done</mat-icon>
+                        </aside>
+                      </section>
+                    </div> -->
         </mat-expansion-panel>
       </ng-container>
     </mat-accordion>

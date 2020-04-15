@@ -5,7 +5,7 @@ import { selectEvents } from '../store/schedule.selectors';
 import { readTaskEvent } from '../store/schedule.actions';
 import { Router } from '@angular/router';
 import { AppState } from '../store/app-state';
-import { TaskEventOperation } from '../store/task-event-operation.enum';
+import { EventOperation } from '../store/task-event-operation.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +29,7 @@ export class NotificationService {
       if (unread) {
         this.readingEvent = true;
         const snackBarRef = this.snackBar.open(
-          `${this.actionName(unread.operation)} ${unread.taskDto.title}`,
+          `${this.actionName(unread.operation)} ${unread.title}`,
           'View',
           {
             duration: 2000,
@@ -49,11 +49,11 @@ export class NotificationService {
     });
   }
 
-  private actionName(taskEventOperation: TaskEventOperation) {
+  private actionName(taskEventOperation: EventOperation) {
     switch (taskEventOperation) {
-      case TaskEventOperation.Add:
+      case EventOperation.AddTask:
         return 'Added';
-      case TaskEventOperation.Edit:
+      case EventOperation.EditTask:
         return 'Updated';
       default:
         return 'Removed';

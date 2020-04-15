@@ -7,6 +7,9 @@ import {
   AddTaskEvent,
   RemoveTaskEvent,
   EditTaskEvent,
+  AddHabitEvent,
+  EditHabitEvent,
+  DeleteHabitEvent,
 } from './task-event.interface';
 
 export const initialState: ScheduleState = {
@@ -16,7 +19,7 @@ export const initialState: ScheduleState = {
   loadingTasks: false,
   editingHabit: false,
   editingTaskId: undefined,
-  taskEvents: [],
+  events: [],
   sidebar: { opened: true, section: SidebarSection.Habits },
 };
 
@@ -51,7 +54,7 @@ export const taskReducer = createReducer(
     return {
       ...schedule,
       tasks: [...schedule.tasks, task],
-      taskEvents: [...schedule.taskEvents, new AddTaskEvent(task.toDto())],
+      events: [...schedule.events, new AddTaskEvent(task.toDto())],
     };
   }),
 
@@ -69,8 +72,8 @@ export const taskReducer = createReducer(
         ...schedule,
         tasks: [...filteredTasks(schedule.tasks, updatedTask.id), updatedTask],
         editingTaskId: undefined,
-        taskEvents: [
-          ...schedule.taskEvents,
+        events: [
+          ...schedule.events,
           new EditTaskEvent(updatedTask, originalTask),
         ],
       };
@@ -134,8 +137,8 @@ export const taskReducer = createReducer(
       return {
         ...schedule,
         tasks: newTasks,
-        taskEvents: [
-          ...schedule.taskEvents,
+        events: [
+          ...schedule.events,
           // purposedly not signaling the affected task's move
           new RemoveTaskEvent(deletedTaskDto as TaskDto),
         ],
@@ -144,16 +147,16 @@ export const taskReducer = createReducer(
   ),
 
   on(ScheduleActions.readTaskEvent, (schedule, { id: id }) => {
-    const newEvents = [...schedule.taskEvents];
+    const newEvents = [...schedule.events];
     for (let i = 0; i < newEvents.length; i++) {
       if (newEvents[i].id === id) {
-        newEvents[i] = { ...newEvents[i], read: true };
+        newEvents[i] = newEvents[i].setAsRead();
         break;
       }
     }
     return {
       ...schedule,
-      taskEvents: newEvents,
+      events: newEvents,
     };
   }),
 
@@ -163,6 +166,7 @@ export const taskReducer = createReducer(
     return {
       ...state,
       habits: [...state.habits, habit],
+      events: [...state.events, new AddHabitEvent(habit)],
     };
   }),
 
@@ -174,10 +178,17 @@ export const taskReducer = createReducer(
   }),
 
   on(ScheduleActions.editHabitSuccess, (state, { habit }) => {
+    let originalHabit = habit; // avoids null checks
+    const habits = [];
+    for (const item of state.habits) {
+      if (item.id === habit.id) originalHabit = item;
+      else habits.push(item);
+    }
     return {
       ...state,
-      habits: [...state.habits.filter((item) => item.id !== habit.id), habit],
+      habits,
       editingHabit: false,
+      events: [...state.events, new EditHabitEvent(habit, originalHabit)],
     };
   }),
 
@@ -195,6 +206,7 @@ export const taskReducer = createReducer(
       habitsEntries: [
         ...state.habitsEntries.filter((entry) => entry.habitId !== habit.id),
       ],
+      events: [...state.events, new DeleteHabitEvent(habit)],
       editingHabit: false,
     };
   }),

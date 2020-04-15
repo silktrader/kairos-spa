@@ -2,11 +2,14 @@ import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { Task } from '../models/task';
 import { isSameDay } from 'date-fns';
 import { ScheduleState } from './app-state';
-import { TaskEventOperation } from './task-event-operation.enum';
+import { EventOperation } from './task-event-operation.enum';
 import {
   AddTaskEvent,
   RemoveTaskEvent,
   EditTaskEvent,
+  AddHabitEvent,
+  DeleteHabitEvent,
+  EditHabitEvent,
 } from './task-event.interface';
 
 export const selectFeature = createFeatureSelector<
@@ -28,25 +31,36 @@ export const selectSidebar = createSelector(
 
 export const selectEvents = createSelector(
   selectFeature,
-  (state: ScheduleState) => state.taskEvents
+  (state: ScheduleState) => state.events
 );
 
 export const selectAddEvents = createSelector(
   selectEvents,
   (events: ReadonlyArray<AddTaskEvent>) =>
-    events.filter((event) => event.operation === TaskEventOperation.Add)
+    events.filter((event) => event.operation === EventOperation.AddTask)
 );
 
 export const selectRemoveEvents = createSelector(
   selectEvents,
   (events: ReadonlyArray<RemoveTaskEvent>) =>
-    events.filter((event) => event.operation === TaskEventOperation.Remove)
+    events.filter((event) => event.operation === EventOperation.RemoveTask)
 );
 
 export const selectEditEvents = createSelector(
   selectEvents,
   (events: ReadonlyArray<EditTaskEvent>) =>
-    events.filter((event) => event.operation === TaskEventOperation.Edit)
+    events.filter((event) => event.operation === EventOperation.EditTask)
+);
+
+export const selectHabitEvents = createSelector(
+  selectEvents,
+  (events: ReadonlyArray<AddHabitEvent | EditHabitEvent | DeleteHabitEvent>) =>
+    events.filter(
+      (event) =>
+        event.operation === EventOperation.EditTask ||
+        event.operation === EventOperation.AddHabit ||
+        event.operation === EventOperation.DeleteHabit
+    )
 );
 
 // Tasks selectors

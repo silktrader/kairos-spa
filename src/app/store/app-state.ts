@@ -1,5 +1,5 @@
 import { Task } from '../models/task';
-import { TaskEvent } from './task-event.interface';
+import { AppEvent } from './task-event.interface';
 import { HabitDto } from '../models/dtos/habit.dto';
 import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
 
@@ -14,7 +14,7 @@ export interface ScheduleState {
   readonly loadingTasks: boolean;
   readonly editingHabit: boolean;
   readonly editingTaskId: number | undefined;
-  readonly taskEvents: ReadonlyArray<TaskEvent>;
+  readonly events: ReadonlyArray<AppEvent>;
   readonly sidebar: { opened: boolean; section: SidebarSection };
 }
 
