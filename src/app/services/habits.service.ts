@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
-import { map } from 'rxjs/operators';
+import { map, delay } from 'rxjs/operators';
 import { formatISO } from 'date-fns';
 
 @Injectable({
@@ -20,7 +20,7 @@ export class HabitsService {
     return this.http.post<HabitDto>(this.habitsUrl, habitDto);
   }
 
-  updateHabit(habitDto: HabitDto): Observable<HabitDto> {
+  editHabit(habitDto: HabitDto): Observable<HabitDto> {
     return this.http.put<HabitDto>(
       `${this.habitsUrl}/${habitDto.id}`,
       habitDto

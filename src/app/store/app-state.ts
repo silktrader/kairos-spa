@@ -4,10 +4,15 @@ import { HabitDto } from '../models/dtos/habit.dto';
 import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
 
 export interface AppState {
+  schedule: ScheduleState;
+}
+
+export interface ScheduleState {
   readonly tasks: ReadonlyArray<Task>;
   readonly habits: ReadonlyArray<HabitDto>;
   readonly habitsEntries: ReadonlyArray<HabitEntryDto>;
   readonly loadingTasks: boolean;
+  readonly editingHabit: boolean;
   readonly editingTaskId: number | undefined;
   readonly taskEvents: ReadonlyArray<TaskEvent>;
   readonly sidebar: { opened: boolean; section: SidebarSection };

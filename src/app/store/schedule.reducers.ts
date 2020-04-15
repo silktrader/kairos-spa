@@ -2,21 +2,22 @@ import { createReducer, on } from '@ngrx/store';
 import * as ScheduleActions from './schedule.actions';
 import { Task } from '../models/task';
 import { TaskDto } from '../models/dtos/task.dto';
-import { AppState, SidebarSection } from './app-state';
+import { ScheduleState, SidebarSection } from './app-state';
 import {
   AddTaskEvent,
   RemoveTaskEvent,
   EditTaskEvent,
 } from './task-event.interface';
 
-export const initialState: AppState = {
+export const initialState: ScheduleState = {
   tasks: [],
   habits: [],
   habitsEntries: [],
   loadingTasks: false,
+  editingHabit: false,
   editingTaskId: undefined,
   taskEvents: [],
-  sidebar: { opened: false, section: SidebarSection.Events },
+  sidebar: { opened: true, section: SidebarSection.Habits },
 };
 
 export const filteredTasks = (
@@ -165,10 +166,18 @@ export const taskReducer = createReducer(
     };
   }),
 
-  on(ScheduleActions.updateHabitSuccess, (state, { habit }) => {
+  on(ScheduleActions.editHabit, (state) => {
+    return {
+      ...state,
+      editingHabit: true,
+    };
+  }),
+
+  on(ScheduleActions.editHabitSuccess, (state, { habit }) => {
     return {
       ...state,
       habits: [...state.habits.filter((item) => item.id !== habit.id), habit],
+      editingHabit: false,
     };
   }),
 

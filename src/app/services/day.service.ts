@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Task } from '../models/task';
 import { addDays, format, isToday } from 'date-fns';
 import { Store, select } from '@ngrx/store';
-import { AppState } from '../store/app-state';
+import { ScheduleState } from '../store/app-state';
 import { HttpClient } from '@angular/common/http';
 import { TaskDto } from '../models/dtos/task.dto';
 import { environment } from 'src/environments/environment';
@@ -18,7 +18,7 @@ import { NotificationService } from './notification.service';
 export class DayService {
   constructor(
     private readonly http: HttpClient,
-    private readonly store: Store<AppState>,
+    private readonly store: Store<ScheduleState>,
     private readonly ns: NotificationService
   ) {}
 

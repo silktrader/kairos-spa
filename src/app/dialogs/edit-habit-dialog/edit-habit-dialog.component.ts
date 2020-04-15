@@ -3,8 +3,8 @@ import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HabitDto } from 'src/app/models/dtos/habit.dto';
 import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/store/app-state';
-import { updateHabit } from 'src/app/store/schedule.actions';
+import { ScheduleState } from 'src/app/store/app-state';
+import { editHabit } from 'src/app/store/schedule.actions';
 
 @Component({
   selector: 'app-edit-habit-dialog',
@@ -18,21 +18,25 @@ export class EditHabitDialogComponent implements OnInit {
     colour: [undefined],
   });
 
+  editingHabit$ = this.store.select((state) => state.schedule.editingHabit);
+
   constructor(
     private readonly fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public habit: HabitDto,
-    private readonly store: Store<AppState>
+    private readonly store: Store<{ schedule: ScheduleState }>
   ) {}
 
   ngOnInit(): void {
     if (this.habit) {
       this.habitGroup.patchValue(this.habit);
     }
+
+    this.editingHabit$.subscribe(console.log);
   }
 
-  updateHabit(): void {
+  editHabit(): void {
     this.store.dispatch(
-      updateHabit({ habit: { ...this.habitGroup.value, id: this.habit.id } })
+      editHabit({ habit: { ...this.habitGroup.value, id: this.habit.id } })
     );
   }
 }

@@ -78,12 +78,12 @@ export const addHabitSuccess = createAction(
   props<{ habit: HabitDto }>()
 );
 
-export const updateHabit = createAction(
+export const editHabit = createAction(
   'Update Habbit',
   props<{ habit: HabitDto }>()
 );
 
-export const updateHabitSuccess = createAction(
+export const editHabitSuccess = createAction(
   'Update Habit Success',
   props<{ habit: HabitDto }>()
 );

@@ -10,7 +10,7 @@ import { addDays } from 'date-fns';
 import { DayService } from 'src/app/services/day.service';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { Store, select } from '@ngrx/store';
-import { AppState, SidebarSection } from 'src/app/store/app-state';
+import { SidebarSection, AppState } from 'src/app/store/app-state';
 import {
   getDatesTasks,
   toggleSidebar,

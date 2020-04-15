@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AppState } from 'src/app/store/app-state';
+import { ScheduleState } from 'src/app/store/app-state';
 import { Store } from '@ngrx/store';
 import { toggleSidebar } from 'src/app/store/schedule.actions';
 
@@ -11,7 +11,7 @@ import { toggleSidebar } from 'src/app/store/schedule.actions';
 export class SidebarSectionTitleComponent implements OnInit {
   @Input() title: string;
 
-  constructor(private readonly store: Store<AppState>) {}
+  constructor(private readonly store: Store<ScheduleState>) {}
 
   ngOnInit(): void {}
 

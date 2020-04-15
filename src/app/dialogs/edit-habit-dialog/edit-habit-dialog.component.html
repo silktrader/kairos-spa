@@ -37,8 +37,12 @@
   </form>
 
   <section class="controls">
-    <button class="delete" mat-button [mat-dialog-close] color="warn">Delete</button>
-    <button mat-raised-button [mat-dialog-close] cdkFocusInitial color="primary" (click)="updateHabit()">Save</button>
+    <button class="delete" mat-button color="warn">Delete</button>
+    <button *ngIf="!(editingHabit$ | async); else editingHabit" mat-raised-button cdkFocusInitial color="primary"
+      (click)="editHabit()">Save</button>
+    <ng-template #editingHabit>
+      <mat-spinner [diameter]="20"></mat-spinner>
+    </ng-template>
   </section>
 </main>
 

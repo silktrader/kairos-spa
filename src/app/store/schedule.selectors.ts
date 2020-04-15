@@ -1,7 +1,7 @@
-import { createSelector } from '@ngrx/store';
+import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { Task } from '../models/task';
 import { isSameDay } from 'date-fns';
-import { AppState } from './app-state';
+import { ScheduleState } from './app-state';
 import { TaskEventOperation } from './task-event-operation.enum';
 import {
   AddTaskEvent,
@@ -9,23 +9,26 @@ import {
   EditTaskEvent,
 } from './task-event.interface';
 
-export const selectFeature = (state: any) => state.schedule;
+export const selectFeature = createFeatureSelector<
+  { schedule: ScheduleState },
+  ScheduleState
+>('schedule');
 
 export const selectLoading = createSelector(
   selectFeature,
-  (state: AppState) => state.loadingTasks
+  (state: ScheduleState) => state.loadingTasks
 );
 
 export const selectSidebar = createSelector(
   selectFeature,
-  (state: AppState) => state.sidebar
+  (state: ScheduleState) => state.sidebar
 );
 
 // Events selectors
 
 export const selectEvents = createSelector(
   selectFeature,
-  (state: AppState) => state.taskEvents
+  (state: ScheduleState) => state.taskEvents
 );
 
 export const selectAddEvents = createSelector(
@@ -50,7 +53,7 @@ export const selectEditEvents = createSelector(
 
 export const selectAllTasks = createSelector(
   selectFeature,
-  (state: AppState) => state.tasks
+  (state: ScheduleState) => state.tasks
 );
 
 export const selectTasksByDay = createSelector(
@@ -115,19 +118,19 @@ export const selectTaskById = createSelector(
 
 export const selectTaskEditingId = createSelector(
   selectFeature,
-  (state: AppState) => state.editingTaskId
+  (state: ScheduleState) => state.editingTaskId
 );
 
 /* Habits Selectors */
 
 export const selectHabits = createSelector(
   selectFeature,
-  (state: AppState) => state.habits
+  (state: ScheduleState) => state.habits
 );
 
 export const selectHabitsEntries = createSelector(
   selectFeature,
-  (state: AppState, props: { date: Date }) =>
+  (state: ScheduleState, props: { date: Date }) =>
     state.habitsEntries.filter((habitEntry) =>
       isSameDay(habitEntry.date, props.date)
     )
