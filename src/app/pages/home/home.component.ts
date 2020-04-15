@@ -19,6 +19,7 @@ import {
 } from 'src/app/store/schedule.actions';
 import { MatSidenav } from '@angular/material/sidenav';
 import { selectSidebar } from 'src/app/store/schedule.selectors';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -79,7 +80,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit(): void {
     // must run after the onInit cycle to catch the sidenav element
     this.subscriptions.add(
-      this.sidebarState$.subscribe((sidebarState) => {
+      // the delay fixes the `ExpressionChangedAfterItHasBeenCheckedError`
+      this.sidebarState$.pipe(delay(0)).subscribe((sidebarState) => {
         sidebarState.opened ? this.sidebar.open() : this.sidebar.close();
         this.previousSidebarState = sidebarState;
       })

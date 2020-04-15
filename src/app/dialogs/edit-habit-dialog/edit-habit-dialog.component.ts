@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HabitDto } from 'src/app/models/dtos/habit.dto';
 import { Store } from '@ngrx/store';
-import { ScheduleState } from 'src/app/store/app-state';
+import { AppState } from 'src/app/store/app-state';
 import { editHabit } from 'src/app/store/schedule.actions';
 
 @Component({
@@ -23,15 +23,13 @@ export class EditHabitDialogComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public habit: HabitDto,
-    private readonly store: Store<{ schedule: ScheduleState }>
+    private readonly store: Store<AppState>
   ) {}
 
   ngOnInit(): void {
     if (this.habit) {
       this.habitGroup.patchValue(this.habit);
     }
-
-    this.editingHabit$.subscribe(console.log);
   }
 
   editHabit(): void {
