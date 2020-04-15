@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { DayService } from '../services/day.service';
 import * as ScheduleActions from './schedule.actions';
-import { mergeMap, map, catchError } from 'rxjs/operators';
+import { mergeMap, map, catchError, tap } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { TaskDto } from '../models/dtos/task.dto';
 import { HabitDto } from '../models/dtos/habit.dto';
 import { HabitsService } from '../services/habits.service';
 import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable()
 export class ScheduleEffects {
@@ -114,6 +115,19 @@ export class ScheduleEffects {
     )
   );
 
+  habitOperationsSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(
+          ScheduleActions.deleteHabitSuccess,
+          ScheduleActions.editHabitSuccess,
+          ScheduleActions.addHabitSuccess
+        ),
+        tap(() => this.matDialog.closeAll())
+      ),
+    { dispatch: false }
+  );
+
   getHabits$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ScheduleActions.getHabits),
@@ -174,6 +188,7 @@ export class ScheduleEffects {
   constructor(
     private actions$: Actions,
     private ds: DayService,
-    private hs: HabitsService
+    private hs: HabitsService,
+    private matDialog: MatDialog
   ) {}
 }

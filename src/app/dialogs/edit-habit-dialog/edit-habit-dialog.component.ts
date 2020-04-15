@@ -32,6 +32,7 @@ export class EditHabitDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // tk unregister subscriptions
     this.habitGroup.valueChanges.subscribe((value) => {
       this.saveable$.next(this.formHasChanged(value));
     });
