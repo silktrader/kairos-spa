@@ -181,6 +181,24 @@ export const taskReducer = createReducer(
     };
   }),
 
+  on(ScheduleActions.deleteHabit, (state, { habit }) => {
+    return {
+      ...state,
+      editingHabit: true,
+    };
+  }),
+
+  on(ScheduleActions.deleteHabitSuccess, (state, { habit }) => {
+    return {
+      ...state,
+      habits: [...state.habits.filter((item) => item.id !== habit.id)],
+      habitsEntries: [
+        ...state.habitsEntries.filter((entry) => entry.habitId !== habit.id),
+      ],
+      editingHabit: false,
+    };
+  }),
+
   on(ScheduleActions.getHabitsSuccess, (state, { habits }) => {
     return {
       ...state,

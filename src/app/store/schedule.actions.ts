@@ -88,6 +88,16 @@ export const editHabitSuccess = createAction(
   props<{ habit: HabitDto }>()
 );
 
+export const deleteHabit = createAction(
+  'Delete Habit',
+  props<{ habit: HabitDto }>()
+);
+
+export const deleteHabitSuccess = createAction(
+  'Delete Habit Success',
+  props<{ habit: HabitDto }>()
+);
+
 export const getHabits = createAction('Get Habits');
 
 export const getHabitsSuccess = createAction(

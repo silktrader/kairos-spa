@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
-import { map, delay } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { formatISO } from 'date-fns';
 
 @Injectable({
@@ -25,6 +25,10 @@ export class HabitsService {
       `${this.habitsUrl}/${habitDto.id}`,
       habitDto
     );
+  }
+
+  deleteHabit(habitDto: HabitDto): Observable<HabitDto> {
+    return this.http.delete<HabitDto>(`${this.habitsUrl}/${habitDto.id}`);
   }
 
   getHabits(): Observable<ReadonlyArray<HabitDto>> {

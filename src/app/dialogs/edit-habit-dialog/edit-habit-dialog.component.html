@@ -9,7 +9,7 @@
 
       <mat-toolbar-row class="title">
         <mat-form-field class="title-input">
-          <input type="text" formControlName="title" matInput autocomplete="off" maxlength="30">
+          <input type="text" formControlName="title" matInput autocomplete="off" maxlength="30" cdkFocusInitial>
         </mat-form-field>
       </mat-toolbar-row>
     </mat-toolbar>
@@ -37,20 +37,11 @@
   </form>
 
   <section class="controls">
-    <button class="delete" mat-button color="warn">Delete</button>
-    <button *ngIf="!(editingHabit$ | async); else editingHabit" mat-raised-button cdkFocusInitial color="primary"
-      (click)="editHabit()">Save</button>
+    <button class="delete" mat-button color="warn" (click)="deleteHabit()">Delete</button>
+    <button *ngIf="!(editingHabit$ | async); else editingHabit" mat-raised-button color="primary" (click)="editHabit()"
+      [disabled]="!(saveable$ | async)">Save</button>
     <ng-template #editingHabit>
       <mat-spinner [diameter]="20"></mat-spinner>
     </ng-template>
   </section>
 </main>
-
-
-<!-- <mat-toolbar>
-    <section class="actions">
-      <button mat-icon-button color="warn" (click)="deleteTask()">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </section>
-  </mat-toolbar> -->
