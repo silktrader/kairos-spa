@@ -5,7 +5,7 @@ import { TaskDto } from '../models/dtos/task.dto';
 import { ScheduleState, SidebarSection } from './app-state';
 import {
   AddTaskEvent,
-  RemoveTaskEvent,
+  DeleteTaskEvent,
   EditTaskEvent,
   AddHabitEvent,
   EditHabitEvent,
@@ -20,7 +20,7 @@ export const initialState: ScheduleState = {
   editingHabit: false,
   editingTaskId: undefined,
   events: [],
-  sidebar: { opened: true, section: SidebarSection.Habits },
+  sidebar: { opened: true, section: SidebarSection.Events },
 };
 
 export const filteredTasks = (
@@ -140,7 +140,7 @@ export const taskReducer = createReducer(
         events: [
           ...schedule.events,
           // purposedly not signaling the affected task's move
-          new RemoveTaskEvent(deletedTaskDto as TaskDto),
+          new DeleteTaskEvent(deletedTaskDto as TaskDto),
         ],
       };
     }

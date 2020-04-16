@@ -51,12 +51,14 @@ export class NotificationService {
 
   private actionName(taskEventOperation: EventOperation) {
     switch (taskEventOperation) {
-      case EventOperation.AddTask:
+      case EventOperation.AddedTask:
+      case EventOperation.AddedHabit:
         return 'Added';
-      case EventOperation.EditTask:
-        return 'Updated';
+      case EventOperation.EditedTask:
+      case EventOperation.EditedHabit:
+        return 'Edited';
       default:
-        return 'Removed';
+        return 'Deleted';
     }
   }
 

@@ -5,7 +5,7 @@ import { ScheduleState } from './app-state';
 import { EventOperation } from './task-event-operation.enum';
 import {
   AddTaskEvent,
-  RemoveTaskEvent,
+  DeleteTaskEvent,
   EditTaskEvent,
   AddHabitEvent,
   DeleteHabitEvent,
@@ -37,19 +37,30 @@ export const selectEvents = createSelector(
 export const selectAddEvents = createSelector(
   selectEvents,
   (events: ReadonlyArray<AddTaskEvent>) =>
-    events.filter((event) => event.operation === EventOperation.AddTask)
+    events.filter((event) => event.operation === EventOperation.AddedTask)
 );
 
 export const selectRemoveEvents = createSelector(
   selectEvents,
-  (events: ReadonlyArray<RemoveTaskEvent>) =>
-    events.filter((event) => event.operation === EventOperation.RemoveTask)
+  (events: ReadonlyArray<DeleteTaskEvent>) =>
+    events.filter((event) => event.operation === EventOperation.DeletedTask)
 );
 
 export const selectEditEvents = createSelector(
   selectEvents,
   (events: ReadonlyArray<EditTaskEvent>) =>
-    events.filter((event) => event.operation === EventOperation.EditTask)
+    events.filter((event) => event.operation === EventOperation.EditedTask)
+);
+
+export const selectTaskEvents = createSelector(
+  selectEvents,
+  (events: ReadonlyArray<AddTaskEvent | EditTaskEvent | DeleteTaskEvent>) =>
+    events.filter(
+      (event) =>
+        event.operation === EventOperation.AddedTask ||
+        event.operation === EventOperation.EditedTask ||
+        event.operation === EventOperation.DeletedTask
+    )
 );
 
 export const selectHabitEvents = createSelector(
@@ -57,9 +68,9 @@ export const selectHabitEvents = createSelector(
   (events: ReadonlyArray<AddHabitEvent | EditHabitEvent | DeleteHabitEvent>) =>
     events.filter(
       (event) =>
-        event.operation === EventOperation.EditTask ||
-        event.operation === EventOperation.AddHabit ||
-        event.operation === EventOperation.DeleteHabit
+        event.operation === EventOperation.EditedHabit ||
+        event.operation === EventOperation.AddedHabit ||
+        event.operation === EventOperation.DeletedHabit
     )
 );
 

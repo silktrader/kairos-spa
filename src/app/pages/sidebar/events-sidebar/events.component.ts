@@ -1,18 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import {
-  selectAddEvents,
-  selectRemoveEvents,
-  selectEditEvents,
   selectHabitEvents,
+  selectTaskEvents,
+  selectTasksByDay,
 } from 'src/app/store/schedule.selectors';
 import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { formatDistanceToNow } from 'date-fns';
-import { deleteTask, updateTask } from 'src/app/store/schedule.actions';
+import {
+  deleteTask,
+  updateTask,
+  addTask,
+} from 'src/app/store/schedule.actions';
 import { AppState } from 'src/app/store/app-state';
 import { AppEvent } from 'src/app/store/task-event.interface';
 import { TaskDto } from 'src/app/models/dtos/task.dto';
+import { EventOperation } from 'src/app/store/task-event-operation.enum';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-events',
@@ -20,16 +25,16 @@ import { TaskDto } from 'src/app/models/dtos/task.dto';
   styleUrls: ['./events.component.scss'],
 })
 export class EventsComponent implements OnInit {
-  visibleEvents$ = new BehaviorSubject<EventsView>('added');
+  visibleEvents$ = new BehaviorSubject<EventsView>('tasks');
 
-  additions$ = this.store.pipe(select(selectAddEvents));
-  deletions$ = this.store.pipe(select(selectRemoveEvents));
-  edits$ = this.store.pipe(select(selectEditEvents));
-  habits$ = this.store.pipe(select(selectHabitEvents));
+  habitsEvents$ = this.store.pipe(select(selectHabitEvents));
+  taskEvents$ = this.store.pipe(select(selectTaskEvents));
 
   referenceNow: Date;
 
-  eventsSwitcher = new FormControl('added');
+  eventsSwitcher = new FormControl('tasks');
+
+  eventOperation = EventOperation;
 
   constructor(private readonly store: Store<AppState>) {}
 
@@ -49,11 +54,42 @@ export class EventsComponent implements OnInit {
     this.store.dispatch(deleteTask({ deletedTaskId: id }));
   }
 
-  restoreEdit(currentDto: TaskDto, restoredDto: TaskDto): void {
+  revertTask(currentDto: TaskDto, restoredDto: TaskDto): void {
     this.store.dispatch(
       updateTask({ originalTask: currentDto, updatedTask: restoredDto })
     );
   }
+
+  restoreTask(taskDto: TaskDto): void {
+    // get the last id in the date's task list
+    // we assume that to delete a task its ancestors were fetched, displayed and in the store
+    this.store
+      .pipe(select(selectTasksByDay, { date: taskDto.date }), first())
+      .subscribe((orderedTasks) => {
+        this.store.dispatch(
+          addTask({
+            task: {
+              ...taskDto,
+              previousId: orderedTasks[orderedTasks.length - 1].id,
+            },
+          })
+        );
+      });
+  }
+
+  operationName(operation: EventOperation): string {
+    switch (operation) {
+      case EventOperation.AddedTask:
+      case EventOperation.AddedHabit:
+        return 'added';
+      case EventOperation.DeletedTask:
+      case EventOperation.DeletedHabit:
+        return 'deleted';
+      case EventOperation.EditedTask:
+      case EventOperation.EditedHabit:
+        return 'edited';
+    }
+  }
 }
 
-export type EventsView = 'added' | 'removed' | 'edited' | 'habits';
+export type EventsView = 'tasks' | 'habits';

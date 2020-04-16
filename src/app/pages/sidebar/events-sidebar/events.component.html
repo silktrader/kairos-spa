@@ -4,135 +4,65 @@
   <mat-form-field appearance="outline">
     <mat-label></mat-label>
     <mat-select [formControl]="eventsSwitcher">
-      <mat-option value="added">Added Tasks</mat-option>
-      <mat-option value="removed">Deleted Tasks</mat-option>
-      <mat-option value="edited">Edited Tasks</mat-option>
+      <mat-option value="tasks">Task Events</mat-option>
       <mat-option value="habits">Habits Events</mat-option>
     </mat-select>
   </mat-form-field>
 
   <ng-container *ngIf="visibleEvents$ | async as visibleEvents">
 
-    <!-- Add Events -->
-
-    <mat-accordion *ngIf="visibleEvents === 'added'">
-      <ng-container *ngIf="additions$ | async as additions">
-        <aside class="no-results" *ngIf="!additions.length">
-          No tasks were added so far.
-        </aside>
-        <mat-expansion-panel *ngFor="let event of additions">
-          <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*">
-            <header class="event-header">
-              <span class="event-header-time">{{timeAgo(event)}} ago</span> <span
-                class="event-header-title">{{event.taskDto.title}}</span>
-            </header>
-          </mat-expansion-panel-header>
-
-          <p class="event-task-details">{{event.taskDto.details}}</p>
-          <section class="event-task-date">
-            <time class="event-task-date-item">
-              <mat-icon>event_note</mat-icon>{{event.taskDto.date | date}}
-            </time>
-            <time *ngIf="event.taskDto.duration" class="event-task-date-item">
-              <mat-icon>schedule</mat-icon>{{event.taskDto.duration}}
-            </time>
-            <aside *ngIf="event.taskDto.complete" class="event-task-date-item">
-              <mat-icon>done</mat-icon>
-            </aside>
-          </section>
-
-          <mat-action-row>
-            <button mat-button color="warn" (click)="delete(event.taskDto.id)">Remove</button>
-          </mat-action-row>
-        </mat-expansion-panel>
-      </ng-container>
-    </mat-accordion>
-
-    <!-- Delete Events -->
-
-    <mat-accordion *ngIf="visibleEvents === 'removed'">
-      <ng-container *ngIf="deletions$ | async as deletions">
-        <aside class="no-results" *ngIf="!deletions.length">
-          No tasks were removed so far.
-        </aside>
-        <mat-expansion-panel *ngFor="let event of deletions">
-          <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*">
-            <header class="event-header">
-              <span class="event-header-time">{{timeAgo(event)}} ago</span> <span
-                class="event-header-title">{{event.taskDto.title}}</span>
-            </header>
-          </mat-expansion-panel-header>
-
-          <p class="event-task-details">{{event.taskDto.details}}</p>
-          <section class="event-task-date">
-            <time class="event-task-date-item">
-              <mat-icon>event_note</mat-icon>{{event.taskDto.date | date}}
-            </time>
-            <time *ngIf="event.taskDto.duration" class="event-task-date-item">
-              <mat-icon>schedule</mat-icon>{{event.taskDto.duration}}
-            </time>
-            <aside *ngIf="event.taskDto.complete" class="event-task-date-item">
-              <mat-icon>done</mat-icon>
-            </aside>
-          </section>
-
-          <mat-action-row>
-            <button mat-button color="primary">Restore</button>
-          </mat-action-row>
-        </mat-expansion-panel>
-      </ng-container>
-    </mat-accordion>
-
-    <!-- Edit Events -->
-
-    <mat-accordion *ngIf="visibleEvents === 'edited'">
-      <ng-container *ngIf="edits$ | async as edits">
-        <aside class="no-results" *ngIf="!edits.length">
+    <mat-accordion *ngIf="visibleEvents === 'tasks'">
+      <ng-container *ngIf="taskEvents$ | async as taskEvents">
+        <aside class="no-results" *ngIf="!taskEvents.length">
           No tasks were edited so far.
         </aside>
-        <mat-expansion-panel *ngFor="let event of edits">
+        <mat-expansion-panel *ngFor="let event of taskEvents">
           <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*">
             <header class="event-header">
-              <span class="event-header-time">{{timeAgo(event)}} ago</span> <span
-                class="event-header-title">{{event.taskDto.title}}</span>
+              <span class="event-header-time">{{operationName(event.operation)}} {{timeAgo(event)}} ago</span>
+              <span class="event-header-title">{{event.taskDto.title}}</span>
             </header>
           </mat-expansion-panel-header>
 
-          <div class="original-details">
-            <p class="event-task-details line-through">{{event.originalDto.title}}</p>
-            <p class="event-task-details line-through">{{event.originalDto.details}}</p>
-            <section class="event-task-date">
-              <time class="event-task-date-item">
-                <mat-icon>event_note</mat-icon><span class="line-through">{{event.originalDto.date | date}}</span>
-              </time>
-              <time *ngIf="event.originalDto.duration" class="event-task-date-item">
-                <mat-icon>schedule</mat-icon><span class="line-through">{{event.originalDto.duration}}</span>
-              </time>
-              <aside *ngIf="event.originalDto.complete" class="event-task-date-item">
-                <mat-icon>done</mat-icon>
-              </aside>
-            </section>
-          </div>
-          <mat-divider></mat-divider>
+          <p class="event-task-details">{{event.taskDto.details}}</p>
+          <section class="event-task-date">
+            <time class="event-task-date-item">
+              <mat-icon>event_note</mat-icon>{{event.taskDto.date | date}}
+            </time>
+            <time *ngIf="event.taskDto.duration" class="event-task-date-item">
+              <mat-icon>schedule</mat-icon>{{event.taskDto.duration}}
+            </time>
+            <aside *ngIf="event.taskDto.complete" class="event-task-date-item">
+              <mat-icon>done</mat-icon>
+            </aside>
+          </section>
 
-          <div class="edited-details">
-            <p class="event-task-details">{{event.taskDto.title}}</p>
-            <p class="event-task-details">{{event.taskDto.details}}</p>
-            <section class="event-task-date">
-              <time class="event-task-date-item">
-                <mat-icon>event_note</mat-icon>{{event.taskDto.date | date}}
-              </time>
-              <time *ngIf="event.taskDto.duration" class="event-task-date-item">
-                <mat-icon>schedule</mat-icon>{{event.taskDto.duration}}
-              </time>
-              <aside *ngIf="event.taskDto.complete" class="event-task-date-item">
-                <mat-icon>done</mat-icon>
-              </aside>
-            </section>
-          </div>
+          <ng-container *ngIf="event['originalDto'] as originalDto">
+            <mat-divider></mat-divider>
+            <div class="original-details">
+              <p class="event-task-details line-through event-header-title">{{originalDto.title}}</p>
+              <p class="event-task-details line-through">{{originalDto.details}}</p>
+              <section class="event-task-date">
+                <time class="event-task-date-item">
+                  <mat-icon>event_note</mat-icon><span class="line-through">{{originalDto.date | date}}</span>
+                </time>
+                <time *ngIf="originalDto.duration" class="event-task-date-item">
+                  <mat-icon>schedule</mat-icon><span class="line-through">{{originalDto.duration}}</span>
+                </time>
+                <aside *ngIf="originalDto.complete" class="event-task-date-item">
+                  <mat-icon>done</mat-icon>
+                </aside>
+              </section>
+            </div>
+          </ng-container>
 
-          <mat-action-row>
-            <button mat-button color="primary" (click)="restoreEdit(event.taskDto, event.originalDto)">Restore</button>
+          <mat-action-row [ngSwitch]="event.operation">
+            <button *ngSwitchCase="eventOperation.AddedTask" mat-button color="warn"
+              (click)="delete(event.taskDto.id)">Remove</button>
+            <button *ngSwitchCase="eventOperation.EditedTask" mat-button color="primary"
+              (click)="revertTask(event.taskDto, event['originalDto'])">Revert</button>
+            <button *ngSwitchCase="eventOperation.DeletedTask" mat-button color="primary"
+              (click)="restoreTask(event.taskDto)">Restore</button>
           </mat-action-row>
         </mat-expansion-panel>
       </ng-container>
@@ -140,9 +70,9 @@
 
     <!-- Habits Events -->
     <mat-accordion *ngIf="visibleEvents === 'habits'">
-      <ng-container *ngIf="habits$ | async as habits">
+      <ng-container *ngIf="habitsEvents$ | async as habits">
         <aside class="no-results" *ngIf="!habits.length">
-          No tasks were edited so far.
+          No habits were edited so far.
         </aside>
         <mat-expansion-panel *ngFor="let event of habits">
           <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*">
@@ -151,22 +81,6 @@
                 class="event-header-title">{{event.habit.title}}</span>
             </header>
           </mat-expansion-panel-header>
-
-          <!-- <div class="original-details">
-                      <p class="event-task-details line-through">{{event.originalDto.title}}</p>
-                      <p class="event-task-details line-through">{{event.originalDto.details}}</p>
-                      <section class="event-task-date">
-                        <time class="event-task-date-item">
-                          <mat-icon>event_note</mat-icon><span class="line-through">{{event.originalDto.date | date}}</span>
-                        </time>
-                        <time *ngIf="event.originalDto.duration" class="event-task-date-item">
-                          <mat-icon>schedule</mat-icon><span class="line-through">{{event.originalDto.duration}}</span>
-                        </time>
-                        <aside *ngIf="event.originalDto.complete" class="event-task-date-item">
-                          <mat-icon>done</mat-icon>
-                        </aside>
-                      </section>
-                    </div> -->
         </mat-expansion-panel>
       </ng-container>
     </mat-accordion>

@@ -20,18 +20,18 @@ export class AddTaskEvent extends AppEvent {
   get title(): string {
     return this.taskDto.title;
   }
-  operation = EventOperation.AddTask;
+  operation = EventOperation.AddedTask;
 
   constructor(public readonly taskDto: TaskDto) {
     super();
   }
 }
 
-export class RemoveTaskEvent extends AppEvent {
+export class DeleteTaskEvent extends AppEvent {
   get title(): string {
     return this.taskDto.title;
   }
-  operation = EventOperation.RemoveTask;
+  operation = EventOperation.DeletedTask;
 
   constructor(public readonly taskDto: TaskDto) {
     super();
@@ -42,7 +42,7 @@ export class EditTaskEvent extends AppEvent {
   get title(): string {
     return this.taskDto.title;
   }
-  operation = EventOperation.EditTask;
+  operation = EventOperation.EditedTask;
 
   constructor(
     public readonly taskDto: TaskDto,
@@ -56,7 +56,7 @@ export class AddHabitEvent extends AppEvent {
   get title(): string {
     return this.habit.title;
   }
-  operation = EventOperation.AddHabit;
+  operation = EventOperation.AddedHabit;
 
   constructor(public readonly habit: HabitDto) {
     super();
@@ -67,7 +67,7 @@ export class EditHabitEvent extends AppEvent {
   get title(): string {
     return this.habit.title;
   }
-  operation = EventOperation.EditHabit;
+  operation = EventOperation.EditedHabit;
 
   constructor(
     public readonly habit: HabitDto,
@@ -81,7 +81,7 @@ export class DeleteHabitEvent extends AppEvent {
   get title(): string {
     return this.habit.title;
   }
-  operation = EventOperation.DeleteHabit;
+  operation = EventOperation.DeletedHabit;
 
   constructor(public readonly habit: HabitDto) {
     super();

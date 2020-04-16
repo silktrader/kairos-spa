@@ -8,9 +8,7 @@ import { TaskDto } from '../models/dtos/task.dto';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { selectTasksByDay } from '../store/schedule.selectors';
 import { DeleteTaskDto } from '../models/dtos/deleteTask.dto';
-import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +16,7 @@ import { NotificationService } from './notification.service';
 export class DayService {
   constructor(
     private readonly http: HttpClient,
-    private readonly store: Store<ScheduleState>,
-    private readonly ns: NotificationService
+    private readonly store: Store<ScheduleState>
   ) {}
 
   getDayName(date: Date): string {
