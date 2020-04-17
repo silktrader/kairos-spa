@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { HabitDto } from 'src/app/models/dtos/habit.dto';
+import { HabitDto } from 'src/app/habits/models/habit.dto';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { editHabit, deleteHabit } from 'src/app/store/schedule.actions';

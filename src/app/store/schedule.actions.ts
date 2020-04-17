@@ -1,9 +1,9 @@
 import { createAction, props } from '@ngrx/store';
 import { Task } from '../models/task';
 import { TaskDto } from '../models/dtos/task.dto';
-import { HabitDto } from '../models/dtos/habit.dto';
+import { HabitDto } from '../habits/models/habit.dto';
 import { SidebarSection } from './app-state';
-import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
+import { HabitEntryDto } from '../habits/models/habit-entry.dto';
 
 /* Tasks */
 

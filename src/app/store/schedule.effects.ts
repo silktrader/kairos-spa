@@ -5,9 +5,9 @@ import * as ScheduleActions from './schedule.actions';
 import { mergeMap, map, catchError, tap } from 'rxjs/operators';
 import { EMPTY } from 'rxjs';
 import { TaskDto } from '../models/dtos/task.dto';
-import { HabitDto } from '../models/dtos/habit.dto';
-import { HabitsService } from '../services/habits.service';
-import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
+import { HabitDto } from '../habits/models/habit.dto';
+import { HabitsService } from '../habits/habits.service';
+import { HabitEntryDto } from '../habits/models/habit-entry.dto';
 import { MatDialog } from '@angular/material/dialog';
 
 @Injectable()

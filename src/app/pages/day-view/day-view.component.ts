@@ -29,8 +29,8 @@ import {
   addHabitEntry,
   deleteHabitEntry,
 } from 'src/app/store/schedule.actions';
-import { HabitEntryDto } from 'src/app/models/dtos/habit-entry.dto';
-import { HabitDetails } from 'src/app/models/dtos/habit.dto';
+import { HabitEntryDto } from 'src/app/habits/models/habit-entry.dto';
+import { HabitDetails } from 'src/app/habits/models/habit.dto';
 
 @Component({
   selector: 'app-day-view',

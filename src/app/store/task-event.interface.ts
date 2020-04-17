@@ -1,6 +1,6 @@
 import { TaskDto } from '../models/dtos/task.dto';
 import { generate } from 'shortid';
-import { HabitDto } from '../models/dtos/habit.dto';
+import { HabitDto } from '../habits/models/habit.dto';
 import { EventOperation } from './task-event-operation.enum';
 
 export abstract class AppEvent {

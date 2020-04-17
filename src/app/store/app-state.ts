@@ -1,7 +1,7 @@
 import { Task } from '../models/task';
 import { AppEvent } from './task-event.interface';
-import { HabitDto } from '../models/dtos/habit.dto';
-import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
+import { HabitDto } from '../habits/models/habit.dto';
+import { HabitEntryDto } from '../habits/models/habit-entry.dto';
 
 export interface AppState {
   schedule: ScheduleState;

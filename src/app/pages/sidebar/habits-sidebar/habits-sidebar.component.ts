@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { AddHabitDialogComponent } from '../../add-habit-dialog/add-habit-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { selectHabits } from 'src/app/store/schedule.selectors';
-import { EditHabitDialogComponent } from 'src/app/dialogs/edit-habit-dialog/edit-habit-dialog.component';
-import { HabitDto } from 'src/app/models/dtos/habit.dto';
+import { HabitDto } from 'src/app/habits/models/habit.dto';
+import { AddHabitDialogComponent } from 'src/app/habits/components/add-habit-dialog/add-habit-dialog.component';
+import { EditHabitDialogComponent } from 'src/app/habits/components/edit-habit-dialog/edit-habit-dialog.component';
 
 @Component({
   selector: 'app-habits-sidebar',

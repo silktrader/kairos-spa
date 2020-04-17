@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HabitDto } from '../models/dtos/habit.dto';
+import { HabitDto } from './models/habit.dto';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { HabitEntryDto } from '../models/dtos/habit-entry.dto';
+import { HabitEntryDto } from './models/habit-entry.dto';
 import { map } from 'rxjs/operators';
 import { formatISO } from 'date-fns';
 
