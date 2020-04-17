@@ -3,17 +3,14 @@
   <header class="date-header" [ngClass]="{'current-day': isToday}">
     <h2>{{dayName}}</h2>
     <h3>{{daySubtitle}}</h3>
+    <div class="tasks-actions">
+      <button mat-stroked-button (click)="promptAddTask()">Add Task</button>
+    </div>
   </header>
 
   <mat-spinner *ngIf="loading | async; else tasksList"></mat-spinner>
 
   <ng-template #tasksList>
-    <div class="tasks-actions">
-      <button mat-stroked-button (click)="promptAddTask()">Add Task</button>
-      <!-- <button mat-icon-button>
-        <mat-icon>done_all</mat-icon>
-      </button> -->
-    </div>
 
     <div class="add-task-card">
       <mat-card [hidden]="!(addingTask$ | async)">

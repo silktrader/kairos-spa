@@ -28,6 +28,7 @@ h3 {
 .date-header {
   margin-top: 2rem;
   margin-bottom: 1.5rem;
+  flex: 0 0 auto;
 }
 
 .current-day {
@@ -41,12 +42,16 @@ h3 {
   flex-direction: column;
   flex: 1 1 auto;
   width: 100%;
-  // tk export min height to match cards max heights so that nothing's shifted down when drag and dropping
+  overflow-y: auto;
+  margin-bottom: 1rem; // separates the tasks from the habits panel below
 }
 
 .task-title {
-  text-align: center;
   font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .add-task-card {
@@ -67,8 +72,9 @@ mat-card {
   display: flex;
   margin: 0.5rem;
   margin-top: 0;
-  max-height: 100px;
   cursor: pointer;
+  min-height: 30px;
+  overflow-y: auto;
 
   span {
     width: 100%;
@@ -86,12 +92,13 @@ mat-card[hidden] {
 
 .tasks-actions {
   display: flex;
-  margin-bottom: 1.5rem;
+  margin-top: 1rem;
 }
 
 /* Habits */
 .habits-panel {
   width: 90%;
+  flex: 0 0 auto;
 }
 
 mat-panel-title {
