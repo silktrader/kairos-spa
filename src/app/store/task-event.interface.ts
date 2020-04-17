@@ -16,74 +16,60 @@ export abstract class AppEvent {
   }
 }
 
-export class AddTaskEvent extends AppEvent {
+export abstract class TaskEvent extends AppEvent {
+  constructor(public readonly taskDto: TaskDto) {
+    super();
+  }
+
   get title(): string {
     return this.taskDto.title;
   }
+}
+
+export class AddTaskEvent extends TaskEvent {
   operation = EventOperation.AddedTask;
-
-  constructor(public readonly taskDto: TaskDto) {
-    super();
-  }
 }
 
-export class DeleteTaskEvent extends AppEvent {
-  get title(): string {
-    return this.taskDto.title;
-  }
+export class DeleteTaskEvent extends TaskEvent {
   operation = EventOperation.DeletedTask;
-
-  constructor(public readonly taskDto: TaskDto) {
-    super();
-  }
 }
 
-export class EditTaskEvent extends AppEvent {
-  get title(): string {
-    return this.taskDto.title;
-  }
+export class EditTaskEvent extends TaskEvent {
   operation = EventOperation.EditedTask;
 
   constructor(
     public readonly taskDto: TaskDto,
     public readonly originalDto: TaskDto
   ) {
-    super();
+    super(taskDto);
   }
 }
 
-export class AddHabitEvent extends AppEvent {
+export class HabitEvent extends AppEvent {
   get title(): string {
     return this.habit.title;
   }
-  operation = EventOperation.AddedHabit;
 
   constructor(public readonly habit: HabitDto) {
     super();
   }
 }
 
-export class EditHabitEvent extends AppEvent {
-  get title(): string {
-    return this.habit.title;
-  }
+export class AddHabitEvent extends HabitEvent {
+  operation = EventOperation.AddedHabit;
+}
+
+export class EditHabitEvent extends HabitEvent {
   operation = EventOperation.EditedHabit;
 
   constructor(
     public readonly habit: HabitDto,
     public readonly originalHabit: HabitDto
   ) {
-    super();
+    super(habit);
   }
 }
 
-export class DeleteHabitEvent extends AppEvent {
-  get title(): string {
-    return this.habit.title;
-  }
+export class DeleteHabitEvent extends HabitEvent {
   operation = EventOperation.DeletedHabit;
-
-  constructor(public readonly habit: HabitDto) {
-    super();
-  }
 }
