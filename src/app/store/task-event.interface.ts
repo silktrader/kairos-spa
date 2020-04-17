@@ -26,6 +26,22 @@ export abstract class TaskEvent extends AppEvent {
   }
 }
 
+export class HabitEvent extends AppEvent {
+  get title(): string {
+    return this.habit.title;
+  }
+
+  constructor(public readonly habit: HabitDto) {
+    super();
+  }
+}
+
+export class ErrorEvent extends AppEvent {
+  constructor(public readonly title: string, public readonly message: string) {
+    super();
+  }
+}
+
 export class AddTaskEvent extends TaskEvent {
   operation = EventOperation.AddedTask;
 }
@@ -42,16 +58,6 @@ export class EditTaskEvent extends TaskEvent {
     public readonly originalDto: TaskDto
   ) {
     super(taskDto);
-  }
-}
-
-export class HabitEvent extends AppEvent {
-  get title(): string {
-    return this.habit.title;
-  }
-
-  constructor(public readonly habit: HabitDto) {
-    super();
   }
 }
 
