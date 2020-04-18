@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 import {
-  selectHabitEvents,
   selectTaskEvents,
   selectTasksByDay,
 } from 'src/app/store/schedule.selectors';
@@ -14,10 +13,11 @@ import {
   addTask,
 } from 'src/app/store/schedule.actions';
 import { AppState } from 'src/app/store/app-state';
-import { AppEvent } from 'src/app/store/task-event.interface';
+import { AppEvent } from 'src/app/store/app-event.interface';
 import { TaskDto } from 'src/app/models/dtos/task.dto';
-import { EventOperation } from 'src/app/store/task-event-operation.enum';
+import { EventOperation } from 'src/app/store/event-operation.enum';
 import { first } from 'rxjs/operators';
+import { selectHabitsEvents } from 'src/app/habits/state/habits.selectors';
 
 @Component({
   selector: 'app-events',
@@ -27,7 +27,7 @@ import { first } from 'rxjs/operators';
 export class EventsComponent implements OnInit {
   visibleEvents$ = new BehaviorSubject<EventsView>('tasks');
 
-  habitsEvents$ = this.store.pipe(select(selectHabitEvents));
+  habitsEvents$ = this.store.pipe(select(selectHabitsEvents));
   taskEvents$ = this.store.pipe(select(selectTaskEvents));
 
   referenceNow: Date;

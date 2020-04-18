@@ -2,7 +2,7 @@ import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { Task } from '../models/task';
 import { isSameDay } from 'date-fns';
 import { ScheduleState } from './app-state';
-import { EventOperation } from './task-event-operation.enum';
+import { EventOperation } from './event-operation.enum';
 import {
   AddTaskEvent,
   DeleteTaskEvent,
@@ -10,7 +10,7 @@ import {
   AddHabitEvent,
   DeleteHabitEvent,
   EditHabitEvent,
-} from './task-event.interface';
+} from './app-event.interface';
 
 export const selectFeature = createFeatureSelector<
   { schedule: ScheduleState },
@@ -60,17 +60,6 @@ export const selectTaskEvents = createSelector(
         event.operation === EventOperation.AddedTask ||
         event.operation === EventOperation.EditedTask ||
         event.operation === EventOperation.DeletedTask
-    )
-);
-
-export const selectHabitEvents = createSelector(
-  selectEvents,
-  (events: ReadonlyArray<AddHabitEvent | EditHabitEvent | DeleteHabitEvent>) =>
-    events.filter(
-      (event) =>
-        event.operation === EventOperation.EditedHabit ||
-        event.operation === EventOperation.AddedHabit ||
-        event.operation === EventOperation.DeletedHabit
     )
 );
 

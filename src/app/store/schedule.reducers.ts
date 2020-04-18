@@ -7,17 +7,11 @@ import {
   AddTaskEvent,
   DeleteTaskEvent,
   EditTaskEvent,
-  AddHabitEvent,
-  EditHabitEvent,
-  DeleteHabitEvent,
-} from './task-event.interface';
+} from './app-event.interface';
 
 export const initialState: ScheduleState = {
   tasks: [],
-  // habits: [],
-  // habitsEntries: [],
   loadingTasks: false,
-  // editingHabit: false,
   editingTaskId: undefined,
   events: [],
   sidebar: { opened: true, section: SidebarSection.Events },
@@ -164,5 +158,11 @@ export const taskReducer = createReducer(
 
   on(ScheduleActions.toggleSidebar, (state, { opened, section }) => {
     return { ...state, sidebar: { opened, section } };
+  }),
+
+  /* Events */
+
+  on(ScheduleActions.addEvent, (state, { event }) => {
+    return { ...state, events: [...state.events, event] };
   })
 );

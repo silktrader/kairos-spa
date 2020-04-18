@@ -7,6 +7,7 @@ import { EMPTY } from 'rxjs';
 import { TaskDto } from '../models/dtos/task.dto';
 import { HabitsService } from '../habits/habits.service';
 import { MatDialog } from '@angular/material/dialog';
+import { AppEvent, AddTaskEvent, EditTaskEvent } from './app-event.interface';
 
 @Injectable()
 export class ScheduleEffects {

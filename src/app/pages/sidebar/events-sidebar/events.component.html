@@ -24,7 +24,7 @@
             </header>
           </mat-expansion-panel-header>
 
-          <p class="event-task-details">{{event.taskDto.details}}</p>
+          <p class="event-details">{{event.taskDto.details}}</p>
           <section class="event-task-date">
             <time class="event-task-date-item">
               <mat-icon>event_note</mat-icon>{{event.taskDto.date | date}}
@@ -40,8 +40,8 @@
           <ng-container *ngIf="event['originalDto'] as originalDto">
             <mat-divider></mat-divider>
             <div class="original-details">
-              <p class="event-task-details line-through event-header-title">{{originalDto.title}}</p>
-              <p class="event-task-details line-through">{{originalDto.details}}</p>
+              <p class="event-details line-through event-header-title">{{originalDto.title}}</p>
+              <p class="event-details line-through">{{originalDto.details}}</p>
               <section class="event-task-date">
                 <time class="event-task-date-item">
                   <mat-icon>event_note</mat-icon><span class="line-through">{{originalDto.date | date}}</span>
@@ -77,10 +77,25 @@
         <mat-expansion-panel *ngFor="let event of habits">
           <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*">
             <header class="event-header">
-              <span class="event-header-time">{{timeAgo(event)}} ago</span> <span
+              <span class="event-header-time">{{operationName(event.operation)}} {{timeAgo(event)}} ago</span> <span
                 class="event-header-title">{{event.habit.title}}</span>
             </header>
           </mat-expansion-panel-header>
+          <p class="event-details">{{event.habit.description}}</p>
+          <p class="event-details">
+            <mat-icon>palette</mat-icon>{{event.habit.colour}}
+          </p>
+
+          <ng-container *ngIf="event['originalHabit'] as originalHabit">
+            <mat-divider></mat-divider>
+            <div class="original-details">
+              <p class="event-details line-through event-header-title">{{originalHabit.title}}</p>
+              <p class="event-details line-through">{{originalHabit.description}}</p>
+              <p class="event-details">
+                <mat-icon>palette</mat-icon><span class="line-through">{{originalHabit.colour}}</span>
+              </p>
+            </div>
+          </ng-container>
         </mat-expansion-panel>
       </ng-container>
     </mat-accordion>

@@ -5,7 +5,7 @@ import { selectEvents } from '../store/schedule.selectors';
 import { readTaskEvent } from '../store/schedule.actions';
 import { Router } from '@angular/router';
 import { AppState } from '../store/app-state';
-import { EventOperation } from '../store/task-event-operation.enum';
+import { EventOperation } from '../store/event-operation.enum';
 
 @Injectable({
   providedIn: 'root',

@@ -1,9 +1,8 @@
 import { createAction, props } from '@ngrx/store';
 import { Task } from '../models/task';
 import { TaskDto } from '../models/dtos/task.dto';
-import { HabitDto } from '../habits/models/habit.dto';
 import { SidebarSection } from './app-state';
-import { HabitEntryDto } from '../habits/models/habit-entry.dto';
+import { AppEvent } from './app-event.interface';
 
 /* Tasks */
 
@@ -72,3 +71,7 @@ export const toggleSidebar = createAction(
   'Toggle Sidebar',
   props<{ opened: boolean; section?: SidebarSection }>()
 );
+
+/* Events */
+
+export const addEvent = createAction('Add Event', props<{ event: AppEvent }>());

@@ -21,3 +21,8 @@ export const selectHabitsEntries = createSelector(
     return entries.filter((entry) => isSameDay(entry.date, props.date));
   }
 );
+
+export const selectHabitsEvents = createSelector(
+  selectHabitsFeature,
+  (state) => state.events
+);

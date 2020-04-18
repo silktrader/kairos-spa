@@ -11,10 +11,16 @@ import {
   addHabitEntrySuccess,
   deleteHabitEntrySuccess,
 } from './habits.actions';
+import {
+  AddHabitEvent,
+  EditHabitEvent,
+  DeleteHabitEvent,
+} from 'src/app/store/app-event.interface';
 
 export const initialState: HabitsState = {
   habits: [],
   entries: [],
+  events: [],
   editingHabit: false,
 };
 
@@ -24,7 +30,7 @@ export const habitsReducer = createReducer(
     return {
       ...state,
       habits: [...state.habits, habit],
-      // events: [...state.events, new AddHabitEvent(habit)],
+      events: [...state.events, new AddHabitEvent(habit)],
     };
   }),
 
@@ -46,7 +52,7 @@ export const habitsReducer = createReducer(
       ...state,
       habits,
       editingHabit: false,
-      // events: [...state.events, new EditHabitEvent(habit, originalHabit)],
+      events: [...state.events, new EditHabitEvent(habit, originalHabit)],
     };
   }),
 
@@ -62,7 +68,7 @@ export const habitsReducer = createReducer(
       ...state,
       habits: [...state.habits.filter((item) => item.id !== habit.id)],
       entries: [...state.entries.filter((entry) => entry.habitId !== habit.id)],
-      // events: [...state.events, new DeleteHabitEvent(habit)],
+      events: [...state.events, new DeleteHabitEvent(habit)],
       editingHabit: false,
     };
   }),

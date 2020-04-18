@@ -47,9 +47,11 @@ mat-divider {
   margin-top: 0.5rem;
 }
 
-.event-task-details {
-  text-align: center;
+.event-details {
+  display: flex;
   margin-bottom: 1rem;
+  justify-content: center;
+  align-items: center;
 }
 
 .event-task-date {
@@ -72,6 +74,10 @@ mat-divider {
 
 .line-through {
   text-decoration: line-through;
+
+  mat-icon {
+    text-decoration: none;
+  }
 }
 
 .edited-details {

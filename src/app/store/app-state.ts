@@ -1,5 +1,5 @@
 import { Task } from '../models/task';
-import { AppEvent } from './task-event.interface';
+import { AppEvent } from './app-event.interface';
 import { HabitDto } from '../habits/models/habit.dto';
 import { HabitEntryDto } from '../habits/models/habit-entry.dto';
 

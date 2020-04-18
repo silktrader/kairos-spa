@@ -1,7 +1,7 @@
 import { TaskDto } from '../models/dtos/task.dto';
 import { generate } from 'shortid';
 import { HabitDto } from '../habits/models/habit.dto';
-import { EventOperation } from './task-event-operation.enum';
+import { EventOperation } from './event-operation.enum';
 
 export abstract class AppEvent {
   public readonly id = generate();
