@@ -11,15 +11,14 @@ import { DayService } from 'src/app/services/day.service';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { SidebarSection, AppState } from 'src/app/store/app-state';
-import {
-  getDatesTasks,
-  toggleSidebar,
-  getHabitsEntries,
-  getHabits,
-} from 'src/app/store/schedule.actions';
+import { getDatesTasks, toggleSidebar } from 'src/app/store/schedule.actions';
 import { MatSidenav } from '@angular/material/sidenav';
 import { selectSidebar } from 'src/app/store/schedule.selectors';
 import { delay } from 'rxjs/operators';
+import {
+  getHabits,
+  getHabitsEntries,
+} from 'src/app/habits/state/habits.actions';
 
 @Component({
   selector: 'app-home',

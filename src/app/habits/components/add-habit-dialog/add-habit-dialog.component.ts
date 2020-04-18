@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ScheduleState } from 'src/app/store/app-state';
 import { Store } from '@ngrx/store';
-import { addHabit } from 'src/app/store/schedule.actions';
+import { addHabit } from '../../state/habits.actions';
 
 @Component({
   selector: 'app-add-habit-dialog',

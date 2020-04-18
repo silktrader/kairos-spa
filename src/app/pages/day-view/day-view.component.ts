@@ -19,18 +19,20 @@ import { AppState } from 'src/app/store/app-state';
 import {
   selectLoading,
   selectTasksByDay,
-  selectHabits,
-  selectHabitsEntries,
 } from 'src/app/store/schedule.selectors';
 import { take, map } from 'rxjs/operators';
-import {
-  updateTasks,
-  addTask,
-  addHabitEntry,
-  deleteHabitEntry,
-} from 'src/app/store/schedule.actions';
+import { updateTasks, addTask } from 'src/app/store/schedule.actions';
 import { HabitEntryDto } from 'src/app/habits/models/habit-entry.dto';
 import { HabitDetails } from 'src/app/habits/models/habit.dto';
+import { HabitsState } from 'src/app/habits/state/habits.state';
+import {
+  selectHabits,
+  selectHabitsEntries,
+} from 'src/app/habits/state/habits.selectors';
+import {
+  deleteHabitEntry,
+  addHabitEntry,
+} from 'src/app/habits/state/habits.actions';
 
 @Component({
   selector: 'app-day-view',
@@ -55,6 +57,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly store: Store<AppState>,
+    private readonly habitsStore: Store<HabitsState>,
     private readonly ds: DayService,
     private editTaskDialog: MatDialog
   ) {}
@@ -69,8 +72,8 @@ export class DayViewComponent implements OnInit, OnDestroy {
     );
 
     this.habitsDetails$ = combineLatest([
-      this.store.pipe(select(selectHabits)),
-      this.store.pipe(select(selectHabitsEntries, { date: this.date })),
+      this.habitsStore.pipe(select(selectHabits)),
+      this.habitsStore.pipe(select(selectHabitsEntries, { date: this.date })),
     ]).pipe(
       map(([habits, entries]) => {
         const habitsDetails: Array<HabitDetails> = [];

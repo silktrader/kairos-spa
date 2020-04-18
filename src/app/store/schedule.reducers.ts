@@ -14,10 +14,10 @@ import {
 
 export const initialState: ScheduleState = {
   tasks: [],
-  habits: [],
-  habitsEntries: [],
+  // habits: [],
+  // habitsEntries: [],
   loadingTasks: false,
-  editingHabit: false,
+  // editingHabit: false,
   editingTaskId: undefined,
   events: [],
   sidebar: { opened: true, section: SidebarSection.Events },
@@ -157,88 +157,6 @@ export const taskReducer = createReducer(
     return {
       ...schedule,
       events: newEvents,
-    };
-  }),
-
-  /* Habits */
-
-  on(ScheduleActions.addHabitSuccess, (state, { habit }) => {
-    return {
-      ...state,
-      habits: [...state.habits, habit],
-      events: [...state.events, new AddHabitEvent(habit)],
-    };
-  }),
-
-  on(ScheduleActions.editHabit, (state) => {
-    return {
-      ...state,
-      editingHabit: true,
-    };
-  }),
-
-  on(ScheduleActions.editHabitSuccess, (state, { habit }) => {
-    let originalHabit = habit; // avoids null checks
-    const habits = [];
-    for (const item of state.habits) {
-      if (item.id === habit.id) originalHabit = item;
-      else habits.push(item);
-    }
-    return {
-      ...state,
-      habits,
-      editingHabit: false,
-      events: [...state.events, new EditHabitEvent(habit, originalHabit)],
-    };
-  }),
-
-  on(ScheduleActions.deleteHabit, (state, { habit }) => {
-    return {
-      ...state,
-      editingHabit: true,
-    };
-  }),
-
-  on(ScheduleActions.deleteHabitSuccess, (state, { habit }) => {
-    return {
-      ...state,
-      habits: [...state.habits.filter((item) => item.id !== habit.id)],
-      habitsEntries: [
-        ...state.habitsEntries.filter((entry) => entry.habitId !== habit.id),
-      ],
-      events: [...state.events, new DeleteHabitEvent(habit)],
-      editingHabit: false,
-    };
-  }),
-
-  on(ScheduleActions.getHabitsSuccess, (state, { habits }) => {
-    return {
-      ...state,
-      habits,
-    };
-  }),
-
-  on(ScheduleActions.getHabitsEntriesSuccess, (state, { habitsEntries }) => {
-    return {
-      ...state,
-      habitsEntries,
-    };
-  }),
-
-  on(ScheduleActions.addHabitEntrySuccess, (state, { habitEntry }) => {
-    return {
-      ...state,
-      habitsEntries: [...state.habitsEntries, habitEntry],
-    };
-  }),
-
-  on(ScheduleActions.deleteHabitEntrySuccess, (state, { habitEntry }) => {
-    return {
-      ...state,
-      habitsEntries: state.habitsEntries.filter(
-        (entry) =>
-          entry.date !== habitEntry.date || entry.habitId !== habitEntry.habitId
-      ),
     };
   }),
 

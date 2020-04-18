@@ -147,16 +147,3 @@ export const selectTaskEditingId = createSelector(
 );
 
 /* Habits Selectors */
-
-export const selectHabits = createSelector(
-  selectFeature,
-  (state: ScheduleState) => state.habits
-);
-
-export const selectHabitsEntries = createSelector(
-  selectFeature,
-  (state: ScheduleState, props: { date: Date }) =>
-    state.habitsEntries.filter((habitEntry) =>
-      isSameDay(habitEntry.date, props.date)
-    )
-);

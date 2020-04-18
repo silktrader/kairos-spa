@@ -3,9 +3,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HabitDto } from 'src/app/habits/models/habit.dto';
 import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/store/app-state';
-import { editHabit, deleteHabit } from 'src/app/store/schedule.actions';
 import { BehaviorSubject } from 'rxjs';
+import { HabitsState } from '../../state/habits.state';
+import { deleteHabit, editHabit } from '../../state/habits.actions';
 
 @Component({
   selector: 'app-edit-habit-dialog',
@@ -22,13 +22,13 @@ export class EditHabitDialogComponent implements OnInit {
     colour: this.habit.colour,
   });
 
-  editingHabit$ = this.store.select((state) => state.schedule.editingHabit);
+  editingHabit$ = this.store.select((state) => state.editingHabit);
   saveable$ = new BehaviorSubject(false);
 
   constructor(
     private readonly fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public habit: HabitDto,
-    private readonly store: Store<AppState>
+    private readonly store: Store<HabitsState>
   ) {}
 
   ngOnInit(): void {
