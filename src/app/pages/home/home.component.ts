@@ -19,6 +19,7 @@ import {
   getHabits,
   getHabitsEntries,
 } from 'src/app/habits/state/habits.actions';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-home',
@@ -44,7 +45,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private readonly ds: DayService,
     private readonly authService: AuthService,
-    private readonly store: Store<AppState>
+    private readonly store: Store<AppState>,
+    private readonly ns: NotificationService // needed to start up the service
   ) {
     this.visibleDates$$ = new BehaviorSubject<ReadonlyArray<Date>>(
       this.currentDates()

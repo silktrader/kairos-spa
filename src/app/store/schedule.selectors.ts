@@ -7,10 +7,8 @@ import {
   AddTaskEvent,
   DeleteTaskEvent,
   EditTaskEvent,
-  AddHabitEvent,
-  DeleteHabitEvent,
-  EditHabitEvent,
 } from './app-event.interface';
+import { selectHabitsEvents } from '../habits/state/habits.selectors';
 
 export const selectFeature = createFeatureSelector<
   { schedule: ScheduleState },
@@ -34,24 +32,6 @@ export const selectEvents = createSelector(
   (state: ScheduleState) => state.events
 );
 
-export const selectAddEvents = createSelector(
-  selectEvents,
-  (events: ReadonlyArray<AddTaskEvent>) =>
-    events.filter((event) => event.operation === EventOperation.AddedTask)
-);
-
-export const selectRemoveEvents = createSelector(
-  selectEvents,
-  (events: ReadonlyArray<DeleteTaskEvent>) =>
-    events.filter((event) => event.operation === EventOperation.DeletedTask)
-);
-
-export const selectEditEvents = createSelector(
-  selectEvents,
-  (events: ReadonlyArray<EditTaskEvent>) =>
-    events.filter((event) => event.operation === EventOperation.EditedTask)
-);
-
 export const selectTaskEvents = createSelector(
   selectEvents,
   (events: ReadonlyArray<AddTaskEvent | EditTaskEvent | DeleteTaskEvent>) =>
@@ -61,6 +41,32 @@ export const selectTaskEvents = createSelector(
         event.operation === EventOperation.EditedTask ||
         event.operation === EventOperation.DeletedTask
     )
+);
+
+export const selectNotifiableEvents = createSelector(
+  selectEvents,
+  selectHabitsEvents,
+  (appEvents, habitEvents) => {
+    // fetch the first items in both collections; order of insertion matches the timestamps order
+    const notifiableEvents = [];
+    for (const appEvent of appEvents) {
+      if (!appEvent.read) {
+        notifiableEvents.push(appEvent);
+        break;
+      }
+    }
+    for (const habitEvent of habitEvents) {
+      if (!habitEvent.read) {
+        notifiableEvents.push(habitEvent);
+        break;
+      }
+    }
+
+    // need to sort according to timestamp
+    return (
+      notifiableEvents.sort((a, b) => b.timestamp - a.timestamp)[0] ?? null
+    );
+  }
 );
 
 // Tasks selectors
@@ -134,5 +140,3 @@ export const selectTaskEditingId = createSelector(
   selectFeature,
   (state: ScheduleState) => state.editingTaskId
 );
-
-/* Habits Selectors */
