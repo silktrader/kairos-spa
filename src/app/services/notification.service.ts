@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Store, select } from '@ngrx/store';
-import {
-  selectEvents,
-  selectNotifiableEvents,
-} from '../store/schedule.selectors';
+import { selectNotifiableEvent } from '../store/schedule.selectors';
 import { readTaskEvent } from '../store/schedule.actions';
 import { Router } from '@angular/router';
 import { AppState } from '../store/app-state';
@@ -22,10 +19,9 @@ export class NotificationService {
     private snackBar: MatSnackBar,
     private readonly router: Router
   ) {
-    this.store.pipe(select(selectNotifiableEvents)).subscribe((event) => {
+    this.store.pipe(select(selectNotifiableEvent)).subscribe((event) => {
       // ignore new events until the one being read is dismissed
       // the dismissal triggers a new value for the observable
-      console.log(event);
       if (this.readingEvent || !event) return;
 
       // fetch the first event not yet shown and display it

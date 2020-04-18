@@ -71,6 +71,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
         })
     );
 
+    // tk create better selector
     this.habitsDetails$ = combineLatest([
       this.habitsStore.pipe(select(selectHabits)),
       this.habitsStore.pipe(select(selectHabitsEntries, { date: this.date })),

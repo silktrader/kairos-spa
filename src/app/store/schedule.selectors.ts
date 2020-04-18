@@ -43,7 +43,7 @@ export const selectTaskEvents = createSelector(
     )
 );
 
-export const selectNotifiableEvents = createSelector(
+export const selectNotifiableEvent = createSelector(
   selectEvents,
   selectHabitsEvents,
   (appEvents, habitEvents) => {

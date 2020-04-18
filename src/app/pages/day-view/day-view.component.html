@@ -17,7 +17,8 @@
         <mat-form-field class="add-task-field">
           <mat-label></mat-label>
           <input type="text" #addTaskInput autocomplete="off" placeholder="Enter task title" matInput
-            [formControl]="newTaskControl" (keyup.enter)="leavePromptAddTask()" (blur)="leavePromptAddTask()">
+            [formControl]="newTaskControl" (keyup.enter)="leavePromptAddTask()" (blur)="leavePromptAddTask()"
+            (keyup.esc)="cancelPromptAddTask()">
         </mat-form-field>
       </mat-card>
     </div>
