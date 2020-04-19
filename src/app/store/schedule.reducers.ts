@@ -2,7 +2,7 @@ import { createReducer, on } from '@ngrx/store';
 import * as ScheduleActions from './schedule.actions';
 import { Task } from '../models/task';
 import { TaskDto } from '../models/dtos/task.dto';
-import { ScheduleState, SidebarSection } from './app-state';
+import { ScheduleState, SidebarSection, TasksLoadingState } from './app-state';
 import {
   AddTaskEvent,
   DeleteTaskEvent,
@@ -11,7 +11,7 @@ import {
 
 export const initialState: ScheduleState = {
   tasks: [],
-  loadingTasks: false,
+  loadingState: TasksLoadingState.Loading,
   editingTaskId: undefined,
   events: [],
   sidebar: { opened: true, section: SidebarSection.Events },
@@ -94,7 +94,7 @@ export const taskReducer = createReducer(
   on(ScheduleActions.getDatesTasks, (schedule) => {
     return {
       ...schedule,
-      loadingTasks: true,
+      loadingState: TasksLoadingState.Loading,
     };
   }),
 
@@ -102,7 +102,14 @@ export const taskReducer = createReducer(
     return {
       ...schedule,
       tasks,
-      loadingTasks: false,
+      loadingState: TasksLoadingState.Loaded,
+    };
+  }),
+
+  on(ScheduleActions.getDatesTasksFailed, (schedule, { error }) => {
+    return {
+      ...schedule,
+      loadingState: TasksLoadingState.Error,
     };
   }),
 

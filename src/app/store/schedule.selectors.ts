@@ -15,9 +15,9 @@ export const selectFeature = createFeatureSelector<
   ScheduleState
 >('schedule');
 
-export const selectLoading = createSelector(
+export const selectLoadingState = createSelector(
   selectFeature,
-  (state: ScheduleState) => state.loadingTasks
+  (state: ScheduleState) => state.loadingState
 );
 
 export const selectSidebar = createSelector(

@@ -9,13 +9,16 @@ export interface AppState {
 
 export interface ScheduleState {
   readonly tasks: ReadonlyArray<Task>;
-  // readonly habits: ReadonlyArray<HabitDto>;
-  // readonly habitsEntries: ReadonlyArray<HabitEntryDto>;
-  readonly loadingTasks: boolean;
-  // readonly editingHabit: boolean;
+  readonly loadingState: TasksLoadingState;
   readonly editingTaskId: number | undefined;
   readonly events: ReadonlyArray<AppEvent>;
   readonly sidebar: { opened: boolean; section: SidebarSection };
+}
+
+export enum TasksLoadingState {
+  Loading,
+  Loaded,
+  Error,
 }
 
 export enum SidebarSection {

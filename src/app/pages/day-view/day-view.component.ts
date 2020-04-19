@@ -15,9 +15,9 @@ import { Options } from 'sortablejs';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
-import { AppState } from 'src/app/store/app-state';
+import { AppState, TasksLoadingState } from 'src/app/store/app-state';
 import {
-  selectLoading,
+  selectLoadingState,
   selectTasksByDay,
 } from 'src/app/store/schedule.selectors';
 import { take, map } from 'rxjs/operators';
@@ -45,14 +45,16 @@ export class DayViewComponent implements OnInit, OnDestroy {
   @ViewChild('addTaskInput') addTaskInput: ElementRef;
 
   tasks: ReadonlyArray<Task>;
-  loading: Observable<boolean> = this.store.pipe(select(selectLoading));
+  loadingState$: Observable<TasksLoadingState> = this.store.pipe(
+    select(selectLoadingState)
+  );
   addingTask$ = new BehaviorSubject<boolean>(false);
   habitsDetails$: Observable<ReadonlyArray<HabitDetails>>;
 
+  tasksLoadingState = TasksLoadingState;
+
   private subscriptions = new Subscription();
-
   newTaskControl = new FormControl('');
-
   options: Options; // SortableJs options
 
   constructor(

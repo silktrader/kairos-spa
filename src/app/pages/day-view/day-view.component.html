@@ -8,45 +8,55 @@
     </div>
   </header>
 
-  <mat-spinner *ngIf="loading | async; else tasksList"></mat-spinner>
+  <ng-container *ngIf="loadingState$ | async as loadingState">
+    <ng-container [ngSwitch]="loadingState">
 
-  <ng-template #tasksList>
+      <div class="loading-error" color="warn" *ngSwitchCase="tasksLoadingState.Error">
+        <mat-icon>error</mat-icon><span>Error while loading tasks</span>
+      </div>
 
-    <div class="add-task-card">
-      <mat-card [hidden]="!(addingTask$ | async)">
-        <mat-form-field class="add-task-field">
-          <mat-label></mat-label>
-          <input type="text" #addTaskInput autocomplete="off" placeholder="Enter task title" matInput
-            [formControl]="newTaskControl" (keyup.enter)="leavePromptAddTask()" (blur)="leavePromptAddTask()"
-            (keyup.esc)="cancelPromptAddTask()">
-        </mat-form-field>
-      </mat-card>
-    </div>
+      <mat-spinner *ngSwitchCase="tasksLoadingState.Loading"></mat-spinner>
 
-    <div id="{{dayUrl}}" class="tasks" sortablejs [sortablejsOptions]="options">
+      <ng-container *ngSwitchCase="tasksLoadingState.Loaded">
 
-      <mat-card *ngFor="let task of tasks" class="mat-elevation-z2" matRipple (click)="openEditTakDialog(task)"
-        [ngClass]="{'task-complete': task.complete}">
-        <span class="task-title">{{task.title}}</span>
-      </mat-card>
-    </div>
+        <div class="add-task-card">
+          <mat-card [hidden]="!(addingTask$ | async)">
+            <mat-form-field class="add-task-field">
+              <mat-label></mat-label>
+              <input type="text" #addTaskInput autocomplete="off" placeholder="Enter task title" matInput
+                [formControl]="newTaskControl" (keyup.enter)="leavePromptAddTask()" (blur)="leavePromptAddTask()"
+                (keyup.esc)="cancelPromptAddTask()">
+            </mat-form-field>
+          </mat-card>
+        </div>
 
-    <mat-expansion-panel class="habits-panel">
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Habits
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+        <div id="{{dayUrl}}" class="tasks" sortablejs [sortablejsOptions]="options">
 
-      <ul class="habits-list">
-        <li class="habit" *ngFor="let habit of (habitsDetails$ | async)" [ngStyle]="{'color': habit.colour}">
-          <mat-checkbox [checked]="habit.entry !== undefined" (change)="toggleHabit(habit.id, habit.entry)"
-            color="primary">
-            <span>{{habit.title}}</span></mat-checkbox>
-        </li>
-      </ul>
-    </mat-expansion-panel>
+          <mat-card *ngFor="let task of tasks" class="mat-elevation-z2" matRipple (click)="openEditTakDialog(task)"
+            [ngClass]="{'task-complete': task.complete}">
+            <span class="task-title">{{task.title}}</span>
+          </mat-card>
+        </div>
 
-  </ng-template>
+        <mat-expansion-panel class="habits-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Habits
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <ul class="habits-list">
+            <li class="habit" *ngFor="let habit of (habitsDetails$ | async)" [ngStyle]="{'color': habit.colour}">
+              <mat-checkbox [checked]="habit.entry !== undefined" (change)="toggleHabit(habit.id, habit.entry)"
+                color="primary">
+                <span>{{habit.title}}</span></mat-checkbox>
+            </li>
+          </ul>
+        </mat-expansion-panel>
+
+      </ng-container>
+
+    </ng-container>
+  </ng-container>
 
 </section>

@@ -12,12 +12,13 @@ export const getDatesTasks = createAction(
 );
 
 export const getDatesTasksSuccess = createAction(
-  '[SCHEDULE Get Dates Tasks Success',
+  '[SCHEDULE] Get Dates Tasks Success',
   props<{ tasks: ReadonlyArray<Task> }>()
 );
 
 export const getDatesTasksFailed = createAction(
-  '[SCHEDULE] Get Dates Tasks Failed'
+  '[SCHEDULE] Get Dates Tasks Failed',
+  props<{ error: string }>()
 );
 
 export const addTask = createAction(

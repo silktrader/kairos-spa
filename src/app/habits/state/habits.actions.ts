@@ -59,6 +59,11 @@ export const addHabitEntrySuccess = createAction(
   props<{ habitEntry: HabitEntryDto }>()
 );
 
+export const addHabitEntryFailure = createAction(
+  '[HABITS] Add Entry Failure',
+  props<{ habitEntry: HabitEntryDto }>()
+);
+
 export const deleteHabitEntry = createAction(
   '[HABITS] Delete Entry',
   props<{ habitEntry: HabitEntryDto }>()

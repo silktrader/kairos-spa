@@ -3,11 +3,10 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { DayService } from '../services/day.service';
 import * as ScheduleActions from './schedule.actions';
 import { mergeMap, map, catchError, tap } from 'rxjs/operators';
-import { EMPTY } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { TaskDto } from '../models/dtos/task.dto';
 import { HabitsService } from '../habits/habits.service';
 import { MatDialog } from '@angular/material/dialog';
-import { AppEvent, AddTaskEvent, EditTaskEvent } from './app-event.interface';
 
 @Injectable()
 export class ScheduleEffects {
@@ -17,7 +16,9 @@ export class ScheduleEffects {
       mergeMap((action: { startDate: Date; endDate: Date }) =>
         this.ds.getTasksBetweenDates(action.startDate, action.endDate).pipe(
           map((tasks) => ScheduleActions.getDatesTasksSuccess({ tasks })),
-          catchError(() => EMPTY)
+          catchError((error) =>
+            of(ScheduleActions.getDatesTasksFailed({ error }))
+          )
         )
       )
     )

@@ -35,6 +35,19 @@ h3 {
   color: darkred;
 }
 
+.loading-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5rem;
+  font-style: italic;
+  font-weight: 500;
+
+  mat-icon {
+    margin-bottom: 1rem;
+  }
+}
+
 // Tasks
 
 .tasks {
