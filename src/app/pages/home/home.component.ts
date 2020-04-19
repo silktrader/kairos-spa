@@ -11,9 +11,16 @@ import { DayService } from 'src/app/services/day.service';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { SidebarSection, AppState } from 'src/app/store/app-state';
-import { getDatesTasks, toggleSidebar } from 'src/app/store/schedule.actions';
+import {
+  getDatesTasks,
+  toggleSidebar,
+  setVisiblePeriod,
+} from 'src/app/store/schedule.actions';
 import { MatSidenav } from '@angular/material/sidenav';
-import { selectSidebar } from 'src/app/store/schedule.selectors';
+import {
+  selectSidebar,
+  selectVisiblePeriod,
+} from 'src/app/store/schedule.selectors';
 import { delay } from 'rxjs/operators';
 import {
   getHabits,
@@ -48,6 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private readonly store: Store<AppState>,
     private readonly ns: NotificationService // needed to start up the service
   ) {
+    // tk remove this and rely on the store's selector
     this.visibleDates$$ = new BehaviorSubject<ReadonlyArray<Date>>(
       this.currentDates()
     );
@@ -71,8 +79,14 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
           endDate: dates[dates.length - 1],
         };
 
-        this.store.dispatch(getDatesTasks(dateRange));
+        this.store.dispatch(setVisiblePeriod(dateRange));
+      })
+    );
 
+    this.subscriptions.add(
+      this.store.pipe(select(selectVisiblePeriod)).subscribe((dateRange) => {
+        if (!dateRange) return;
+        this.store.dispatch(getDatesTasks(dateRange));
         this.store.dispatch(getHabitsEntries(dateRange));
       })
     );

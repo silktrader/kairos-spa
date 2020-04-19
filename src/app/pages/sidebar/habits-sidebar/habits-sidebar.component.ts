@@ -16,20 +16,19 @@ export class HabitsSidebarComponent implements OnInit {
   habits$ = this.store.pipe(select(selectHabits));
   constructor(
     private readonly store: Store<HabitsState>,
-    private addHabitDialog: MatDialog,
-    private editHabitDialog: MatDialog
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {}
 
   public openAddHabitDialog() {
-    this.addHabitDialog.open(AddHabitDialogComponent, {
+    this.dialog.open(AddHabitDialogComponent, {
       panelClass: 'kairos-edit-task-dialog',
     });
   }
 
   public openEditHabitDialog(habit: HabitDto) {
-    this.editHabitDialog.open(EditHabitDialogComponent, {
+    this.dialog.open(EditHabitDialogComponent, {
       panelClass: 'kairos-edit-task-dialog',
       data: habit,
     });

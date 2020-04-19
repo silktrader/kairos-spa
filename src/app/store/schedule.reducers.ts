@@ -8,8 +8,10 @@ import {
   DeleteTaskEvent,
   EditTaskEvent,
 } from './app-event.interface';
+import { setVisiblePeriod } from './schedule.actions';
 
 export const initialState: ScheduleState = {
+  visiblePeriod: undefined,
   tasks: [],
   loadingState: TasksLoadingState.Loading,
   editingTaskId: undefined,
@@ -37,6 +39,13 @@ export const filteredTasks = (
 
 export const taskReducer = createReducer(
   initialState,
+
+  on(setVisiblePeriod, (schedule, { startDate, endDate }) => {
+    return {
+      ...schedule,
+      visiblePeriod: { startDate, endDate },
+    };
+  }),
 
   on(ScheduleActions.addTask, (schedule, { task }) => {
     return {

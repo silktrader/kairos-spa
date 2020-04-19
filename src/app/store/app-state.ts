@@ -8,6 +8,9 @@ export interface AppState {
 }
 
 export interface ScheduleState {
+  readonly visiblePeriod: Readonly<
+    { startDate: Date; endDate: Date } | undefined
+  >;
   readonly tasks: ReadonlyArray<Task>;
   readonly loadingState: TasksLoadingState;
   readonly editingTaskId: number | undefined;

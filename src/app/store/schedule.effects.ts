@@ -7,6 +7,7 @@ import { EMPTY, of } from 'rxjs';
 import { TaskDto } from '../models/dtos/task.dto';
 import { HabitsService } from '../habits/habits.service';
 import { MatDialog } from '@angular/material/dialog';
+import { TasksErrorDialogComponent } from '../core/components/error-dialog/tasks-error-dialog.component';
 
 @Injectable()
 export class ScheduleEffects {
@@ -78,10 +79,35 @@ export class ScheduleEffects {
     )
   );
 
+  getDatesTasksFailed$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ScheduleActions.getDatesTasksFailed),
+        tap(() => {
+          this.matDialog.closeAll(); // avoid the stacking of errors dialogs when retrying
+          this.matDialog.open(TasksErrorDialogComponent, {
+            disableClose: true,
+          });
+        })
+      ),
+    { dispatch: false }
+  );
+
+  getDatesTasksSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(ScheduleActions.getDatesTasksSuccess),
+        tap(() => {
+          // close error dialogs when present
+          this.matDialog.closeAll();
+        })
+      ),
+    { dispatch: false }
+  );
+
   constructor(
     private actions$: Actions,
     private ds: DayService,
-    private hs: HabitsService,
     private matDialog: MatDialog
   ) {}
 }

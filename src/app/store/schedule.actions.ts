@@ -6,6 +6,11 @@ import { AppEvent } from './app-event.interface';
 
 /* Tasks */
 
+export const setVisiblePeriod = createAction(
+  '[SCHEDULE] Set Visible Period',
+  props<{ startDate: Date; endDate: Date }>()
+);
+
 export const getDatesTasks = createAction(
   '[SCHEDULE] Get Dates Tasks',
   props<{ startDate: Date; endDate: Date }>()

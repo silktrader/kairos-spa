@@ -71,6 +71,11 @@ export const selectNotifiableEvent = createSelector(
 
 // Tasks selectors
 
+export const selectVisiblePeriod = createSelector(
+  selectFeature,
+  (state: ScheduleState) => state.visiblePeriod
+);
+
 export const selectAllTasks = createSelector(
   selectFeature,
   (state: ScheduleState) => state.tasks
