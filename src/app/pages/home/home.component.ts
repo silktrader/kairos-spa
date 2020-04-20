@@ -12,7 +12,6 @@ import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { SidebarSection, AppState } from 'src/app/store/app-state';
 import {
-  getDatesTasks,
   toggleSidebar,
   setVisiblePeriod,
 } from 'src/app/store/schedule.actions';
@@ -27,6 +26,7 @@ import {
   getHabitsEntries,
 } from 'src/app/habits/state/habits.actions';
 import { NotificationService } from 'src/app/services/notification.service';
+import * as TasksActions from 'src/app/tasks/state/tasks.actions';
 
 @Component({
   selector: 'app-home',
@@ -86,7 +86,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.subscriptions.add(
       this.store.pipe(select(selectVisiblePeriod)).subscribe((dateRange) => {
         if (!dateRange) return;
-        this.store.dispatch(getDatesTasks(dateRange));
+        this.store.dispatch(TasksActions.get(dateRange));
         this.store.dispatch(getHabitsEntries(dateRange));
       })
     );

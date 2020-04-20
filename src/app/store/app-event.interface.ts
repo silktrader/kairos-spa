@@ -7,13 +7,8 @@ export abstract class AppEvent {
   public readonly id = generate();
   public readonly operation: EventOperation;
   public readonly timestamp = Date.now();
-  public readonly read: boolean = false;
 
   abstract get title(): string;
-
-  public setAsRead(): AppEvent {
-    return { ...this, read: true };
-  }
 }
 
 export abstract class TaskEvent extends AppEvent {

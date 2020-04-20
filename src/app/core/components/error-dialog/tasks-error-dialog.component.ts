@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { AppState, TasksLoadingState } from 'src/app/store/app-state';
+import { AppState } from 'src/app/store/app-state';
 import { Store, select } from '@ngrx/store';
-import { getDatesTasks } from 'src/app/store/schedule.actions';
-import {
-  selectVisiblePeriod,
-  selectLoadingState,
-} from 'src/app/store/schedule.selectors';
+import { selectVisiblePeriod } from 'src/app/store/schedule.selectors';
 import { first, map } from 'rxjs/operators';
+import { selectLoadingState } from 'src/app/tasks/state/tasks.selectors';
+import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
+import { get } from 'src/app/tasks/state/tasks.actions';
 
 @Component({
   selector: 'app-tasks-error-dialog',
@@ -25,7 +24,7 @@ export class TasksErrorDialogComponent implements OnInit {
     this.store
       .pipe(select(selectVisiblePeriod), first())
       .subscribe((dateRange) => {
-        if (dateRange) this.store.dispatch(getDatesTasks(dateRange));
+        if (dateRange) this.store.dispatch(get(dateRange));
         // the dialog's closed by a successful loading of tasks
       });
   }

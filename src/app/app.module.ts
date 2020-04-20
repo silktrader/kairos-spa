@@ -16,12 +16,12 @@ import { SigninComponent } from './pages/auth/signin/signin.component';
 import { SortablejsModule } from 'ngx-sortablejs';
 import { EditTaskDialogComponent } from './pages/edit-task-dialog/edit-task-dialog.component';
 import { EffectsModule } from '@ngrx/effects';
-import { ScheduleEffects } from './store/schedule.effects';
 import { EventsComponent } from './pages/sidebar/events-sidebar/events.component';
 import { HabitsSidebarComponent } from './pages/sidebar/habits-sidebar/habits-sidebar.component';
 import { SidebarSectionTitleComponent } from './pages/sidebar/sidebar-section-title/sidebar-section-title.component';
 import { HabitsModule } from './habits/habits.module';
 import { CoreModule } from './core/core.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @NgModule({
   declarations: [
@@ -39,7 +39,8 @@ import { CoreModule } from './core/core.module';
     BrowserModule,
     AppRoutingModule,
     CoreModule,
-    StoreModule.forRoot({ schedule: Reducers.taskReducer }),
+    StoreModule.forRoot({ schedule: Reducers.scheduleReducer }),
+    EffectsModule.forRoot([]), // must register for feature effects to work
     StoreDevtoolsModule.instrument({
       maxAge: 10,
       logOnly: environment.production,
@@ -48,8 +49,8 @@ import { CoreModule } from './core/core.module';
     MaterialModule,
     AuthModule.forRoot({ backendUrl: 'http://localhost:3000/auth/' }),
     SortablejsModule.forRoot({ animation: 150 }),
-    EffectsModule.forRoot([ScheduleEffects]),
     HabitsModule,
+    TasksModule,
   ],
   entryComponents: [EditTaskDialogComponent],
   providers: [],

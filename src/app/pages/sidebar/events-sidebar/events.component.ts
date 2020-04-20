@@ -1,23 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import {
-  selectTaskEvents,
-  selectTasksByDay,
-} from 'src/app/store/schedule.selectors';
 import { BehaviorSubject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { formatDistanceToNow } from 'date-fns';
-import {
-  deleteTask,
-  updateTask,
-  addTask,
-} from 'src/app/store/schedule.actions';
 import { AppState } from 'src/app/store/app-state';
 import { AppEvent } from 'src/app/store/app-event.interface';
 import { TaskDto } from 'src/app/models/dtos/task.dto';
 import { EventOperation } from 'src/app/store/event-operation.enum';
 import { first } from 'rxjs/operators';
 import { selectHabitsEvents } from 'src/app/habits/state/habits.selectors';
+import {
+  selectTaskEvents,
+  selectTasksByDate,
+} from 'src/app/tasks/state/tasks.selectors';
+import { remove, add, edit } from 'src/app/tasks/state/tasks.actions';
 
 @Component({
   selector: 'app-events',
@@ -51,12 +47,12 @@ export class EventsComponent implements OnInit {
   }
 
   delete(id: number): void {
-    this.store.dispatch(deleteTask({ deletedTaskId: id }));
+    this.store.dispatch(remove({ removedTaskId: id }));
   }
 
   revertTask(currentDto: TaskDto, restoredDto: TaskDto): void {
     this.store.dispatch(
-      updateTask({ originalTask: currentDto, updatedTask: restoredDto })
+      edit({ originalTask: currentDto, updatedTask: restoredDto })
     );
   }
 
@@ -64,10 +60,10 @@ export class EventsComponent implements OnInit {
     // get the last id in the date's task list
     // we assume that to delete a task its ancestors were fetched, displayed and in the store
     this.store
-      .pipe(select(selectTasksByDay, { date: taskDto.date }), first())
+      .pipe(select(selectTasksByDate, { date: taskDto.date }), first())
       .subscribe((orderedTasks) => {
         this.store.dispatch(
-          addTask({
+          add({
             task: {
               ...taskDto,
               previousId: orderedTasks[orderedTasks.length - 1].id,

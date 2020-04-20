@@ -15,13 +15,8 @@ import { Options } from 'sortablejs';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
-import { AppState, TasksLoadingState } from 'src/app/store/app-state';
-import {
-  selectLoadingState,
-  selectTasksByDay,
-} from 'src/app/store/schedule.selectors';
+import { AppState } from 'src/app/store/app-state';
 import { take, map } from 'rxjs/operators';
-import { updateTasks, addTask } from 'src/app/store/schedule.actions';
 import { HabitEntryDto } from 'src/app/habits/models/habit-entry.dto';
 import { HabitDetails } from 'src/app/habits/models/habit.dto';
 import { HabitsState } from 'src/app/habits/state/habits.state';
@@ -33,6 +28,12 @@ import {
   deleteHabitEntry,
   addHabitEntry,
 } from 'src/app/habits/state/habits.actions';
+import {
+  selectLoadingState,
+  selectTasksByDate,
+} from 'src/app/tasks/state/tasks.selectors';
+import { updateTasks, add } from 'src/app/tasks/state/tasks.actions';
+import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
 
 @Component({
   selector: 'app-day-view',
@@ -67,7 +68,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscriptions.add(
       this.store
-        .pipe(select(selectTasksByDay, { date: this.date }))
+        .pipe(select(selectTasksByDate, { date: this.date }))
         .subscribe((tasks) => {
           this.tasks = tasks;
         })
@@ -102,7 +103,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
         // get the target date's sorted tasks
         this.store
           .pipe(
-            select(selectTasksByDay, {
+            select(selectTasksByDate, {
               date: targetDate,
             }),
             take(1)
@@ -184,7 +185,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
       this.tasks.length > 0 ? this.tasks[this.tasks.length - 1].id : null;
 
     this.store.dispatch(
-      addTask({
+      add({
         task: {
           title,
           previousId,

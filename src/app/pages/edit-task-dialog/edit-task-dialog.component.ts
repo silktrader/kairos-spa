@@ -12,14 +12,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, BehaviorSubject } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
-import { updateTask, deleteTask } from 'src/app/store/schedule.actions';
-import {
-  selectTaskEditingId,
-  selectTaskById,
-} from 'src/app/store/schedule.selectors';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { take } from 'rxjs/operators';
 import { formatISO } from 'date-fns';
+import {
+  selectTaskEditingId,
+  selectTaskById,
+} from 'src/app/tasks/state/tasks.selectors';
+import { edit, remove } from 'src/app/tasks/state/tasks.actions';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -112,7 +112,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
 
     // merge data with spread operator
     this.store.dispatch(
-      updateTask({
+      edit({
         originalTask: {
           ...this.task,
         },
@@ -127,7 +127,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
 
   revertChanges(): void {
     this.store.dispatch(
-      updateTask({
+      edit({
         updatedTask: this.initialTask,
         originalTask: this.taskForm.value,
       })
@@ -135,7 +135,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   }
 
   deleteTask(): void {
-    this.store.dispatch(deleteTask({ deletedTaskId: this.initialTask.id }));
+    this.store.dispatch(remove({ removedTaskId: this.initialTask.id }));
 
     // tk should check for effective deletion by listening to observable?
     this.dialogRef.close();
