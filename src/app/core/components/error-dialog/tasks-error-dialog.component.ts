@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { AppState } from 'src/app/store/app-state';
+import { AppState, TasksLoadingState } from 'src/app/store/app-state';
 import { Store, select } from '@ngrx/store';
 import { getDatesTasks } from 'src/app/store/schedule.actions';
-import { selectVisiblePeriod } from 'src/app/store/schedule.selectors';
-import { first } from 'rxjs/operators';
+import {
+  selectVisiblePeriod,
+  selectLoadingState,
+} from 'src/app/store/schedule.selectors';
+import { first, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-tasks-error-dialog',
@@ -11,6 +14,9 @@ import { first } from 'rxjs/operators';
   styleUrls: ['./tasks-error-dialog.component.scss'],
 })
 export class TasksErrorDialogComponent implements OnInit {
+  loading$ = this.store.pipe(select(selectLoadingState));
+  loadingState = TasksLoadingState;
+
   constructor(private readonly store: Store<AppState>) {}
 
   ngOnInit(): void {}

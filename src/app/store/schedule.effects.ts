@@ -86,6 +86,7 @@ export class ScheduleEffects {
         tap(() => {
           this.matDialog.closeAll(); // avoid the stacking of errors dialogs when retrying
           this.matDialog.open(TasksErrorDialogComponent, {
+            panelClass: 'kairos-dialog',
             disableClose: true,
           });
         })

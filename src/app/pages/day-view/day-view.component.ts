@@ -239,7 +239,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
   public openEditTakDialog(task: Task) {
     this.editTaskDialog.open(EditTaskDialogComponent, {
       data: task,
-      panelClass: 'kairos-edit-task-dialog',
+      panelClass: 'kairos-dialog',
     });
   }
 

@@ -1,8 +1,15 @@
-<h1 mat-dialog-title>Connection Error</h1>
-<div mat-dialog-content>
-  We couldn't load the tasks from our server. Please check your network connection and retry.
-</div>
-<div mat-dialog-actions>
-  <button mat-button cdkFocusInitial (click)="retry()">Retry</button>
+<header>
+  <mat-icon>cloud_off</mat-icon>
+  <h1>Connection Error</h1>
+</header>
+<main>
+  We couldn't load the tasks from our server; please check your network connection.
+</main>
+<footer>
+  <mat-spinner *ngIf="(loading$ | async) === loadingState.Loading; else retryButton" [diameter]="30"></mat-spinner>
+  <ng-template #retryButton>
+    <button mat-stroked-button cdkFocusInitial (click)="retry()">
+      Retry</button>
+  </ng-template>
   <!-- tk add loading spinner when fetching tasks -->
-</div>
+</footer>

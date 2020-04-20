@@ -23,13 +23,13 @@ export class HabitsSidebarComponent implements OnInit {
 
   public openAddHabitDialog() {
     this.dialog.open(AddHabitDialogComponent, {
-      panelClass: 'kairos-edit-task-dialog',
+      panelClass: 'kairos-dialog',
     });
   }
 
   public openEditHabitDialog(habit: HabitDto) {
     this.dialog.open(EditHabitDialogComponent, {
-      panelClass: 'kairos-edit-task-dialog',
+      panelClass: 'kairos-dialog',
       data: habit,
     });
   }
