@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
-import { take, map } from 'rxjs/operators';
+import { take, map, first, last } from 'rxjs/operators';
 import { HabitEntryDto } from 'src/app/habits/models/habit-entry.dto';
 import { HabitDetails } from 'src/app/habits/models/habit.dto';
 import { HabitsState } from 'src/app/habits/state/habits.state';
@@ -34,6 +34,8 @@ import {
 } from 'src/app/tasks/state/tasks.selectors';
 import { updateTasks, add } from 'src/app/tasks/state/tasks.actions';
 import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
+import { addDays } from 'date-fns';
+import { TaskDto } from 'src/app/models/dtos/task.dto';
 
 @Component({
   selector: 'app-day-view',
@@ -276,5 +278,34 @@ export class DayViewComponent implements OnInit, OnDestroy {
         addHabitEntry({ habitEntry: { date: this.date, habitId, comment: '' } })
       );
     }
+  }
+
+  delayIncompleteTasks(): void {
+    // draft a list of incomplete but ordered tasks
+    const incompleteTasks = this.tasks.filter((task) => !task.complete);
+    // read the next date's last task, so to correctly append delayed ones
+    const nextDate = addDays(this.date, 1);
+    // fetch tasks via service without changing the state
+    // might change behaviour from `append` to `insert`
+    this.ds
+      .getTasksBetweenDates(nextDate, nextDate)
+      .pipe(first())
+      .subscribe((tasks: Array<Task>) => {
+        let lastTaskId =
+          tasks.length > 0
+            ? this.ds.sortTasks(tasks)[tasks.length - 1].id
+            : null;
+        const updatedTasks: Array<TaskDto> = [];
+
+        for (const task of incompleteTasks) {
+          updatedTasks.push({
+            ...task,
+            date: nextDate,
+            previousId: lastTaskId,
+          });
+          lastTaskId = task.id;
+        }
+        this.store.dispatch(updateTasks({ tasksDtos: updatedTasks }));
+      });
   }
 }

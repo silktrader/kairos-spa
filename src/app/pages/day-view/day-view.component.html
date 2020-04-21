@@ -5,6 +5,12 @@
     <h3>{{daySubtitle}}</h3>
     <div class="tasks-actions">
       <button mat-stroked-button (click)="promptAddTask()">Add Task</button>
+      <button mat-icon-button [matMenuTriggerFor]="dateMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #dateMenu="matMenu">
+        <button mat-menu-item (click)="delayIncompleteTasks()">Delay Incomplete</button>
+      </mat-menu>
     </div>
   </header>
 
