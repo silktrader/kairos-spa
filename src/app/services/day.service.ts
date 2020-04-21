@@ -60,6 +60,32 @@ export class DayService {
       .pipe(map((taskDtos) => taskDtos.map(this.mapTask)));
   }
 
+  /** Sort tasks according to their previous ID references */
+  sortTasks(tasks: Array<Task>): ReadonlyArray<Task> {
+    const unorderedTasks = new Set(tasks);
+    const orderedTasks: Array<Task> = [];
+    let lastTaskId: number | null = null;
+
+    while (unorderedTasks.size > 0) {
+      let foundTask: Task | undefined;
+      for (const task of unorderedTasks) {
+        if (task.previousId === lastTaskId) {
+          orderedTasks.push(task);
+          foundTask = task;
+          lastTaskId = task.id;
+          break;
+        }
+      }
+      if (foundTask) {
+        unorderedTasks.delete(foundTask);
+      } else {
+        console.error('Could not reconstruct tasks order', tasks);
+      } // tk
+    }
+
+    return orderedTasks;
+  }
+
   addTask(taskDto: Omit<TaskDto, 'id'>): Observable<Task> {
     return this.http
       .post<TaskDto>(`${environment.backendRootURL}/schedule/tasks`, taskDto)

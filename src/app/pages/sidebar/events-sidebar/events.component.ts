@@ -7,13 +7,14 @@ import { AppState } from 'src/app/store/app-state';
 import { AppEvent } from 'src/app/store/app-event.interface';
 import { TaskDto } from 'src/app/models/dtos/task.dto';
 import { EventOperation } from 'src/app/store/event-operation.enum';
-import { first } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { selectHabitsEvents } from 'src/app/habits/state/habits.selectors';
 import {
   selectTaskEvents,
   selectTasksByDate,
 } from 'src/app/tasks/state/tasks.selectors';
 import { remove, add, edit } from 'src/app/tasks/state/tasks.actions';
+import { DayService } from 'src/app/services/day.service';
 
 @Component({
   selector: 'app-events',
@@ -32,7 +33,10 @@ export class EventsComponent implements OnInit {
 
   eventOperation = EventOperation;
 
-  constructor(private readonly store: Store<AppState>) {}
+  constructor(
+    private readonly store: Store<AppState>,
+    private ds: DayService
+  ) {}
 
   ngOnInit(): void {
     this.eventsSwitcher.valueChanges.subscribe((value) => {
@@ -60,7 +64,11 @@ export class EventsComponent implements OnInit {
     // get the last id in the date's task list
     // we assume that to delete a task its ancestors were fetched, displayed and in the store
     this.store
-      .pipe(select(selectTasksByDate, { date: taskDto.date }), first())
+      .pipe(
+        select(selectTasksByDate, { date: taskDto.date }),
+        map(this.ds.sortTasks),
+        first()
+      )
       .subscribe((orderedTasks) => {
         this.store.dispatch(
           add({

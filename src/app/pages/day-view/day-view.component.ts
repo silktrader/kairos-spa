@@ -68,7 +68,10 @@ export class DayViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.subscriptions.add(
       this.store
-        .pipe(select(selectTasksByDate, { date: this.date }))
+        .pipe(
+          select(selectTasksByDate, { date: this.date }),
+          map(this.ds.sortTasks)
+        )
         .subscribe((tasks) => {
           this.tasks = tasks;
         })
@@ -106,6 +109,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
             select(selectTasksByDate, {
               date: targetDate,
             }),
+            map(this.ds.sortTasks),
             take(1)
           )
           .subscribe((tasks) => {
