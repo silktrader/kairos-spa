@@ -7,8 +7,8 @@ import {
   DeleteTaskEvent,
   GenericTaskEvent,
 } from 'src/app/store/app-event.state';
-import { Task } from 'src/app/models/task';
-import { TaskDto } from 'src/app/models/dtos/task.dto';
+import { Task } from 'src/app/tasks/models/task';
+import { TaskDto } from 'src/app/tasks/models/task.dto';
 
 export const initialState: TasksState = {
   tasks: [],

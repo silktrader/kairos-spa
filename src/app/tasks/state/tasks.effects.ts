@@ -4,7 +4,7 @@ import { DayService } from 'src/app/services/day.service';
 import * as TasksActions from './tasks.actions';
 import { mergeMap, map, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { TaskDto } from 'src/app/models/dtos/task.dto';
+import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { TasksErrorDialogComponent } from 'src/app/core/components/error-dialog/tasks-error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 

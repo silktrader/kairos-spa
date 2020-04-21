@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
 import { formatDistanceToNow } from 'date-fns';
 import { AppState } from 'src/app/store/app-state';
 import { AppEvent, TaskEvent } from 'src/app/store/app-event.state';
-import { TaskDto } from 'src/app/models/dtos/task.dto';
+import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { EventOperation } from 'src/app/store/event-operation.enum';
 import { first, map } from 'rxjs/operators';
 import { selectHabitsEvents } from 'src/app/habits/state/habits.selectors';

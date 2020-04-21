@@ -7,7 +7,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
-import { Task } from 'src/app/models/task';
+import { Task } from 'src/app/tasks/models/task';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Subscription, BehaviorSubject } from 'rxjs';
 import { Store, select } from '@ngrx/store';

@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { Task } from 'src/app/models/task';
+import { Task } from 'src/app/tasks/models/task';
 import { isSameDay } from 'date-fns';
 import { TasksState } from './tasks.state';
 

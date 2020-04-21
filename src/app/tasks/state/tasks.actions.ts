@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
-import { Task } from 'src/app/models/task';
-import { TaskDto } from 'src/app/models/dtos/task.dto';
+import { Task } from 'src/app/tasks/models/task';
+import { TaskDto } from 'src/app/tasks/models/task.dto';
 
 export const get = createAction(
   '[TASKS] Get',

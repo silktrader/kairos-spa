@@ -1,4 +1,4 @@
-import { TaskDto } from '../models/dtos/task.dto';
+import { TaskDto } from '../tasks/models/task.dto';
 import { generate } from 'shortid';
 import { HabitDto } from '../habits/models/habit.dto';
 import { EventOperation } from './event-operation.enum';

@@ -9,11 +9,11 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { DayService } from 'src/app/services/day.service';
-import { Task } from 'src/app/models/task';
+import { Task } from 'src/app/tasks/models/task';
 import { Subscription, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { Options } from 'sortablejs';
 import { MatDialog } from '@angular/material/dialog';
-import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
+import { EditTaskDialogComponent } from '../../tasks/components/edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { take, map, first, last } from 'rxjs/operators';
@@ -35,7 +35,7 @@ import {
 import { updateTasks, add } from 'src/app/tasks/state/tasks.actions';
 import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
 import { addDays } from 'date-fns';
-import { TaskDto } from 'src/app/models/dtos/task.dto';
+import { TaskDto } from 'src/app/tasks/models/task.dto';
 
 @Component({
   selector: 'app-day-view',

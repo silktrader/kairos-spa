@@ -1,23 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Task } from '../models/task';
+import { Task } from '../tasks/models/task';
 import { addDays, format, isToday } from 'date-fns';
-import { Store, select } from '@ngrx/store';
-import { ScheduleState } from '../store/app-state';
 import { HttpClient } from '@angular/common/http';
-import { TaskDto } from '../models/dtos/task.dto';
+import { TaskDto } from '../tasks/models/task.dto';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { DeleteTaskDto } from '../models/dtos/deleteTask.dto';
+import { DeleteTaskDto } from '../tasks/models/deleteTask.dto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DayService {
-  constructor(
-    private readonly http: HttpClient,
-    private readonly store: Store<ScheduleState>
-  ) {}
+  constructor(private readonly http: HttpClient) {}
 
   getDayName(date: Date): string {
     return format(date, 'cccc');

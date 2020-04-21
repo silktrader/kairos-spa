@@ -1,4 +1,4 @@
-import { Task } from 'src/app/models/task';
+import { Task } from 'src/app/tasks/models/task';
 import { AppEvent } from 'src/app/store/app-event.state';
 
 export interface TasksState {

@@ -14,7 +14,7 @@ import { AuthModule } from 'auth';
 import { AuthComponent } from './pages/auth/auth.component';
 import { SigninComponent } from './pages/auth/signin/signin.component';
 import { SortablejsModule } from 'ngx-sortablejs';
-import { EditTaskDialogComponent } from './pages/edit-task-dialog/edit-task-dialog.component';
+import { EditTaskDialogComponent } from './tasks/components/edit-task-dialog/edit-task-dialog.component';
 import { EffectsModule } from '@ngrx/effects';
 import { EventsComponent } from './pages/sidebar/events-sidebar/events.component';
 import { HabitsSidebarComponent } from './pages/sidebar/habits-sidebar/habits-sidebar.component';
@@ -30,7 +30,6 @@ import { TasksModule } from './tasks/tasks.module';
     DayViewComponent,
     AuthComponent,
     SigninComponent,
-    EditTaskDialogComponent,
     EventsComponent,
     HabitsSidebarComponent,
     SidebarSectionTitleComponent,
@@ -52,7 +51,6 @@ import { TasksModule } from './tasks/tasks.module';
     HabitsModule,
     TasksModule,
   ],
-  entryComponents: [EditTaskDialogComponent],
   providers: [],
   bootstrap: [AppComponent],
 })

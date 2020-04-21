@@ -1,4 +1,4 @@
-import { TaskDto } from './dtos/task.dto';
+import { TaskDto } from './task.dto';
 import { isEqual } from 'date-fns';
 
 export class Task {
@@ -32,7 +32,7 @@ export class Task {
   // tk move to mapper or use class-transformer
   toDto(): TaskDto {
     return {
-      ...this
+      ...this,
     };
   }
 }
