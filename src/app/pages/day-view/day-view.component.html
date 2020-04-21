@@ -9,7 +9,12 @@
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #dateMenu="matMenu">
-        <button mat-menu-item (click)="delayIncompleteTasks()">Delay Incomplete</button>
+        <button mat-menu-item (click)="postponeIncompleteTasks()">
+          <mat-icon>navigate_next</mat-icon>Postpone Incomplete
+        </button>
+        <button mat-menu-item (click)="anticipateIncompleteTasks()">
+          <mat-icon>navigate_before</mat-icon>Anticipate Incomplete
+        </button>
       </mat-menu>
     </div>
   </header>

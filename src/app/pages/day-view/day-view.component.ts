@@ -280,15 +280,11 @@ export class DayViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  delayIncompleteTasks(): void {
-    // draft a list of incomplete but ordered tasks
-    const incompleteTasks = this.tasks.filter((task) => !task.complete);
-    // read the next date's last task, so to correctly append delayed ones
-    const nextDate = addDays(this.date, 1);
+  private rescheduleTasks(rescheduleTasks: Array<TaskDto>, date: Date): void {
     // fetch tasks via service without changing the state
     // might change behaviour from `append` to `insert`
     this.ds
-      .getTasksBetweenDates(nextDate, nextDate)
+      .getTasksBetweenDates(date, date)
       .pipe(first())
       .subscribe((tasks: Array<Task>) => {
         let lastTaskId =
@@ -297,15 +293,33 @@ export class DayViewComponent implements OnInit, OnDestroy {
             : null;
         const updatedTasks: Array<TaskDto> = [];
 
-        for (const task of incompleteTasks) {
+        for (const task of rescheduleTasks) {
           updatedTasks.push({
             ...task,
-            date: nextDate,
+            date,
             previousId: lastTaskId,
           });
           lastTaskId = task.id;
         }
-        this.store.dispatch(updateTasks({ tasksDtos: updatedTasks }));
+        this.store.dispatch(
+          updateTasks({
+            tasksDtos: updatedTasks,
+          })
+        );
       });
+  }
+
+  /* Move incomplete tasks to the following day */
+  postponeIncompleteTasks(): void {
+    const incompleteTasks = this.tasks.filter((task) => !task.complete);
+    const nextDate = addDays(this.date, 1);
+    this.rescheduleTasks(incompleteTasks, nextDate);
+  }
+
+  /* Move incomplete tasks to the previous day */
+  anticipateIncompleteTasks(): void {
+    const incompleteTasks = this.tasks.filter((task) => !task.complete);
+    const previousDate = addDays(this.date, -1);
+    this.rescheduleTasks(incompleteTasks, previousDate);
   }
 }
