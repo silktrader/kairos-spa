@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { SidebarSection } from './app-state';
-import { AppEvent } from './app-event.interface';
+import { AppEvent } from './app-event.state';
 
 export const setVisiblePeriod = createAction(
   '[SCHEDULE] Set Visible Period',

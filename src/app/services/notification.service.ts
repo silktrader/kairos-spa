@@ -55,8 +55,11 @@ export class NotificationService {
       case EventOperation.EditedTask:
       case EventOperation.EditedHabit:
         return 'Edited';
+      case EventOperation.DeletedTask:
+      case EventOperation.DeletedHabit:
+        return 'Removed';
       default:
-        return 'Deleted';
+        return 'Updated';
     }
   }
 }

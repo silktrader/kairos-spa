@@ -5,4 +5,5 @@ export enum EventOperation {
   AddedHabit,
   EditedHabit,
   DeletedHabit,
+  Update,
 }

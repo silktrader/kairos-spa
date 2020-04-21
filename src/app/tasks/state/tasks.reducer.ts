@@ -5,7 +5,8 @@ import {
   AddTaskEvent,
   EditTaskEvent,
   DeleteTaskEvent,
-} from 'src/app/store/app-event.interface';
+  GenericTaskEvent,
+} from 'src/app/store/app-event.state';
 import { Task } from 'src/app/models/task';
 import { TaskDto } from 'src/app/models/dtos/task.dto';
 
@@ -83,6 +84,8 @@ export const tasksReducer = createReducer(
         ...filteredTasks(schedule.tasks, ...tasks.map((task) => task.id)),
         ...tasks,
       ],
+      // provide a generic notification, absent from the log but picked up by the snackbar
+      events: [...schedule.events, new GenericTaskEvent()],
     };
   }),
 

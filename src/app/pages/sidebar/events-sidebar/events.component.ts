@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { formatDistanceToNow } from 'date-fns';
 import { AppState } from 'src/app/store/app-state';
-import { AppEvent } from 'src/app/store/app-event.interface';
+import { AppEvent, TaskEvent } from 'src/app/store/app-event.state';
 import { TaskDto } from 'src/app/models/dtos/task.dto';
 import { EventOperation } from 'src/app/store/event-operation.enum';
 import { first, map } from 'rxjs/operators';
@@ -24,8 +24,12 @@ import { DayService } from 'src/app/services/day.service';
 export class EventsComponent implements OnInit {
   visibleEvents$ = new BehaviorSubject<EventsView>('tasks');
 
-  habitsEvents$ = this.store.pipe(select(selectHabitsEvents));
-  taskEvents$ = this.store.pipe(select(selectTaskEvents));
+  habitsEvents$ = this.store.select(selectHabitsEvents);
+  taskEvents$ = this.store
+    .select(selectTaskEvents)
+    .pipe(
+      map((events) => events.filter((event) => event instanceof TaskEvent))
+    ) as Observable<Array<TaskEvent>>;
 
   referenceNow: Date;
 
@@ -92,6 +96,8 @@ export class EventsComponent implements OnInit {
       case EventOperation.EditedTask:
       case EventOperation.EditedHabit:
         return 'edited';
+      default:
+        return '';
     }
   }
 }

@@ -31,6 +31,15 @@ export class HabitEvent extends AppEvent {
   }
 }
 
+export class GenericTaskEvent extends AppEvent {
+  operation = EventOperation.Update;
+  title = 'tasks';
+
+  constructor() {
+    super();
+  }
+}
+
 export class ErrorEvent extends AppEvent {
   constructor(public readonly title: string, public readonly message: string) {
     super();

@@ -15,7 +15,7 @@ import {
   AddHabitEvent,
   EditHabitEvent,
   DeleteHabitEvent,
-} from 'src/app/store/app-event.interface';
+} from 'src/app/store/app-event.state';
 
 export const initialState: HabitsState = {
   habits: [],

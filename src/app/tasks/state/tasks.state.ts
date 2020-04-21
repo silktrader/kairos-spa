@@ -1,5 +1,5 @@
 import { Task } from 'src/app/models/task';
-import { AppEvent } from 'src/app/store/app-event.interface';
+import { AppEvent } from 'src/app/store/app-event.state';
 
 export interface TasksState {
   readonly tasks: ReadonlyArray<Task>;
