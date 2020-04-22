@@ -43,15 +43,12 @@ export class DayService {
     endDate: Date
   ): Observable<ReadonlyArray<Task>> {
     return this.http
-      .get<ReadonlyArray<TaskDto>>(
-        `${environment.backendRootURL}/schedule/tasks`,
-        {
-          params: {
-            startDate: startDate.toISOString(),
-            endDate: endDate.toISOString(),
-          },
-        }
-      )
+      .get<ReadonlyArray<TaskDto>>(`${environment.backendRootURL}/tasks`, {
+        params: {
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
+        },
+      })
       .pipe(map((taskDtos) => taskDtos.map(this.mapTask)));
   }
 
@@ -83,7 +80,7 @@ export class DayService {
 
   addTask(taskDto: Omit<TaskDto, 'id'>): Observable<Task> {
     return this.http
-      .post<TaskDto>(`${environment.backendRootURL}/schedule/tasks`, taskDto)
+      .post<TaskDto>(`${environment.backendRootURL}/tasks`, taskDto)
       .pipe(
         map(this.mapTask)
         // catchError(error => {
@@ -108,7 +105,7 @@ export class DayService {
   deleteTask(taskId: number): Observable<DeleteTaskDto> {
     return this.http
       .delete<{ deletedTaskId: number; affectedTask: TaskDto | null }>(
-        `${environment.backendRootURL}/schedule/tasks/${taskId}`
+        `${environment.backendRootURL}/tasks/${taskId}`
       )
       .pipe(
         map((response) => {
@@ -124,17 +121,14 @@ export class DayService {
 
   updateTask(task: TaskDto): Observable<Task> {
     return this.http
-      .put<TaskDto>(
-        `${environment.backendRootURL}/schedule/tasks/${task.id}`,
-        task
-      )
+      .put<TaskDto>(`${environment.backendRootURL}/tasks/${task.id}`, task)
       .pipe(map(this.mapTask));
   }
 
   updateTasks(tasks: ReadonlyArray<TaskDto>): Observable<ReadonlyArray<Task>> {
     return this.http
       .put<ReadonlyArray<TaskDto>>(
-        `${environment.backendRootURL}/schedule/tasks/`,
+        `${environment.backendRootURL}/tasks/`,
         tasks
       )
       .pipe(map((tasksDtos) => tasksDtos.map(this.mapTask)));
