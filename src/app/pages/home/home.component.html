@@ -41,8 +41,9 @@
   <mat-sidenav #sidebar mode="side" position="end" class="sidebar mat-elevation-z4">
 
     <ng-container [ngSwitch]="(sidebarState$ | async)?.section">
-      <app-events *ngSwitchCase="'events'"></app-events>
-      <app-habits-sidebar *ngSwitchCase="'habits'"></app-habits-sidebar>
+      <app-events *ngSwitchCase="sidebarSection.Events"></app-events>
+      <app-habits-sidebar *ngSwitchCase="sidebarSection.Habits"></app-habits-sidebar>
+      <app-tags-sidebar *ngSwitchCase="sidebarSection.Tags"></app-tags-sidebar>
     </ng-container>
   </mat-sidenav>
 
@@ -54,11 +55,14 @@
           [ngClass]="{'last-day': last, 'day': true}"></app-day-view>
 
         <section class="sidebar-controls">
-          <button mat-icon-button color="accent" (click)="toggleEventsSidebar()">
+          <button mat-icon-button color="accent" (click)="toggleSidebarSection(sidebarSection.Events)">
             <mat-icon>restore_page</mat-icon>
           </button>
-          <button mat-icon-button color="accent" (click)="toggleHabitsSidebar()">
+          <button mat-icon-button color="accent" (click)="toggleSidebarSection(sidebarSection.Habits)">
             <mat-icon>save</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" (click)="toggleSidebarSection(sidebarSection.Tags)">
+            <mat-icon>label</mat-icon>
           </button>
         </section>
       </main>

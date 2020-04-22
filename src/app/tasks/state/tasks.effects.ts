@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { TasksErrorDialogComponent } from 'src/app/core/components/error-dialog/tasks-error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { TagDto } from '../models/tag.dto';
 
 @Injectable()
 export class TasksEffects {
@@ -99,6 +100,19 @@ export class TasksEffects {
         this.ds
           .updateTasks(action.tasksDtos)
           .pipe(map((tasks) => TasksActions.updateTasksSuccess({ tasks })))
+      )
+    )
+  );
+
+  /* Tags */
+  getTags$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.getTags),
+      mergeMap(() =>
+        this.ds.getTags().pipe(
+          map((tags) => TasksActions.getTagsSuccess({ tags })),
+          catchError(() => of(TasksActions.getTagsFailure))
+        )
       )
     )
   );

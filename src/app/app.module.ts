@@ -18,7 +18,7 @@ import { EditTaskDialogComponent } from './tasks/components/edit-task-dialog/edi
 import { EffectsModule } from '@ngrx/effects';
 import { EventsComponent } from './pages/sidebar/events-sidebar/events.component';
 import { HabitsSidebarComponent } from './pages/sidebar/habits-sidebar/habits-sidebar.component';
-import { SidebarSectionTitleComponent } from './pages/sidebar/sidebar-section-title/sidebar-section-title.component';
+import { SidebarSectionTitleComponent } from './core/components/sidebar-section-title/sidebar-section-title.component';
 import { HabitsModule } from './habits/habits.module';
 import { CoreModule } from './core/core.module';
 import { TasksModule } from './tasks/tasks.module';
@@ -32,7 +32,6 @@ import { TasksModule } from './tasks/tasks.module';
     SigninComponent,
     EventsComponent,
     HabitsSidebarComponent,
-    SidebarSectionTitleComponent,
   ],
   imports: [
     BrowserModule,

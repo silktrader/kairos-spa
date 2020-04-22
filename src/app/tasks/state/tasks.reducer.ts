@@ -15,6 +15,7 @@ export const initialState: TasksState = {
   loadingState: TasksLoadingState.Loading,
   editingTaskId: undefined,
   events: [],
+  tags: [],
 };
 
 export const filteredTasks = (
@@ -37,11 +38,6 @@ export const filteredTasks = (
 
 export const tasksReducer = createReducer(
   initialState,
-  on(TasksActions.add, (schedule, { task }) => {
-    return {
-      ...schedule,
-    };
-  }),
 
   on(TasksActions.addSuccess, (schedule, { task }) => {
     return {
@@ -143,5 +139,7 @@ export const tasksReducer = createReducer(
         ],
       };
     }
-  )
+  ),
+
+  on(TasksActions.getTagsSuccess, (state, { tags }) => ({ ...state, tags }))
 );

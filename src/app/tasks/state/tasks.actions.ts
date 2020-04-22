@@ -1,6 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { Task } from 'src/app/tasks/models/task';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
+import { TagDto } from '../models/tag.dto';
 
 export const get = createAction(
   '[TASKS] Get',
@@ -56,3 +57,14 @@ export const removeSuccess = createAction(
   '[TASKS] Remove Success',
   props<{ removedTaskId: number; affectedTask: Task | null }>()
 );
+
+/* Tags */
+
+export const getTags = createAction('[TASKS] Get Tags');
+
+export const getTagsSuccess = createAction(
+  '[TASKS] Get Tags Success',
+  props<{ tags: ReadonlyArray<TagDto> }>()
+);
+
+export const getTagsFailure = createAction('[TASKS] Get Tags Failure');

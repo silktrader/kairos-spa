@@ -7,9 +7,15 @@ import { TasksEffects } from './state/tasks.effects';
 import { EffectsModule } from '@ngrx/effects';
 import { tasksReducer } from './state/tasks.reducer';
 import { EditTaskDialogComponent } from './components/edit-task-dialog/edit-task-dialog.component';
+import { TagsSidebarComponent } from './components/tags-sidebar/tags-sidebar.component';
+import { SidebarSectionTitleComponent } from '../core/components/sidebar-section-title/sidebar-section-title.component';
 
 @NgModule({
-  declarations: [EditTaskDialogComponent],
+  declarations: [
+    EditTaskDialogComponent,
+    SidebarSectionTitleComponent,
+    TagsSidebarComponent,
+  ],
   imports: [
     CommonModule,
     CoreModule,
@@ -17,6 +23,7 @@ import { EditTaskDialogComponent } from './components/edit-task-dialog/edit-task
     StoreModule.forFeature('tasks', tasksReducer),
     EffectsModule.forFeature([TasksEffects]),
   ],
+  exports: [SidebarSectionTitleComponent, TagsSidebarComponent],
   entryComponents: [EditTaskDialogComponent],
 })
 export class TasksModule {}

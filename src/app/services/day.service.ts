@@ -7,11 +7,14 @@ import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { DeleteTaskDto } from '../tasks/models/deleteTask.dto';
+import { TagDto } from '../tasks/models/tag.dto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DayService {
+  private readonly tasksUrl = `${environment.backendRootURL}/tasks`;
+
   constructor(private readonly http: HttpClient) {}
 
   getDayName(date: Date): string {
@@ -43,7 +46,7 @@ export class DayService {
     endDate: Date
   ): Observable<ReadonlyArray<Task>> {
     return this.http
-      .get<ReadonlyArray<TaskDto>>(`${environment.backendRootURL}/tasks`, {
+      .get<ReadonlyArray<TaskDto>>(this.tasksUrl, {
         params: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
@@ -79,14 +82,12 @@ export class DayService {
   }
 
   addTask(taskDto: Omit<TaskDto, 'id'>): Observable<Task> {
-    return this.http
-      .post<TaskDto>(`${environment.backendRootURL}/tasks`, taskDto)
-      .pipe(
-        map(this.mapTask)
-        // catchError(error => {
-        //   this.ns.alert(error);
-        // })
-      );
+    return this.http.post<TaskDto>(this.tasksUrl, taskDto).pipe(
+      map(this.mapTask)
+      // catchError(error => {
+      //   this.ns.alert(error);
+      // })
+    );
   }
 
   // might create an adapter service or use class-transformer later tk
@@ -105,7 +106,7 @@ export class DayService {
   deleteTask(taskId: number): Observable<DeleteTaskDto> {
     return this.http
       .delete<{ deletedTaskId: number; affectedTask: TaskDto | null }>(
-        `${environment.backendRootURL}/tasks/${taskId}`
+        `${this.tasksUrl}/${taskId}`
       )
       .pipe(
         map((response) => {
@@ -121,16 +122,19 @@ export class DayService {
 
   updateTask(task: TaskDto): Observable<Task> {
     return this.http
-      .put<TaskDto>(`${environment.backendRootURL}/tasks/${task.id}`, task)
+      .put<TaskDto>(`${this.tasksUrl}/${task.id}`, task)
       .pipe(map(this.mapTask));
   }
 
   updateTasks(tasks: ReadonlyArray<TaskDto>): Observable<ReadonlyArray<Task>> {
     return this.http
-      .put<ReadonlyArray<TaskDto>>(
-        `${environment.backendRootURL}/tasks/`,
-        tasks
-      )
+      .put<ReadonlyArray<TaskDto>>(this.tasksUrl, tasks)
       .pipe(map((tasksDtos) => tasksDtos.map(this.mapTask)));
+  }
+
+  getTags(): Observable<ReadonlyArray<TagDto>> {
+    return this.http.get<ReadonlyArray<TagDto>>(
+      `${environment.backendRootURL}/tags`
+    );
   }
 }

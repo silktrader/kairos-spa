@@ -48,6 +48,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     section: SidebarSection;
   }>;
   private previousSidebarState: { opened: boolean; section: SidebarSection };
+  public sidebarSection = SidebarSection;
 
   constructor(
     private readonly ds: DayService,
@@ -141,7 +142,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.authService.signout();
   }
 
-  private toggleSidebarSection(section: SidebarSection): void {
+  public toggleSidebarSection(section: SidebarSection): void {
     if (
       this.previousSidebarState.opened &&
       this.previousSidebarState.section === section
@@ -151,13 +152,5 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.store.dispatch(toggleSidebar({ opened: true, section }));
-  }
-
-  toggleEventsSidebar(): void {
-    this.toggleSidebarSection(SidebarSection.Events);
-  }
-
-  toggleHabitsSidebar(): void {
-    this.toggleSidebarSection(SidebarSection.Habits);
   }
 }

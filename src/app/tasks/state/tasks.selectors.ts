@@ -36,3 +36,8 @@ export const selectLoadingState = createSelector(
   selectTasksFeature,
   (state) => state.loadingState
 );
+
+export const selectTags = createSelector(
+  selectTasksFeature,
+  (state) => state.tags
+);

@@ -11,6 +11,7 @@ export interface ScheduleState {
 }
 
 export enum SidebarSection {
-  Events = 'events',
-  Habits = 'habits',
+  Events,
+  Habits,
+  Tags,
 }
