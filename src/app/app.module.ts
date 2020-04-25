@@ -14,14 +14,13 @@ import { AuthModule } from 'auth';
 import { AuthComponent } from './pages/auth/auth.component';
 import { SigninComponent } from './pages/auth/signin/signin.component';
 import { SortablejsModule } from 'ngx-sortablejs';
-import { EditTaskDialogComponent } from './tasks/components/edit-task-dialog/edit-task-dialog.component';
 import { EffectsModule } from '@ngrx/effects';
 import { EventsComponent } from './pages/sidebar/events-sidebar/events.component';
 import { HabitsSidebarComponent } from './pages/sidebar/habits-sidebar/habits-sidebar.component';
-import { SidebarSectionTitleComponent } from './core/components/sidebar-section-title/sidebar-section-title.component';
 import { HabitsModule } from './habits/habits.module';
 import { CoreModule } from './core/core.module';
 import { TasksModule } from './tasks/tasks.module';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -50,7 +49,12 @@ import { TasksModule } from './tasks/tasks.module';
     HabitsModule,
     TasksModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: MatDialogRef,
+      useValue: {},
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

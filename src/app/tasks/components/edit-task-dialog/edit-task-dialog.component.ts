@@ -5,21 +5,33 @@ import {
   ViewChild,
   NgZone,
   OnDestroy,
+  ElementRef,
 } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Task } from 'src/app/tasks/models/task';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Subscription, BehaviorSubject } from 'rxjs';
-import { Store, select } from '@ngrx/store';
+import { BehaviorSubject, Subject, Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { take } from 'rxjs/operators';
+import { takeUntil, first, startWith, map } from 'rxjs/operators';
 import { formatISO } from 'date-fns';
 import {
   selectTaskEditingId,
   selectTaskById,
+  selectTags,
 } from 'src/app/tasks/state/tasks.selectors';
-import { edit, remove } from 'src/app/tasks/state/tasks.actions';
+import {
+  edit,
+  remove,
+  editSuccess,
+  removeSuccess,
+} from 'src/app/tasks/state/tasks.actions';
+import { Actions, ofType } from '@ngrx/effects';
+import { TagDto } from '../../models/tag.dto';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -28,83 +40,78 @@ import { edit, remove } from 'src/app/tasks/state/tasks.actions';
 })
 export class EditTaskDialogComponent implements OnInit, OnDestroy {
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
+  @ViewChild('tagsInput') tagsInput: ElementRef<HTMLInputElement>;
 
-  private readonly durationControl = new FormControl(undefined, {
-    updateOn: 'blur',
-  });
+  private readonly durationControl = new FormControl(undefined);
   private readonly completeControl = new FormControl(false);
+  public readonly tagsControl = new FormControl(undefined);
 
   readonly taskForm = this.formBuilder.group({
-    title: [undefined, { updateOn: 'blur' }],
-    details: [undefined, { updateOn: 'blur' }],
-    date: [undefined, { updateOn: 'blur' }],
+    title: [undefined],
+    details: [undefined],
+    date: [undefined],
     complete: this.completeControl,
     duration: this.durationControl,
   });
 
-  readonly taskUpdating$ = this.store.pipe(select(selectTaskEditingId));
+  readonly taskUpdating$ = this.store.select(selectTaskEditingId);
 
-  readonly task$ = this.store.pipe(
-    select(selectTaskById, { id: this.initialTask.id })
-  );
-  readonly changeNotice$ = new BehaviorSubject<string>('');
   readonly canRevert$ = new BehaviorSubject<boolean>(false);
 
-  public task: Task;
+  readonly autoCompletableTags: Observable<
+    string[]
+  > = this.tagsControl.valueChanges.pipe(
+    startWith(null),
+    map((tag: string | null) =>
+      tag ? this.filterTag(tag) : [...this.existingTags]
+    )
+  );
+  existingTags: Array<string>;
+  tags: Array<string>;
+  readonly tagSeparators: number[] = [ENTER, COMMA];
 
-  private readonly subscription = new Subscription();
+  private ngUnsubscribe$ = new Subject();
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public initialTask: Task,
     public dialogRef: MatDialogRef<EditTaskDialogComponent>,
     private readonly formBuilder: FormBuilder,
     private readonly store: Store<AppState>,
+    private readonly actions$: Actions,
     private readonly ngZone: NgZone
-  ) {}
+  ) {
+    this.tags = this.initialTask.tags.map((tag) => tag);
+  }
 
   ngOnInit(): void {
-    this.subscription.add(
-      this.taskForm.valueChanges.subscribe((changes) => {
-        // as soon as changes between the form and the task are detected save them
-        if (this.task.hasDifferentContents(changes)) this.saveTask();
+    this.store
+      .select(selectTags)
+      .pipe(takeUntil(this.ngUnsubscribe$))
+      .subscribe((tags) => (this.existingTags = tags.map((tag) => tag.name)));
 
-        // when the original task value and the form's contents differ allow changes to be reverted
-        this.canRevert$.next(this.initialTask.hasDifferentContents(changes));
-      })
-    );
+    // when the original task value and the form's contents differ allow changes to be reverted
+    this.taskForm.valueChanges
+      .pipe(takeUntil(this.ngUnsubscribe$))
+      .subscribe((changes) => {
+        this.canRevert$.next(
+          this.initialTask.hasDifferentContents({ ...changes, tags: this.tags })
+        ); // tk check whether to include tags as a form control
+      });
 
-    this.subscription.add(
-      this.task$.subscribe((task) => {
-        if (task === undefined) {
-          return;
-        }
-        this.task = task;
+    // close the dialog when the task is saved or deleted
+    this.actions$
+      .pipe(ofType(editSuccess, removeSuccess), takeUntil(this.ngUnsubscribe$))
+      .subscribe(() => this.dialogRef.close());
 
-        // the backend can perform changes depending on values sent
-        this.taskForm.patchValue(task);
-
-        // duration is set to null when tasks are marked as incomplete
-        if (this.task.complete) {
-          this.durationControl.enable();
-        } else {
-          this.durationControl.disable();
-        }
-
-        // got a new value from the store; signal the changes
-        // though these could originate from other sources
-        if (this.canRevert$.value) {
-          this.changeNotice$.next('... changes saved');
-          setTimeout(() => this.changeNotice$.next(''), 1000);
-        }
-      })
-    );
+    this.resetChanges();
   }
 
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.ngUnsubscribe$.next();
+    this.ngUnsubscribe$.complete();
   }
 
-  private saveTask(): void {
+  saveTask(): void {
     // ensure that the date is set to UTC
     const date = new Date(
       formatISO(this.taskForm.value.date, { representation: 'date' })
@@ -114,36 +121,67 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       edit({
         originalTask: {
-          ...this.task,
+          ...this.initialTask,
         },
         updatedTask: {
           ...this.initialTask,
           ...this.taskForm.value,
           date,
+          tags: this.tags,
         },
       })
     );
   }
 
-  revertChanges(): void {
-    this.store.dispatch(
-      edit({
-        updatedTask: this.initialTask,
-        originalTask: this.taskForm.value,
-      })
-    );
+  resetChanges(): void {
+    this.taskForm.patchValue(this.initialTask);
   }
 
   deleteTask(): void {
     this.store.dispatch(remove({ removedTaskId: this.initialTask.id }));
-
-    // tk should check for effective deletion by listening to observable?
-    this.dialogRef.close();
   }
 
   resizeDetailsTextarea() {
     this.ngZone.onStable
-      .pipe(take(1))
+      .pipe(first(), takeUntil(this.ngUnsubscribe$))
       .subscribe(() => this.autosize.resizeToFitContent(true));
+  }
+
+  removeTag(tag: string): void {
+    const index = this.tags.indexOf(tag);
+
+    if (index >= 0) {
+      this.tags.splice(index, 1);
+    }
+  }
+
+  addTag(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+
+    // add tag
+    if ((value || '').trim()) {
+      this.tags.push(value.trim());
+    }
+
+    // reset the input for new tags to be entered
+    if (input) input.value = '';
+    this.tagsControl.setValue(null);
+  }
+
+  selectTag(event: MatAutocompleteSelectedEvent): void {
+    this.tags.push(event.option.viewValue);
+    this.tagsInput.nativeElement.value = '';
+    this.tagsControl.setValue(null);
+  }
+
+  /* Return all those tags which contain the value entered so far */
+
+  private filterTag(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.tags.filter(
+      (tag) => tag.toLowerCase().indexOf(filterValue) === 0
+    );
   }
 }

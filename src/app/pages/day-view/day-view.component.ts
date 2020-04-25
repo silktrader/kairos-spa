@@ -199,6 +199,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
           details: null,
           complete: false,
           duration: null,
+          tags: [],
         },
       })
     );

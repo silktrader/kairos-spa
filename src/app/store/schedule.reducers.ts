@@ -6,7 +6,7 @@ import { setVisiblePeriod } from './schedule.actions';
 
 export const initialState: ScheduleState = {
   visiblePeriod: undefined,
-  sidebar: { opened: true, section: SidebarSection.Events },
+  sidebar: { opened: false, section: SidebarSection.Events },
   notifiedEventsIds: new Set(),
 };
 
@@ -25,7 +25,6 @@ export const scheduleReducer = createReducer(
     for (const eventId of schedule.notifiedEventsIds) {
       notifiedEventsIds.add(eventId);
     }
-    console.log(notifiedEventsIds);
     return {
       ...schedule,
       notifiedEventsIds,

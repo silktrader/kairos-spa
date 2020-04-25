@@ -1,5 +1,5 @@
 {
-  "extends": "tslint:recommended",
+  "extends": ["tslint:recommended", "rxjs-tslint-rules"],
   "rules": {
     "array-type": false,
     "arrow-parens": false,
@@ -52,7 +52,12 @@
     "template-banana-in-box": true,
     "template-no-negated-async": true,
     "use-lifecycle-interface": true,
-    "use-pipe-transform-interface": true
+    "use-pipe-transform-interface": true,
+    "rxjs-add": { "severity": "error" },
+    "rxjs-no-unused-add": { "severity": "error" },
+    "rxjs-no-unsafe-catch": true,
+    "rxjs-no-unsafe-switchmap": true,
+    "rxjs-prefer-angular-takeuntil": true
   },
   "rulesDirectory": ["codelyzer"]
 }

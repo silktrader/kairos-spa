@@ -68,3 +68,10 @@ export const getTagsSuccess = createAction(
 );
 
 export const getTagsFailure = createAction('[TASKS] Get Tags Failure');
+
+export const addTag = createAction('[TASKS] Add Tag');
+
+export const addTagSuccess = createAction(
+  '[TASKS] Add Tag',
+  props<{ tag: TagDto }>()
+);

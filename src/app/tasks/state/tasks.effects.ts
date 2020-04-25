@@ -6,8 +6,9 @@ import { mergeMap, map, catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { TasksErrorDialogComponent } from 'src/app/core/components/error-dialog/tasks-error-dialog.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TagDto } from '../models/tag.dto';
+import { EditTaskDialogComponent } from '../components/edit-task-dialog/edit-task-dialog.component';
 
 @Injectable()
 export class TasksEffects {
@@ -111,8 +112,17 @@ export class TasksEffects {
       mergeMap(() =>
         this.ds.getTags().pipe(
           map((tags) => TasksActions.getTagsSuccess({ tags })),
-          catchError(() => of(TasksActions.getTagsFailure))
+          catchError(() => of(TasksActions.getTagsFailure()))
         )
+      )
+    )
+  );
+
+  addTag$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.addTag),
+      mergeMap(() =>
+        this.ds.addTag().pipe(map((tag) => TasksActions.addTagSuccess({ tag })))
       )
     )
   );

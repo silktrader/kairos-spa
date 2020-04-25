@@ -4,44 +4,48 @@ main {
 }
 
 // Toolbar
-.status {
+mat-toolbar {
   display: flex;
-  flex: 1 1 70%;
+  flex-direction: column;
+  padding-bottom: 1rem;
 }
 
-.status-notice {
-  font-size: small;
-  font-style: italic;
-  opacity: 80%;
-}
-
-.actions {
+.dialog-actions {
   display: flex;
   justify-content: flex-end;
-  flex: 1 1 30%;
+  height: auto; // toolbar-row has a default height of 64px, overwritten
 }
 
 // Form
 
-form {
+.form-contents {
+  margin: 1rem;
   margin-left: 2rem;
   margin-right: 2rem;
-  margin-bottom: 1rem;
 }
 
-.title-section,
-.details-section {
+.title-section {
+  display: flex;
+  align-items: center;
+}
+
+.form-section {
   display: flex;
   align-items: center;
 
   mat-icon {
-    margin-right: 1rem;
+    margin-right: 2rem;
   }
 }
 
+.title-section {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .title-input {
-  min-width: 20rem;
-  font-size: larger;
+  font-size: large;
+  min-width: 40ch;
 }
 
 .date {
@@ -56,7 +60,7 @@ em {
 }
 
 .details-input {
-  min-width: 20rem;
+  min-width: 40ch;
   font-size: medium;
 }
 
@@ -68,7 +72,11 @@ em {
 }
 
 .duration-input {
-  width: 6rem;
+  width: 8rem;
+}
+
+.date-input {
+  width: 8rem;
 }
 
 // turn off the number spinners

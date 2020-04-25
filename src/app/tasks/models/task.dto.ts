@@ -6,4 +6,5 @@ export interface TaskDto {
   details: string | null;
   complete: boolean;
   duration: number | null;
+  tags: Array<string>;
 }

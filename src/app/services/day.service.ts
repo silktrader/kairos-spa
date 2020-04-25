@@ -14,6 +14,7 @@ import { TagDto } from '../tasks/models/tag.dto';
 })
 export class DayService {
   private readonly tasksUrl = `${environment.backendRootURL}/tasks`;
+  private readonly tagsUrl = `${environment.backendRootURL}/tags`;
 
   constructor(private readonly http: HttpClient) {}
 
@@ -75,6 +76,7 @@ export class DayService {
         unorderedTasks.delete(foundTask);
       } else {
         console.error('Could not reconstruct tasks order', tasks);
+        return tasks; // avoid infinite loops in case of error
       } // tk
     }
 
@@ -82,12 +84,9 @@ export class DayService {
   }
 
   addTask(taskDto: Omit<TaskDto, 'id'>): Observable<Task> {
-    return this.http.post<TaskDto>(this.tasksUrl, taskDto).pipe(
-      map(this.mapTask)
-      // catchError(error => {
-      //   this.ns.alert(error);
-      // })
-    );
+    return this.http
+      .post<TaskDto>(this.tasksUrl, taskDto)
+      .pipe(map(this.mapTask));
   }
 
   // might create an adapter service or use class-transformer later tk
@@ -99,7 +98,8 @@ export class DayService {
       taskDto.title,
       taskDto.details,
       taskDto.complete,
-      taskDto.duration
+      taskDto.duration,
+      taskDto.tags
     );
   }
 
@@ -133,8 +133,10 @@ export class DayService {
   }
 
   getTags(): Observable<ReadonlyArray<TagDto>> {
-    return this.http.get<ReadonlyArray<TagDto>>(
-      `${environment.backendRootURL}/tags`
-    );
+    return this.http.get<ReadonlyArray<TagDto>>(this.tagsUrl);
+  }
+
+  addTag(): Observable<TagDto> {
+    return this.http.get<TagDto>(this.tagsUrl);
   }
 }

@@ -9,7 +9,8 @@ export class Task {
     public readonly title: string,
     public readonly details: string | null,
     public readonly complete: boolean,
-    public readonly duration: number | null
+    public readonly duration: number | null,
+    public readonly tags: Array<string>
   ) {}
 
   hasDifferentContents(taskDto: TaskDto): boolean {
@@ -24,6 +25,11 @@ export class Task {
 
     if (!isEqual(this.date, taskDto.date)) {
       return true;
+    }
+
+    // determine whether the tags are the same
+    for (let i = 0; i < this.tags.length; i++) {
+      if (this.tags[i] !== taskDto.tags[i]) return true;
     }
 
     return false;

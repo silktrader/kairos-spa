@@ -1,64 +1,93 @@
-<main>
-  <mat-toolbar>
-    <section class="status">
-      <mat-spinner *ngIf="taskUpdating$ | async" [diameter]="20"></mat-spinner>
-      <span class="status-notice">{{changeNotice$ | async}}</span>
-    </section>
-    <section class="actions">
-      <button mat-icon-button [disabled]="!(canRevert$ | async)" (click)="revertChanges()">
+<form [formGroup]="taskForm">
+  <main>
+    <mat-toolbar>
+      <mat-toolbar-row class="dialog-actions">
+        <button class="close-button" mat-icon-button mat-dialog-close>
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-toolbar-row>
+      <!-- <section class="actions">
+      <button mat-icon-button [disabled]="!(canRevert$ | async)" (click)="resetChanges()">
         <mat-icon>restore</mat-icon>
       </button>
       <button mat-icon-button mat-dialog-close>
         <mat-icon>close</mat-icon>
       </button>
-    </section>
-  </mat-toolbar>
-
-  <form [formGroup]="taskForm">
-
-    <main>
-      <section class="title-section">
-        <mat-icon>title</mat-icon>
+    </section> -->
+      <mat-toolbar-row class="title-section">
         <mat-form-field class="title-input">
-          <input type="text" formControlName="title" matInput autocomplete="off" (keyup.enter)="$event.target.blur()"
-            maxlength="50">
+          <mat-label>Title</mat-label>
+          <input type="text" formControlName="title" matInput autocomplete="off" maxlength="50" cdkFocusInitial>
         </mat-form-field>
-      </section>
+      </mat-toolbar-row>
+    </mat-toolbar>
 
-      <section class="details-section">
-        <mat-icon>notes</mat-icon>
-        <mat-form-field class="details-input" appearance="outline">
+
+    <main class="form-contents">
+
+      <section class="form-section">
+        <mat-icon>description</mat-icon>
+        <mat-form-field class="details-input">
           <mat-label>Details</mat-label>
           <textarea formControlName="details" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
-            cdkAutosizeMinRows="2" autocomplete="off"></textarea>
+            cdkAutosizeMinRows="1" autocomplete="off"></textarea>
         </mat-form-field>
       </section>
 
-      <div class="complete-controls">
-        <mat-checkbox color="primary" formControlName="complete">Complete</mat-checkbox>
-        <mat-form-field class="duration-input">
-          <mat-label>Duration</mat-label>
-          <input type="number" matInput formControlName="duration" autocomplete="off"
-            (keyup.enter)="$event.target.blur()">
-          <span matSuffix>min.</span>
-        </mat-form-field>
-      </div>
+      <section class="form-section">
+        <mat-icon>assignment_turned_in</mat-icon>
+        <div class="complete-controls">
+          <mat-checkbox color="primary" formControlName="complete">Complete</mat-checkbox>
+          <mat-form-field class="duration-input">
+            <mat-label>Duration</mat-label>
+            <input type="number" matInput formControlName="duration" autocomplete="off">
+            <span matSuffix>min.</span>
+          </mat-form-field>
+        </div>
+      </section>
 
-      <mat-form-field>
-        <mat-label>Date</mat-label>
-        <input matInput [matDatepicker]="taskDate" formControlName="date">
-        <mat-datepicker-toggle matPrefix [for]="taskDate"></mat-datepicker-toggle>
-        <mat-datepicker #taskDate></mat-datepicker>
-      </mat-form-field>
+      <section class="form-section">
+        <mat-icon>event</mat-icon>
+        <mat-form-field class="date-input">
+          <mat-label>Date</mat-label>
+          <input matInput [matDatepicker]="taskDate" formControlName="date">
+          <mat-datepicker-toggle matSuffix [for]="taskDate"></mat-datepicker-toggle>
+          <mat-datepicker #taskDate></mat-datepicker>
+        </mat-form-field>
+      </section>
+
+      <section class="form-section">
+        <mat-icon>label</mat-icon>
+        <mat-form-field>
+          <mat-chip-list #chipList aria-label="Tags selection">
+            <mat-chip *ngFor="let tag of tags" [selectable]="false" [removable]="true" (removed)="removeTag(tag)">
+              {{tag}}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="New tag..." #tagsInput [formControl]="tagsControl" [matAutocomplete]="auto"
+              [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="tagSeparators"
+              (matChipInputTokenEnd)="addTag($event)">
+          </mat-chip-list>
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectTag($event)">
+            <mat-option *ngFor="let tag of autoCompletableTags | async" [value]="tag">
+              {{tag}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </section>
     </main>
 
-  </form>
-
-  <mat-toolbar>
-    <section class="actions">
-      <button mat-icon-button color="warn" (click)="deleteTask()">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </section>
-  </mat-toolbar>
-</main>
+    <mat-toolbar>
+      <section class="actions">
+        <button mat-icon-button color="warn" (click)="deleteTask()">
+          <mat-icon>delete</mat-icon>
+        </button>
+        <mat-spinner [diameter]="30" *ngIf="taskUpdating$ | async"></mat-spinner>
+        <button mat-raised-button (click)="saveTask()">
+          <mat-icon>save</mat-icon>
+          Save
+        </button>
+      </section>
+    </mat-toolbar>
+  </main>
+</form>

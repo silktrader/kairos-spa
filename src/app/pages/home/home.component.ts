@@ -73,6 +73,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     // get the available habits, needs not be tied with the dates' changes
     this.store.dispatch(getHabits());
 
+    // get available tags
+    this.store.dispatch(TasksActions.getTags());
+
     this.subscriptions.add(
       this.visibleDates$.subscribe((dates) => {
         const dateRange = {
