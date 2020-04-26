@@ -30,13 +30,12 @@
 
       <ng-container *ngSwitchCase="tasksLoadingState.Loaded">
 
-        <div class="add-task-card">
-          <mat-card [hidden]="!(addingTask$ | async)">
+        <div class="add-task-card" [ngClass]="{'editing': addingTask$ | async}">
+          <mat-card>
             <mat-form-field class="add-task-field">
               <mat-label></mat-label>
-              <input type="text" #addTaskInput autocomplete="off" placeholder="Enter task title" matInput
-                [formControl]="newTaskControl" (keyup.enter)="leavePromptAddTask()" (blur)="leavePromptAddTask()"
-                (keyup.esc)="cancelPromptAddTask()">
+              <input type="text" #addTaskInput autocomplete="off" matInput [formControl]="newTaskControl"
+                (keyup.enter)="leavePromptAddTask()" (blur)="leavePromptAddTask()" (keyup.esc)="cancelPromptAddTask()">
             </mat-form-field>
           </mat-card>
         </div>

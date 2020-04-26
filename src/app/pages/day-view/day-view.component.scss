@@ -60,26 +60,48 @@ h3 {
 }
 
 .task-title {
-  font-weight: 500;
-  font-family: "Oswald";
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.task-title,
+.add-task-field {
+  font-weight: 500;
+  font-family: "Oswald";
   text-align: center;
 }
 
 .add-task-card {
   width: 100%;
+  display: none;
 }
 
 .add-task-field {
-  // margin: 0.5rem;
   width: 100%;
-  //visibility: hidden;
-  // opacity: 0;
-  // transition-property: opacity;
-  // transition-duration: 0.5s;
-  // transition-timing-function: linear;
+}
+
+.editing {
+  display: block;
+  -webkit-animation: fadeIn 0.5s;
+  animation: fadeIn 0.5s;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 mat-card {
@@ -87,8 +109,7 @@ mat-card {
   margin: 0.5rem;
   margin-top: 0;
   cursor: pointer;
-  min-height: 30px;
-  overflow-y: auto;
+  height: 35px;
 
   span {
     width: 100%;
