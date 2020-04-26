@@ -1,7 +1,7 @@
 <form [formGroup]="taskForm">
   <main>
     <mat-toolbar>
-      <mat-toolbar-row class="dialog-actions">
+      <mat-toolbar-row class="toolbar-close-row">
         <button class="close-button" mat-icon-button mat-dialog-close>
           <mat-icon>close</mat-icon>
         </button>
@@ -26,7 +26,7 @@
     <main class="form-contents">
 
       <section class="form-section">
-        <mat-icon>description</mat-icon>
+        <mat-icon class="section-icon">description</mat-icon>
         <mat-form-field class="details-input">
           <mat-label>Details</mat-label>
           <textarea formControlName="details" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
@@ -35,7 +35,7 @@
       </section>
 
       <section class="form-section">
-        <mat-icon>assignment_turned_in</mat-icon>
+        <mat-icon class="section-icon">assignment_turned_in</mat-icon>
         <div class="complete-controls">
           <mat-checkbox color="primary" formControlName="complete">Complete</mat-checkbox>
           <mat-form-field class="duration-input">
@@ -47,7 +47,7 @@
       </section>
 
       <section class="form-section">
-        <mat-icon>event</mat-icon>
+        <mat-icon class="section-icon">event</mat-icon>
         <mat-form-field class="date-input">
           <mat-label>Date</mat-label>
           <input matInput [matDatepicker]="taskDate" formControlName="date">
@@ -57,14 +57,14 @@
       </section>
 
       <section class="form-section">
-        <mat-icon>label</mat-icon>
-        <mat-form-field>
+        <mat-icon class="section-icon">label</mat-icon>
+        <mat-form-field class="tags-field">
           <mat-chip-list #chipList aria-label="Tags selection">
             <mat-chip *ngFor="let tag of tags" [selectable]="false" [removable]="true" (removed)="removeTag(tag)">
               {{tag}}
               <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
-            <input placeholder="New tag..." #tagsInput [formControl]="tagsControl" [matAutocomplete]="auto"
+            <input #tagsInput placeholder="New tag ..." [formControl]="tagsControl" [matAutocomplete]="auto"
               [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="tagSeparators"
               (matChipInputTokenEnd)="addTag($event)">
           </mat-chip-list>
@@ -77,16 +77,15 @@
       </section>
     </main>
 
-    <mat-toolbar>
-      <section class="actions">
+    <mat-toolbar class="dialog-actions">
+      <section class="secondary-actions">
         <button mat-icon-button color="warn" (click)="deleteTask()">
           <mat-icon>delete</mat-icon>
         </button>
+      </section>
+      <section class="primary-actions">
         <mat-spinner [diameter]="30" *ngIf="taskUpdating$ | async"></mat-spinner>
-        <button mat-raised-button (click)="saveTask()">
-          <mat-icon>save</mat-icon>
-          Save
-        </button>
+        <button mat-raised-button color="primary" (click)="saveTask()">Save</button>
       </section>
     </mat-toolbar>
   </main>

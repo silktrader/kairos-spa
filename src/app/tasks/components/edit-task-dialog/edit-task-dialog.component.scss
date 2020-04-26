@@ -7,12 +7,13 @@ main {
 mat-toolbar {
   display: flex;
   flex-direction: column;
-  padding-bottom: 1rem;
 }
 
-.dialog-actions {
+.toolbar-close-row {
   display: flex;
   justify-content: flex-end;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem; // avoids the button being overlapped by the title input
   height: auto; // toolbar-row has a default height of 64px, overwritten
 }
 
@@ -24,28 +25,27 @@ mat-toolbar {
   margin-right: 2rem;
 }
 
-.title-section {
-  display: flex;
-  align-items: center;
-}
-
 .form-section {
   display: flex;
   align-items: center;
-
-  mat-icon {
-    margin-right: 2rem;
-  }
+  margin-bottom: 1rem;
 }
 
 .title-section {
+  display: flex;
+  align-items: center;
   padding-left: 2rem;
   padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+.section-icon {
+  margin-right: 2rem;
 }
 
 .title-input {
   font-size: large;
-  min-width: 40ch;
+  min-width: 36ch;
 }
 
 .date {
@@ -60,7 +60,7 @@ em {
 }
 
 .details-input {
-  min-width: 40ch;
+  min-width: 30ch;
   font-size: medium;
 }
 
@@ -79,9 +79,33 @@ em {
   width: 8rem;
 }
 
+/* Tags */
+
+.tags-field {
+  width: 100%;
+}
+
 // turn off the number spinners
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+/* Dialog Actions */
+
+.dialog-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.primary-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.secondary-actions {
+  display: flex;
+  justify-content: flex-start;
 }
