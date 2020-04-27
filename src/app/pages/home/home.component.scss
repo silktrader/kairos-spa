@@ -32,25 +32,33 @@
 
 // Sidebar
 
+$sidebarWidth: 65px;
+
 mat-sidenav-container {
   height: calc(100vh - 65px);
 }
 
 .sidebar {
-  min-width: 400px; // that's about 20% at 1080p
+  width: 400px; // that's about 20% at 1080p
 }
 
 .sidebar-controls {
   display: flex;
   flex-direction: column;
+  flex: 0 0 auto; // ensures the width remains the same
   height: auto; // allows margins to be set
-  width: 65px;
+  width: $sidebarWidth;
   align-items: center;
   border-left: #dadce0 1px solid;
+  background-color: #e4e6dc;
   padding-top: 2rem; // allows border to stretch all the way to the top
 
   mat-icon {
     transform: scale(1.5);
+  }
+
+  button {
+    margin-bottom: 1rem;
   }
 }
 

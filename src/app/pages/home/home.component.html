@@ -54,14 +54,14 @@
         <app-day-view *ngFor="let date of (visibleDates$ | async); let last = last" [date]="date"
           [ngClass]="{'last-day': last, 'day': true}"></app-day-view>
 
-        <section class="sidebar-controls">
-          <button mat-icon-button color="accent" (click)="toggleSidebarSection(sidebarSection.Events)">
+        <section class="sidebar-controls mat-elevation-z4">
+          <button mat-icon-button (click)="toggleSidebarSection(sidebarSection.Events)">
             <mat-icon>restore_page</mat-icon>
           </button>
-          <button mat-icon-button color="accent" (click)="toggleSidebarSection(sidebarSection.Habits)">
+          <button mat-icon-button (click)="toggleSidebarSection(sidebarSection.Habits)">
             <mat-icon>save</mat-icon>
           </button>
-          <button mat-icon-button color="accent" (click)="toggleSidebarSection(sidebarSection.Tags)">
+          <button mat-icon-button (click)="toggleSidebarSection(sidebarSection.Tags)">
             <mat-icon>label</mat-icon>
           </button>
         </section>
