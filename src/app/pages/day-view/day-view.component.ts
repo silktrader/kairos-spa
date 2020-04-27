@@ -323,4 +323,20 @@ export class DayViewComponent implements OnInit, OnDestroy {
     const previousDate = addDays(this.date, -1);
     this.rescheduleTasks(incompleteTasks, previousDate);
   }
+
+  setBadgeCss(badgeNumber: number, tagName: string) {
+    const left = `${-30 * badgeNumber}px`;
+    const bottom = left;
+    const height = `${60 * badgeNumber}px`;
+    const width = height;
+
+    return {
+      backgroundColor: '#e82',
+      height,
+      left,
+      bottom,
+      width,
+      zIndex: -1, // display badges below task titles
+    };
+  }
 }
