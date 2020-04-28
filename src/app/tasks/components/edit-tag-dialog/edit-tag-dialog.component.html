@@ -1,0 +1,59 @@
+<form [formGroup]="tagForm">
+  <mat-toolbar>
+    <mat-toolbar-row class="toolbar-close-row">
+      <button class="close-button" mat-icon-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-toolbar-row>
+    <mat-toolbar-row class="name-section">
+      <mat-form-field class="name-input">
+        <mat-label>Tag Name</mat-label>
+        <input type="text" formControlName="name" matInput autocomplete="off" maxlength="50" cdkFocusInitial>
+      </mat-form-field>
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <main class="form-contents">
+
+    <section class="form-section">
+      <mat-icon class="section-icon">description</mat-icon>
+      <mat-form-field class="description-input">
+        <mat-label>Description</mat-label>
+        <textarea formControlName="description" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+          cdkAutosizeMinRows="1" autocomplete="off"></textarea>
+      </mat-form-field>
+    </section>
+
+    <section class="form-section">
+      <mat-icon class="section-icon">palette</mat-icon>
+      <div class="colours-controls">
+        <section class="colours-grid">
+          <div class="colour-selector" matRipple *ngFor="let colour of availableColours"
+            [style.backgroundColor]="colour" [class.colour-selected]="selectedColour === colour"
+            (click)="selectColour(colour)">
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <mat-toolbar class="dialog-actions">
+    <section class="secondary-actions">
+      <button mat-icon-button color="warn" (click)="deleteTag()">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </section>
+    <section class="primary-actions">
+      <button mat-button [disabled]="!(canSave$ | async)" (click)="resetChanges()">
+        <span>Reset</span>
+      </button>
+      <div class="save-controls">
+        <mat-spinner [diameter]="30" *ngIf="(tagUpdating$ | async); else saveButton">
+        </mat-spinner>
+        <ng-template #saveButton>
+          <button mat-raised-button [disabled]="!(canSave$ | async)" color="primary" (click)="saveTag()">Save</button>
+        </ng-template>
+      </div>
+    </section>
+  </mat-toolbar>
+</form>

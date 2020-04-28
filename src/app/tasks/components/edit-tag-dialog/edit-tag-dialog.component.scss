@@ -1,0 +1,102 @@
+.toolbar-close-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem; // avoids the button being overlapped by the title input
+  height: auto; // toolbar-row has a default height of 64px, overwritten
+}
+
+// Form
+
+.form-contents {
+  margin: 1rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.form-section {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.name-section {
+  display: flex;
+  align-items: center;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-bottom: 2rem;
+}
+
+.section-icon {
+  margin-right: 2rem;
+}
+
+.name-input {
+  font-size: large;
+  min-width: 25ch;
+}
+
+.description-input {
+  width: 100%;
+}
+
+.colour-input {
+  visibility: hidden;
+}
+
+.colours-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 10px;
+}
+
+.colour-selector {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 30%;
+  cursor: pointer;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
+.colour-selected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12); // equivalent to mat-elevation-z8
+  font-size: xx-large;
+}
+
+.colour-selected::after {
+  content: "✔";
+}
+
+/* Dialog Actions */
+
+.dialog-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.primary-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  button {
+    margin-left: 1rem;
+  }
+}
+
+.save-controls {
+  width: 6rem;
+  display: flex;
+  justify-content: center;
+}
+
+.secondary-actions {
+  display: flex;
+  justify-content: flex-start;
+}
