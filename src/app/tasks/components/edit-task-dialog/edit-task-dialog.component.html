@@ -6,14 +6,6 @@
           <mat-icon>close</mat-icon>
         </button>
       </mat-toolbar-row>
-      <!-- <section class="actions">
-      <button mat-icon-button [disabled]="!(canRevert$ | async)" (click)="resetChanges()">
-        <mat-icon>restore</mat-icon>
-      </button>
-      <button mat-icon-button mat-dialog-close>
-        <mat-icon>close</mat-icon>
-      </button>
-    </section> -->
       <mat-toolbar-row class="title-section">
         <mat-form-field class="title-input">
           <mat-label>Title</mat-label>
@@ -21,7 +13,6 @@
         </mat-form-field>
       </mat-toolbar-row>
     </mat-toolbar>
-
 
     <main class="form-contents">
 
@@ -84,8 +75,17 @@
         </button>
       </section>
       <section class="primary-actions">
-        <mat-spinner [diameter]="30" *ngIf="taskUpdating$ | async"></mat-spinner>
-        <button mat-raised-button color="primary" (click)="saveTask()">Save</button>
+        <button mat-button [disabled]="!(canSave$ | async)" (click)="resetChanges()">
+          <span>Reset</span>
+        </button>
+        <div class="save-controls">
+          <mat-spinner [diameter]="30" *ngIf="(taskUpdating$ | async); else saveButton">
+          </mat-spinner>
+          <ng-template #saveButton>
+            <button mat-raised-button [disabled]="!(canSave$ | async)" color="primary"
+              (click)="saveTask()">Save</button>
+          </ng-template>
+        </div>
       </section>
     </mat-toolbar>
   </main>

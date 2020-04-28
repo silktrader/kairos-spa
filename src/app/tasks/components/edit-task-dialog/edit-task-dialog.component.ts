@@ -56,7 +56,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
 
   readonly taskUpdating$ = this.store.select(selectTaskEditingId);
 
-  readonly canRevert$ = new BehaviorSubject<boolean>(false);
+  readonly canSave$ = new BehaviorSubject<boolean>(false);
 
   readonly autoCompletableTags: Observable<
     string[]
@@ -93,7 +93,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.taskForm.valueChanges
       .pipe(takeUntil(this.ngUnsubscribe$))
       .subscribe((changes) => {
-        this.canRevert$.next(
+        this.canSave$.next(
           this.initialTask.hasDifferentContents({ ...changes, tags: this.tags })
         ); // tk check whether to include tags as a form control
       });

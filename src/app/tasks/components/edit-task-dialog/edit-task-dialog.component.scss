@@ -103,6 +103,16 @@ input[type="number"]::-webkit-outer-spin-button {
 .primary-actions {
   display: flex;
   justify-content: flex-end;
+
+  button {
+    margin-left: 1rem;
+  }
+}
+
+.save-controls {
+  width: 6rem;
+  display: flex;
+  justify-content: center;
 }
 
 .secondary-actions {
