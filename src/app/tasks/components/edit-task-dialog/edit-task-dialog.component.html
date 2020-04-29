@@ -51,7 +51,8 @@
         <mat-icon class="section-icon">label</mat-icon>
         <mat-form-field class="tags-field">
           <mat-chip-list #chipList aria-label="Tags selection">
-            <mat-chip *ngFor="let tag of tags" [selectable]="false" [removable]="true" (removed)="removeTag(tag)">
+            <mat-chip *ngFor="let tag of (editedTags$ | async)" [selectable]="false" [removable]="true"
+              (removed)="removeTag(tag)">
               {{tag}}
               <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>

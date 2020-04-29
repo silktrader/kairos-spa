@@ -28,6 +28,7 @@ export class Task {
     }
 
     // determine whether the tags are the same
+    if (this.tags.length !== taskDto.tags.length) return true;
     for (let i = 0; i < this.tags.length; i++) {
       if (this.tags[i] !== taskDto.tags[i]) return true;
     }

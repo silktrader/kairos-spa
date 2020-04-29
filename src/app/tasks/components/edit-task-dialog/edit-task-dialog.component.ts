@@ -10,7 +10,7 @@ import {
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Task } from 'src/app/tasks/models/task';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BehaviorSubject, Subject, Observable } from 'rxjs';
+import { BehaviorSubject, Subject, Observable, combineLatest } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
@@ -30,6 +30,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { TaskDto } from '../../models/task.dto';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -64,8 +65,10 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
       tag ? this.filterTag(tag) : [...this.existingTags]
     )
   );
+
+  // tk remove below?
   existingTags: Array<string>;
-  tags: Array<string>;
+  editedTags$ = new BehaviorSubject<Array<string>>(this.initialTask.tags);
   readonly tagSeparators: number[] = [ENTER, COMMA];
 
   private ngUnsubscribe$ = new Subject();
@@ -77,9 +80,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     private readonly store: Store<AppState>,
     private readonly actions$: Actions,
     private readonly ngZone: NgZone
-  ) {
-    this.tags = this.initialTask.tags.map((tag) => tag);
-  }
+  ) {}
 
   ngOnInit(): void {
     this.store
@@ -88,12 +89,15 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
       .subscribe((tags) => (this.existingTags = tags.map((tag) => tag.name)));
 
     // when the original task value and the form's contents differ allow changes to be reverted
-    this.taskForm.valueChanges
+    combineLatest([this.taskForm.valueChanges, this.editedTags$])
       .pipe(takeUntil(this.ngUnsubscribe$))
-      .subscribe((changes) => {
+      .subscribe(([taskFormChanges, tagChanges]) => {
         this.canSave$.next(
-          this.initialTask.hasDifferentContents({ ...changes, tags: this.tags })
-        ); // tk check whether to include tags as a form control
+          this.initialTask.hasDifferentContents({
+            ...this.updatedTask,
+            ...taskFormChanges,
+          })
+        );
       });
 
     // close the dialog when the task is saved or deleted
@@ -109,24 +113,30 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe$.complete();
   }
 
-  saveTask(): void {
+  get updatedTask(): TaskDto {
     // ensure that the date is set to UTC
     const date = new Date(
-      formatISO(this.taskForm.value.date, { representation: 'date' })
+      formatISO(this.taskForm.value.date, {
+        representation: 'date',
+      })
     );
 
+    return {
+      ...this.initialTask, // ensures the ID is present
+      ...this.taskForm.value,
+      date,
+      tags: this.editedTags$.value,
+    };
+  }
+
+  saveTask(): void {
     // merge data with spread operator
     this.store.dispatch(
       edit({
         originalTask: {
           ...this.initialTask,
         },
-        updatedTask: {
-          ...this.initialTask,
-          ...this.taskForm.value,
-          date,
-          tags: this.tags,
-        },
+        updatedTask: this.updatedTask,
       })
     );
   }
@@ -146,20 +156,19 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   }
 
   removeTag(tag: string): void {
-    const index = this.tags.indexOf(tag);
-
-    if (index >= 0) {
-      this.tags.splice(index, 1);
-    }
+    this.editedTags$.next([
+      ...this.editedTags$.value.filter((item) => item !== tag),
+    ]);
   }
 
+  /** Add new tags from the tags text input */
   addTag(event: MatChipInputEvent): void {
     const input = event.input;
     const value = event.value;
 
     // add tag
     if ((value || '').trim()) {
-      this.tags.push(value.trim());
+      this.editedTags$.next([...this.editedTags$.value, value.trim()]);
     }
 
     // reset the input for new tags to be entered
@@ -167,18 +176,18 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.tagsControl.setValue(null);
   }
 
+  /** Select tags from the autocomplete menu */
   selectTag(event: MatAutocompleteSelectedEvent): void {
-    this.tags.push(event.option.viewValue);
+    this.editedTags$.next([...this.editedTags$.value, event.option.viewValue]);
     this.tagsInput.nativeElement.value = '';
     this.tagsControl.setValue(null);
   }
 
-  /* Return all those tags which contain the value entered so far */
-
+  /** Return all those tags which contain the value entered so far */
   private filterTag(value: string): string[] {
     const filterValue = value.toLowerCase();
 
-    return this.tags.filter(
+    return this.editedTags$.value.filter(
       (tag) => tag.toLowerCase().indexOf(filterValue) === 0
     );
   }
