@@ -164,7 +164,9 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   /** Add new tags from the tags text input */
   addTag(event: MatChipInputEvent): void {
     const input = event.input;
-    const value = event.value;
+
+    // ensure that tags are always lowercase
+    const value = event.value.toLowerCase();
 
     // add tag
     if ((value || '').trim()) {

@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TagDto } from '../../models/tag.dto';
@@ -16,10 +16,16 @@ import { Actions, ofType } from '@ngrx/effects';
   styleUrls: ['./edit-tag-dialog.component.scss'],
 })
 export class EditTagDialogComponent implements OnInit, OnDestroy {
-  readonly tagForm = this.fb.group({
-    name: [undefined],
-    description: [undefined],
-    colour: [undefined],
+  readonly nameControl = new FormControl(undefined, [
+    Validators.required,
+    Validators.minLength(3),
+    Validators.maxLength(12),
+    Validators.pattern('^[a-z]+$'),
+  ]);
+  readonly tagForm = new FormGroup({
+    name: this.nameControl,
+    description: new FormControl(),
+    colour: new FormControl(undefined, [Validators.required]),
   });
 
   private selectedColour$ = new Subject<string>();
@@ -27,13 +33,12 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   public readonly initialColour: string = this.tag.colour;
 
   tagUpdating$ = new BehaviorSubject(false);
-  canSave$ = new BehaviorSubject(true);
-  ngUnsubscribe$ = new Subject();
+  readonly unchanged$ = new BehaviorSubject(false);
+  readonly ngUnsubscribe$ = new Subject();
 
   availableTagColours$ = this.store.select(selectAvailableTagColours);
 
   constructor(
-    private readonly fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public tag: TagDto,
     public dialogRef: MatDialogRef<EditTagDialogComponent>,
     private readonly store: Store<TasksState>,
@@ -41,6 +46,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // update the form with the chosen colour, despite the absence of a matching input
     this.selectedColour$
       .pipe(takeUntil(this.ngUnsubscribe$))
       .subscribe((selectedColour) => {

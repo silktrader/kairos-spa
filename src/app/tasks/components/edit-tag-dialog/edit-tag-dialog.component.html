@@ -8,7 +8,9 @@
     <mat-toolbar-row class="name-section">
       <mat-form-field class="name-input">
         <mat-label>Tag Name</mat-label>
-        <input type="text" formControlName="name" matInput autocomplete="off" maxlength="50" cdkFocusInitial>
+        <input type="text" formControlName="name" matInput autocomplete="off" maxlength="12" cdkFocusInitial
+          spellcheck="false">
+        <mat-error *ngIf="nameControl.invalid">Must be lowercase alphabetical characters.</mat-error>
       </mat-form-field>
     </mat-toolbar-row>
   </mat-toolbar>
@@ -47,14 +49,15 @@
       </button>
     </section>
     <section class="primary-actions">
-      <button mat-button [disabled]="!(canSave$ | async)" (click)="resetChanges()">
+      <button mat-button [disabled]="unchanged$ | async" (click)="resetChanges()">
         <span>Reset</span>
       </button>
       <div class="save-controls">
         <mat-spinner [diameter]="30" *ngIf="(tagUpdating$ | async); else saveButton">
         </mat-spinner>
         <ng-template #saveButton>
-          <button mat-raised-button [disabled]="!(canSave$ | async)" color="primary" (click)="saveTag()">Save</button>
+          <button mat-raised-button [disabled]="(unchanged$ | async) || !tagForm.valid" color="primary"
+            (click)="saveTag()">Save</button>
         </ng-template>
       </div>
     </section>
