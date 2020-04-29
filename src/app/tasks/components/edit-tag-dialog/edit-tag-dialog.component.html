@@ -28,7 +28,10 @@
       <mat-icon class="section-icon">palette</mat-icon>
       <div class="colours-controls">
         <section class="colours-grid">
-          <div class="colour-selector" matRipple *ngFor="let colour of availableColours"
+          <div class="colour-selector" matRipple [style.backgroundColor]="initialColour"
+            [class.colour-selected]="initialColour === selectedColour" (click)="selectColour(initialColour)">
+          </div>
+          <div class="colour-selector" matRipple *ngFor="let colour of (availableTagColours$ | async)"
             [style.backgroundColor]="colour" [class.colour-selected]="selectedColour === colour"
             (click)="selectColour(colour)">
           </div>

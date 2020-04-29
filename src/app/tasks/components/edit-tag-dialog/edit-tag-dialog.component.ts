@@ -4,6 +4,9 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TagDto } from '../../models/tag.dto';
 import { takeUntil } from 'rxjs/operators';
+import { TasksState } from '../../state/tasks.state';
+import { Store } from '@ngrx/store';
+import { selectAvailableTagColours } from '../../state/tasks.selectors';
 
 @Component({
   selector: 'app-edit-tag-dialog',
@@ -19,32 +22,18 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
 
   private selectedColour$ = new Subject<string>();
   public selectedColour: string;
+  public readonly initialColour: string = this.tag.colour;
 
   tagUpdating$ = new BehaviorSubject(false);
   canSave$ = new BehaviorSubject(true);
   ngUnsubscribe$ = new Subject();
 
-  availableColours: string[] = [
-    '#3e6158',
-    '#3f7a89',
-    '#96c582',
-    '#b7d5c4',
-    '#bcd6e7',
-    '#7c90c1',
-    '#9d8594',
-    '#dad0d8',
-    '#4b4fce',
-    '#4e0a77',
-    '#a367b5',
-    '#ee3e6d',
-    '#d63d62',
-    '#c6a670',
-    '#f46600',
-  ];
+  availableTagColours$ = this.store.select(selectAvailableTagColours);
 
   constructor(
     private readonly fb: FormBuilder,
-    @Inject(MAT_DIALOG_DATA) public tag: TagDto
+    @Inject(MAT_DIALOG_DATA) public tag: TagDto,
+    private readonly store: Store<TasksState>
   ) {}
 
   ngOnInit(): void {

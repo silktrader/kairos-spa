@@ -8,6 +8,7 @@ export interface TasksState {
   readonly editingTaskId: number | undefined;
   readonly events: ReadonlyArray<AppEvent>;
   readonly tags: ReadonlyArray<TagDto>;
+  readonly availableTagColours: ReadonlyArray<string>;
 }
 
 export enum TasksLoadingState {

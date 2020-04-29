@@ -45,7 +45,8 @@
           <mat-card *ngFor="let task of tasks" class="mat-elevation-z2" matRipple (click)="openEditTakDialog(task)"
             [ngClass]="{'task-complete': task.complete}">
             <span class="task-title">{{task.title}}</span>
-            <div class="badge" *ngFor="let tag of task.tags; let i = index" [ngStyle]="setBadgeCss(i + 1, tag)"></div>
+            <div class="badge" *ngFor="let tag of task.tags; let i = index" [ngStyle]="badgeCss$(i + 1, tag) | async">
+            </div>
           </mat-card>
         </div>
 

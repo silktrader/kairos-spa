@@ -9,6 +9,7 @@ import {
 } from 'src/app/store/app-event.state';
 import { Task } from 'src/app/tasks/models/task';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
+import { baseTagColours } from './colours.state';
 
 export const initialState: TasksState = {
   tasks: [],
@@ -16,6 +17,7 @@ export const initialState: TasksState = {
   editingTaskId: undefined,
   events: [],
   tags: [],
+  availableTagColours: [],
 };
 
 export const filteredTasks = (
@@ -141,5 +143,15 @@ export const tasksReducer = createReducer(
     }
   ),
 
-  on(TasksActions.getTagsSuccess, (state, { tags }) => ({ ...state, tags }))
+  on(TasksActions.getTagsSuccess, (state, { tags }) => {
+    // remove fetched tags colours from the available list
+    const usedColours = tags.map((tag) => tag.colour);
+    return {
+      ...state,
+      tags,
+      availableTagColours: baseTagColours.filter(
+        (colour) => !usedColours.includes(colour)
+      ),
+    };
+  })
 );

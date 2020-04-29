@@ -31,6 +31,7 @@ import {
 import {
   selectLoadingState,
   selectTasksByDate,
+  selectTagColour,
 } from 'src/app/tasks/state/tasks.selectors';
 import { updateTasks, add } from 'src/app/tasks/state/tasks.actions';
 import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
@@ -324,19 +325,22 @@ export class DayViewComponent implements OnInit, OnDestroy {
     this.rescheduleTasks(incompleteTasks, previousDate);
   }
 
-  setBadgeCss(badgeNumber: number, tagName: string) {
-    const left = `${-30 * badgeNumber}px`;
-    const bottom = left;
-    const height = `${60 * badgeNumber}px`;
-    const width = height;
-
-    return {
-      backgroundColor: '#e82',
-      height,
-      left,
-      bottom,
-      width,
-      zIndex: -1, // display badges below task titles
-    };
+  badgeCss$(badgeNumber: number, tagName: string) {
+    return this.store.select(selectTagColour, { tagName }).pipe(
+      map((colour) => {
+        const left = `${-30 * badgeNumber}px`;
+        const bottom = left;
+        const height = `${60 * badgeNumber}px`;
+        const width = height;
+        return {
+          backgroundColor: colour,
+          height,
+          left,
+          bottom,
+          width,
+          zIndex: -1 * badgeNumber, // display badges below task titles
+        };
+      })
+    );
   }
 }

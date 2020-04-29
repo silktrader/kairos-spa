@@ -18,7 +18,6 @@ import { takeUntil, first, startWith, map } from 'rxjs/operators';
 import { formatISO } from 'date-fns';
 import {
   selectTaskEditingId,
-  selectTaskById,
   selectTags,
 } from 'src/app/tasks/state/tasks.selectors';
 import {
@@ -28,7 +27,6 @@ import {
   removeSuccess,
 } from 'src/app/tasks/state/tasks.actions';
 import { Actions, ofType } from '@ngrx/effects';
-import { TagDto } from '../../models/tag.dto';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
