@@ -121,8 +121,21 @@ export class TasksEffects {
   addTag$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TasksActions.addTag),
-      mergeMap(() =>
-        this.ds.addTag().pipe(map((tag) => TasksActions.addTagSuccess({ tag })))
+      mergeMap((action: { tagDto: Omit<TagDto, 'id'> }) =>
+        this.ds
+          .addTag(action.tagDto)
+          .pipe(map((tagDto) => TasksActions.addTagSuccess({ tagDto })))
+      )
+    )
+  );
+
+  editTag$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.editTag),
+      mergeMap((action: { tagDto: TagDto }) =>
+        this.ds
+          .editTag(action.tagDto)
+          .pipe(map((tagDto) => TasksActions.editTagSuccess({ tagDto })))
       )
     )
   );

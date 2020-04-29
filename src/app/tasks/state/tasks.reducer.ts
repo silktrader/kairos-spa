@@ -143,6 +143,8 @@ export const tasksReducer = createReducer(
     }
   ),
 
+  /* Tags */
+
   on(TasksActions.getTagsSuccess, (state, { tags }) => {
     // remove fetched tags colours from the available list
     const usedColours = tags.map((tag) => tag.colour);
@@ -153,5 +155,16 @@ export const tasksReducer = createReducer(
         (colour) => !usedColours.includes(colour)
       ),
     };
-  })
+  }),
+  // tk turn availableTagColours into a selector
+
+  on(TasksActions.addTagSuccess, (state, { tagDto }) => ({
+    ...state,
+    tags: [...state.tags, tagDto],
+  })),
+
+  on(TasksActions.editTagSuccess, (state, { tagDto }) => ({
+    ...state,
+    tags: [...state.tags.filter((tag) => tag.id !== tagDto.id), tagDto],
+  }))
 );

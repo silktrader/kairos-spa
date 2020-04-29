@@ -1,12 +1,14 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Subject, BehaviorSubject } from 'rxjs';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TagDto } from '../../models/tag.dto';
 import { takeUntil } from 'rxjs/operators';
 import { TasksState } from '../../state/tasks.state';
 import { Store } from '@ngrx/store';
 import { selectAvailableTagColours } from '../../state/tasks.selectors';
+import { editTag, editTagSuccess } from '../../state/tasks.actions';
+import { Actions, ofType } from '@ngrx/effects';
 
 @Component({
   selector: 'app-edit-tag-dialog',
@@ -33,7 +35,9 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   constructor(
     private readonly fb: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public tag: TagDto,
-    private readonly store: Store<TasksState>
+    public dialogRef: MatDialogRef<EditTagDialogComponent>,
+    private readonly store: Store<TasksState>,
+    private readonly actions$: Actions
   ) {}
 
   ngOnInit(): void {
@@ -43,6 +47,12 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
         this.selectedColour = selectedColour;
         this.tagForm.patchValue({ colour: selectedColour });
       });
+
+    // close the dialog when the task is saved or deleted
+    this.actions$
+      .pipe(ofType(editTagSuccess), takeUntil(this.ngUnsubscribe$))
+      .subscribe(() => this.dialogRef.close());
+
     this.resetChanges();
   }
 
@@ -61,7 +71,15 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   }
 
   saveTag(): void {
-    console.log({ ...this.tagForm.value, colour: this.selectedColour });
+    this.store.dispatch(
+      editTag({
+        tagDto: {
+          ...this.tagForm.value,
+          id: this.tag.id,
+          colour: this.selectedColour,
+        },
+      })
+    );
   }
 
   deleteTag(): void {}

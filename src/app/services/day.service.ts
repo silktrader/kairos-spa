@@ -136,7 +136,11 @@ export class DayService {
     return this.http.get<ReadonlyArray<TagDto>>(this.tagsUrl);
   }
 
-  addTag(): Observable<TagDto> {
-    return this.http.get<TagDto>(this.tagsUrl);
+  addTag(tagDto: Omit<TagDto, 'id'>): Observable<TagDto> {
+    return this.http.post<TagDto>(this.tagsUrl, tagDto);
+  }
+
+  editTag(tagDto: TagDto): Observable<TagDto> {
+    return this.http.put<TagDto>(`${this.tagsUrl}/${tagDto.id}`, tagDto);
   }
 }

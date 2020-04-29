@@ -69,9 +69,22 @@ export const getTagsSuccess = createAction(
 
 export const getTagsFailure = createAction('[TASKS] Get Tags Failure');
 
-export const addTag = createAction('[TASKS] Add Tag');
+export const addTag = createAction(
+  '[TASKS] Add Tag',
+  props<{ tagDto: Omit<TagDto, 'id'> }>()
+);
 
 export const addTagSuccess = createAction(
   '[TASKS] Add Tag',
-  props<{ tag: TagDto }>()
+  props<{ tagDto: TagDto }>()
+);
+
+export const editTag = createAction(
+  '[TASKS] Edit Tag',
+  props<{ tagDto: TagDto }>()
+);
+
+export const editTagSuccess = createAction(
+  '[TASKS] Edit Tag Success',
+  props<{ tagDto: TagDto }>()
 );
