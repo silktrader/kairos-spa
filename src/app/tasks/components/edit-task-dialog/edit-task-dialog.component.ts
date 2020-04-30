@@ -31,6 +31,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { TaskDto } from '../../models/task.dto';
+import { TaskService } from '../../task.service';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -79,7 +80,8 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     private readonly formBuilder: FormBuilder,
     private readonly store: Store<AppState>,
     private readonly actions$: Actions,
-    private readonly ngZone: NgZone
+    private readonly ngZone: NgZone,
+    private readonly ts: TaskService
   ) {}
 
   ngOnInit(): void {
@@ -91,12 +93,9 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     // when the original task value and the form's contents differ allow changes to be reverted
     combineLatest([this.taskForm.valueChanges, this.editedTags$])
       .pipe(takeUntil(this.ngUnsubscribe$))
-      .subscribe(([taskFormChanges, tagChanges]) => {
+      .subscribe(() => {
         this.canSave$.next(
-          this.initialTask.hasDifferentContents({
-            ...this.updatedTask,
-            ...taskFormChanges,
-          })
+          this.ts.haveDifferentValues(this.initialTask, this.updatedTask)
         );
       });
 
@@ -115,14 +114,12 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
 
   get updatedTask(): TaskDto {
     // ensure that the date is set to UTC
-    const date = new Date(
-      formatISO(this.taskForm.value.date, {
-        representation: 'date',
-      })
-    );
-
+    const date = formatISO(this.taskForm.value.date, {
+      representation: 'date',
+    });
     return {
-      ...this.initialTask, // ensures the ID is present
+      id: this.initialTask.id, // ensures the ID is present
+      previousId: this.initialTask.previousId,
       ...this.taskForm.value,
       date,
       tags: this.editedTags$.value,
@@ -133,9 +130,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     // merge data with spread operator
     this.store.dispatch(
       edit({
-        originalTask: {
-          ...this.initialTask.toDto(),
-        },
+        originalTask: this.ts.serialise(this.initialTask),
         updatedTask: this.updatedTask,
       })
     );

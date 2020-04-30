@@ -1,24 +1,25 @@
 import { Injectable } from '@angular/core';
-import { Task } from '../tasks/models/task';
+import { Task } from './models/task';
 import { format } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
-import { TaskDto } from '../tasks/models/task.dto';
+import { TaskDto } from './models/task.dto';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { DeleteTaskDto } from '../tasks/models/deleteTask.dto';
-import { TagDto } from '../tasks/models/tag.dto';
+import { DeleteTaskDto } from './models/deleteTask.dto';
+import { TagDto } from './models/tag.dto';
+import { TasksErrorDialogComponent } from '../core/components/error-dialog/tasks-error-dialog.component';
 
 @Injectable({
   providedIn: 'root',
 })
-export class DayService {
+export class TaskService {
   private readonly tasksUrl = `${environment.backendRootURL}/tasks`;
   private readonly tagsUrl = `${environment.backendRootURL}/tags`;
 
   constructor(private readonly http: HttpClient) {}
 
-  getUrl(date: Date): string {
+  getDateString(date: Date): string {
     return format(date, 'yyyy-MM-dd');
   }
 
@@ -29,11 +30,11 @@ export class DayService {
     return this.http
       .get<ReadonlyArray<TaskDto>>(this.tasksUrl, {
         params: {
-          startDate: Task.getDateString(startDate),
-          endDate: Task.getDateString(endDate),
+          startDate: this.getDateString(startDate),
+          endDate: this.getDateString(endDate),
         },
       })
-      .pipe(map((taskDtos) => taskDtos.map(this.mapTask)));
+      .pipe(map((taskDtos) => taskDtos.map(this.deserialise)));
   }
 
   /** Sort tasks according to their previous ID references */
@@ -71,11 +72,11 @@ export class DayService {
   addTask(taskDto: Omit<TaskDto, 'id'>): Observable<Task> {
     return this.http
       .post<TaskDto>(this.tasksUrl, taskDto)
-      .pipe(map(this.mapTask));
+      .pipe(map(this.deserialise));
   }
 
   // might create an adapter service or use class-transformer later tk
-  private mapTask(taskDto: TaskDto): Task {
+  private deserialise(taskDto: TaskDto): Task {
     return new Task(
       taskDto.id,
       taskDto.previousId,
@@ -88,6 +89,21 @@ export class DayService {
     );
   }
 
+  /** Turn a Task into a TaskDto */
+  serialise(task: Task): TaskDto {
+    const { id, title, details, complete, duration, previousId, tags } = task;
+    return {
+      id,
+      title,
+      details,
+      complete,
+      duration,
+      previousId,
+      tags,
+      date: format(task.date, 'yyyy-MM-dd'),
+    };
+  }
+
   deleteTask(taskId: number): Observable<DeleteTaskDto> {
     return this.http
       .delete<{ deletedTaskId: number; affectedTask: TaskDto | null }>(
@@ -98,7 +114,7 @@ export class DayService {
           return {
             deletedTaskId: response.deletedTaskId,
             affectedTask: response.affectedTask
-              ? this.mapTask(response.affectedTask)
+              ? this.deserialise(response.affectedTask)
               : null,
           };
         })
@@ -108,13 +124,32 @@ export class DayService {
   updateTask(task: TaskDto): Observable<Task> {
     return this.http
       .put<TaskDto>(`${this.tasksUrl}/${task.id}`, task)
-      .pipe(map(this.mapTask));
+      .pipe(map(this.deserialise));
   }
 
   updateTasks(tasks: ReadonlyArray<TaskDto>): Observable<ReadonlyArray<Task>> {
     return this.http
       .put<ReadonlyArray<TaskDto>>(this.tasksUrl, tasks)
-      .pipe(map((tasksDtos) => tasksDtos.map(this.mapTask)));
+      .pipe(map((tasksDtos) => tasksDtos.map(this.deserialise)));
+  }
+
+  haveDifferentValues(task: Task, dto: TaskDto): boolean {
+    // compare basic values in order of most likely to be different
+    if (task.title !== dto.title) return true;
+    if (task.complete !== dto.complete) return true;
+    if (task.duration !== dto.duration) return true;
+    if (task.details !== dto.details) return true;
+
+    // compare formatted dates
+    if (this.getDateString(task.date) !== dto.date) return true;
+
+    // determine whether the tags are the same
+    if (task.tags.length !== dto.tags.length) return true;
+    for (let i = 0; i < task.tags.length; i++) {
+      if (task.tags[i] !== dto.tags[i]) return true;
+    }
+
+    return false;
   }
 
   getTags(): Observable<ReadonlyArray<TagDto>> {

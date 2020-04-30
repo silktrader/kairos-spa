@@ -14,7 +14,7 @@ import {
   selectTasksByDate,
 } from 'src/app/tasks/state/tasks.selectors';
 import { remove, add, edit } from 'src/app/tasks/state/tasks.actions';
-import { DayService } from 'src/app/services/day.service';
+import { TaskService } from 'src/app/tasks/task.service';
 
 @Component({
   selector: 'app-events',
@@ -39,7 +39,7 @@ export class EventsComponent implements OnInit {
 
   constructor(
     private readonly store: Store<AppState>,
-    private ds: DayService
+    private ts: TaskService
   ) {}
 
   ngOnInit(): void {
@@ -70,7 +70,7 @@ export class EventsComponent implements OnInit {
     this.store
       .pipe(
         select(selectTasksByDate, { date: new Date(taskDto.date) }),
-        map(this.ds.sortTasks),
+        map(this.ts.sortTasks),
         first()
       )
       .subscribe((orderedTasks) => {

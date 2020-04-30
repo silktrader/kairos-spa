@@ -20,24 +20,24 @@
           <mat-expansion-panel-header collapsedHeight="*" expandedHeight="*">
             <header class="event-header">
               <span class="event-header-time">{{operationName(event.operation)}} {{timeAgo(event)}} ago</span>
-              <span class="event-header-title">{{event.taskDto.title}}</span>
+              <span class="event-header-title">{{event.task.title}}</span>
             </header>
           </mat-expansion-panel-header>
 
-          <p class="event-details">{{event.taskDto.details}}</p>
+          <p class="event-details">{{event.task.details}}</p>
           <section class="event-task-date">
             <time class="event-task-date-item">
-              <mat-icon>event_note</mat-icon>{{event.taskDto.date | date}}
+              <mat-icon>event_note</mat-icon>{{event.task.date | date}}
             </time>
-            <time *ngIf="event.taskDto.duration" class="event-task-date-item">
-              <mat-icon>schedule</mat-icon>{{event.taskDto.duration}}
+            <time *ngIf="event.task.duration" class="event-task-date-item">
+              <mat-icon>schedule</mat-icon>{{event.task.duration}}
             </time>
-            <aside *ngIf="event.taskDto.complete" class="event-task-date-item">
+            <aside *ngIf="event.task.complete" class="event-task-date-item">
               <mat-icon>done</mat-icon>
             </aside>
           </section>
 
-          <ng-container *ngIf="event['originalDto'] as originalDto">
+          <ng-container *ngIf="event['originalTaskDto'] as originalDto">
             <mat-divider></mat-divider>
             <div class="original-details">
               <p class="event-details line-through event-header-title">{{originalDto.title}}</p>
@@ -58,11 +58,11 @@
 
           <mat-action-row [ngSwitch]="event.operation">
             <button *ngSwitchCase="eventOperation.AddedTask" mat-button color="warn"
-              (click)="delete(event.taskDto.id)">Remove</button>
+              (click)="delete(event.task.id)">Remove</button>
             <button *ngSwitchCase="eventOperation.EditedTask" mat-button color="primary"
-              (click)="revertTask(event.taskDto, event['originalDto'])">Revert</button>
+              (click)="revertTask(event.task, event['originalTaskDto'])">Revert</button>
             <button *ngSwitchCase="eventOperation.DeletedTask" mat-button color="primary"
-              (click)="restoreTask(event.taskDto)">Restore</button>
+              (click)="restoreTask(event.task)">Restore</button>
           </mat-action-row>
         </mat-expansion-panel>
       </ng-container>

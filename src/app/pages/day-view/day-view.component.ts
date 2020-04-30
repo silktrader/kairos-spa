@@ -8,7 +8,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { DayService } from 'src/app/services/day.service';
+import { TaskService } from 'src/app/tasks/task.service';
 import { Task } from 'src/app/tasks/models/task';
 import { Subscription, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { Options } from 'sortablejs';
@@ -64,7 +64,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
   constructor(
     private readonly store: Store<AppState>,
     private readonly habitsStore: Store<HabitsState>,
-    private readonly ds: DayService,
+    private readonly ts: TaskService,
     private editTaskDialog: MatDialog
   ) {}
 
@@ -73,7 +73,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
       this.store
         .pipe(
           select(selectTasksByDate, { date: this.date }),
-          map(this.ds.sortTasks)
+          map(this.ts.sortTasks)
         )
         .subscribe((tasks) => {
           this.tasks = tasks;
@@ -112,7 +112,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
             select(selectTasksByDate, {
               date: targetDate,
             }),
-            map(this.ds.sortTasks),
+            map(this.ts.sortTasks),
             take(1)
           )
           .subscribe((tasks) => {
@@ -125,28 +125,32 @@ export class DayViewComponent implements OnInit, OnDestroy {
             ? null
             : targetTasks[event.newIndex - 1].id;
 
-        const updatedTasks = [movedTask.toDto()];
+        const updatedTasks = [this.ts.serialise(movedTask)];
 
         // change the task that references the one being changed
-        const orphanTask = this.tasks
-          .find((task) => task.previousId === movedTask.id)
-          ?.toDto();
+        const orphanTask = this.tasks.find(
+          (task) => task.previousId === movedTask.id
+        );
         if (orphanTask) {
-          orphanTask.previousId = movedTask.previousId;
-          updatedTasks.push(orphanTask);
+          updatedTasks.push({
+            ...this.ts.serialise(orphanTask),
+            previousId: movedTask.previousId,
+          });
         }
 
         // replace the task whose previous ID matches the new reference
-        const pushedDown = targetTasks
-          .find((task) => task.previousId === antecedentId)
-          ?.toDto();
+        const pushedDown = targetTasks.find(
+          (task) => task.previousId === antecedentId
+        );
         if (pushedDown) {
-          pushedDown.previousId = movedTask.id;
-          updatedTasks.push(pushedDown);
+          updatedTasks.push({
+            ...this.ts.serialise(pushedDown),
+            previousId: movedTask.id,
+          });
         }
 
         // finally change the moved task
-        updatedTasks[0].date = Task.getDateString(targetDate);
+        updatedTasks[0].date = this.ts.getDateString(targetDate);
         updatedTasks[0].previousId = antecedentId;
 
         // dispatch the effect
@@ -196,7 +200,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
         task: {
           title,
           previousId,
-          date: Task.getDateString(this.date),
+          date: this.ts.getDateString(this.date),
           details: null,
           complete: false,
           duration: null,
@@ -212,7 +216,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
     // when moving down assign the [newIndex].id, when moving up assing the [newIndex - 1].id
     const updatedMainTask = {
-      ...mainTask.toDto(),
+      ...this.ts.serialise(mainTask),
       previousId:
         oldIndex < newIndex
           ? this.tasks[newIndex].id
@@ -228,13 +232,19 @@ export class DayViewComponent implements OnInit, OnDestroy {
     for (const task of this.tasks) {
       // change the task that referenced the moved task
       if (task.previousId === mainTask.id) {
-        updatedTasks.push({ ...task.toDto(), previousId: mainTask.previousId });
+        updatedTasks.push({
+          ...this.ts.serialise(task),
+          previousId: mainTask.previousId,
+        });
         continue;
       }
 
       // change the task that referenced the one on top of the moving task
       if (task.previousId === updatedMainTask.previousId) {
-        updatedTasks.push({ ...task.toDto(), previousId: mainTask.id });
+        updatedTasks.push({
+          ...this.ts.serialise(task),
+          previousId: mainTask.id,
+        });
       }
     }
 
@@ -265,7 +275,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
   }
 
   get dayUrl(): string {
-    return this.ds.getUrl(this.date);
+    return this.ts.getDateString(this.date);
   }
 
   toggleHabit(habitId: number, habitEntry: HabitEntryDto): void {
@@ -285,20 +295,20 @@ export class DayViewComponent implements OnInit, OnDestroy {
   private moveTasks(movedTasks: Array<Task>, date: Date): void {
     // fetch tasks via service without changing the state
     // might change behaviour from `append` to `insert`
-    this.ds
+    this.ts
       .getTasksBetweenDates(date, date)
       .pipe(first())
       .subscribe((tasks: Array<Task>) => {
         let lastTaskId =
           tasks.length > 0
-            ? this.ds.sortTasks(tasks)[tasks.length - 1].id
+            ? this.ts.sortTasks(tasks)[tasks.length - 1].id
             : null;
         const updatedTasks: Array<TaskDto> = [];
 
         for (const task of movedTasks) {
           updatedTasks.push({
-            ...task.toDto(),
-            date: Task.getDateString(date),
+            ...this.ts.serialise(task),
+            date: this.ts.getDateString(date),
             previousId: lastTaskId,
           });
           lastTaskId = task.id;

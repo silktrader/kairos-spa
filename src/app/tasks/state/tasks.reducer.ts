@@ -45,14 +45,14 @@ export const tasksReducer = createReducer(
     return {
       ...schedule,
       tasks: [...schedule.tasks, task],
-      events: [...schedule.events, new AddTaskEvent(task.toDto())],
+      events: [...schedule.events, new AddTaskEvent(task)],
     };
   }),
 
-  on(TasksActions.edit, (schedule, { updatedTask: task }) => {
+  on(TasksActions.edit, (schedule, { originalTask, updatedTask }) => {
     return {
       ...schedule,
-      editingTaskId: task.id,
+      editingTaskId: originalTask.id,
     };
   }),
 
@@ -63,7 +63,7 @@ export const tasksReducer = createReducer(
       editingTaskId: undefined,
       events: [
         ...schedule.events,
-        new EditTaskEvent(updatedTask.toDto(), originalTask),
+        new EditTaskEvent(updatedTask, originalTask),
       ],
     };
   }),
@@ -111,14 +111,14 @@ export const tasksReducer = createReducer(
 
   on(
     TasksActions.removeSuccess,
-    (schedule, { removedTaskId: deletedTaskId, affectedTask }) => {
+    (state, { removedTaskId: deletedTaskId, affectedTask }) => {
       const newTasks: Array<Task> = [];
 
-      let deletedTaskDto;
-      for (const task of schedule.tasks) {
+      let deletedTask;
+      for (const task of state.tasks) {
         // cache the deleted task dto to allow for it to be restored later
         if (task.id === deletedTaskId) {
-          deletedTaskDto = task.toDto();
+          deletedTask = task;
           continue;
         }
 
@@ -132,12 +132,12 @@ export const tasksReducer = createReducer(
       if (affectedTask) newTasks.push(affectedTask);
 
       return {
-        ...schedule,
+        ...state,
         tasks: newTasks,
         events: [
-          ...schedule.events,
+          ...state.events,
           // purposedly not signaling the affected task's move
-          new DeleteTaskEvent(deletedTaskDto as TaskDto),
+          new DeleteTaskEvent(deletedTask as Task),
         ],
       };
     }
