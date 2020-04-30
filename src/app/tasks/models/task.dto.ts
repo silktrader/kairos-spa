@@ -1,7 +1,7 @@
 export interface TaskDto {
   id: number;
   previousId: number | null;
-  date: Date;
+  date: string;
   title: string;
   details: string | null;
   complete: boolean;

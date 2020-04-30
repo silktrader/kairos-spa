@@ -35,7 +35,7 @@ import {
 } from 'src/app/tasks/state/tasks.selectors';
 import { updateTasks, add } from 'src/app/tasks/state/tasks.actions';
 import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
-import { addDays } from 'date-fns';
+import { addDays, isToday, format } from 'date-fns';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
 
 @Component({
@@ -146,7 +146,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
         }
 
         // finally change the moved task
-        updatedTasks[0].date = targetDate;
+        updatedTasks[0].date = Task.getDateString(targetDate);
         updatedTasks[0].previousId = antecedentId;
 
         // dispatch the effect
@@ -196,7 +196,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
         task: {
           title,
           previousId,
-          date: this.date,
+          date: Task.getDateString(this.date),
           details: null,
           complete: false,
           duration: null,
@@ -253,15 +253,15 @@ export class DayViewComponent implements OnInit, OnDestroy {
   }
 
   get isToday(): boolean {
-    return this.ds.isToday(this.date);
+    return isToday(this.date);
   }
 
   get dayName(): string {
-    return this.ds.getDayName(this.date);
+    return format(this.date, 'cccc');
   }
 
   get daySubtitle(): string {
-    return this.ds.getDaySubtitle(this.date);
+    return format(this.date, 'LLLL d');
   }
 
   get dayUrl(): string {
@@ -282,7 +282,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  private rescheduleTasks(rescheduleTasks: Array<TaskDto>, date: Date): void {
+  private moveTasks(movedTasks: Array<Task>, date: Date): void {
     // fetch tasks via service without changing the state
     // might change behaviour from `append` to `insert`
     this.ds
@@ -295,10 +295,10 @@ export class DayViewComponent implements OnInit, OnDestroy {
             : null;
         const updatedTasks: Array<TaskDto> = [];
 
-        for (const task of rescheduleTasks) {
+        for (const task of movedTasks) {
           updatedTasks.push({
-            ...task,
-            date,
+            ...task.toDto(),
+            date: Task.getDateString(date),
             previousId: lastTaskId,
           });
           lastTaskId = task.id;
@@ -315,14 +315,14 @@ export class DayViewComponent implements OnInit, OnDestroy {
   postponeIncompleteTasks(): void {
     const incompleteTasks = this.tasks.filter((task) => !task.complete);
     const nextDate = addDays(this.date, 1);
-    this.rescheduleTasks(incompleteTasks, nextDate);
+    this.moveTasks(incompleteTasks, nextDate);
   }
 
   /* Move incomplete tasks to the previous day */
   anticipateIncompleteTasks(): void {
     const incompleteTasks = this.tasks.filter((task) => !task.complete);
     const previousDate = addDays(this.date, -1);
-    this.rescheduleTasks(incompleteTasks, previousDate);
+    this.moveTasks(incompleteTasks, previousDate);
   }
 
   badgeCss$(badgeNumber: number, tagName: string) {

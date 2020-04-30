@@ -114,7 +114,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   public showPrevious(): void {
     this.visibleDates$$.next([
-      this.ds.getDateBefore(this.visibleDates[0]),
+      addDays(this.visibleDates[0], -1),
       ...this.visibleDates.slice(0, this.visibleDates.length - 1),
     ]);
   }
@@ -122,7 +122,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   public showNext(): void {
     this.visibleDates$$.next([
       ...this.visibleDates.slice(1),
-      this.ds.getDateAfter(this.visibleDates[this.visibleDates.length - 1]),
+      addDays(this.visibleDates[this.visibleDates.length - 1], 1),
     ]);
   }
 
@@ -131,7 +131,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private currentDates(): ReadonlyArray<Date> {
-    const initialDate = addDays(new Date().setUTCHours(0, 0, 0, 0), -2);
+    //const initialDate = addDays(new Date().setUTCHours(0, 0, 0, 0), -2);
+    const initialDate = addDays(new Date(), -2);
     const currentDates: Array<Date> = [];
 
     for (let index = 0; index < 5; index++) {

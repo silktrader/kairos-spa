@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Task } from '../tasks/models/task';
-import { addDays, format, isToday } from 'date-fns';
+import { format } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
 import { TaskDto } from '../tasks/models/task.dto';
 import { environment } from 'src/environments/environment';
@@ -18,28 +18,8 @@ export class DayService {
 
   constructor(private readonly http: HttpClient) {}
 
-  getDayName(date: Date): string {
-    return format(date, 'cccc');
-  }
-
-  getDaySubtitle(date: Date): string {
-    return format(date, 'LLLL d');
-  }
-
-  isToday(date: Date): boolean {
-    return isToday(date);
-  }
-
   getUrl(date: Date): string {
     return format(date, 'yyyy-MM-dd');
-  }
-
-  getDateBefore(date: Date): Date {
-    return addDays(date, -1);
-  }
-
-  getDateAfter(date: Date): Date {
-    return addDays(date, 1);
   }
 
   getTasksBetweenDates(
@@ -49,8 +29,8 @@ export class DayService {
     return this.http
       .get<ReadonlyArray<TaskDto>>(this.tasksUrl, {
         params: {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
+          startDate: Task.getDateString(startDate),
+          endDate: Task.getDateString(endDate),
         },
       })
       .pipe(map((taskDtos) => taskDtos.map(this.mapTask)));
@@ -75,7 +55,12 @@ export class DayService {
       if (foundTask) {
         unorderedTasks.delete(foundTask);
       } else {
-        console.error('Could not reconstruct tasks order', tasks);
+        console.error(
+          'Could not reconstruct tasks order. Ordered tasks:',
+          orderedTasks,
+          'Unordered tasks:',
+          tasks
+        );
         return tasks; // avoid infinite loops in case of error
       } // tk
     }

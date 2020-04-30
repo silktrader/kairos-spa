@@ -63,7 +63,7 @@ export const tasksReducer = createReducer(
       editingTaskId: undefined,
       events: [
         ...schedule.events,
-        new EditTaskEvent(updatedTask, originalTask),
+        new EditTaskEvent(updatedTask.toDto(), originalTask),
       ],
     };
   }),

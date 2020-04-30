@@ -134,7 +134,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       edit({
         originalTask: {
-          ...this.initialTask,
+          ...this.initialTask.toDto(),
         },
         updatedTask: this.updatedTask,
       })

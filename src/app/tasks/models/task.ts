@@ -1,7 +1,9 @@
 import { TaskDto } from './task.dto';
-import { isEqual } from 'date-fns';
+import { format } from 'date-fns';
 
 export class Task {
+  public readonly dateString = Task.getDateString(this.date);
+
   constructor(
     public readonly id: number,
     public readonly previousId: number | null,
@@ -13,6 +15,10 @@ export class Task {
     public readonly tags: Array<string>
   ) {}
 
+  public static getDateString(date: Date): string {
+    return format(date, 'yyyy-MM-dd');
+  }
+
   hasDifferentContents(taskDto: TaskDto): boolean {
     if (
       this.title !== taskDto.title ||
@@ -23,9 +29,8 @@ export class Task {
       return true;
     }
 
-    if (!isEqual(this.date, taskDto.date)) {
-      return true;
-    }
+    // compare formatted dates
+    if (this.dateString !== taskDto.date) return true;
 
     // determine whether the tags are the same
     if (this.tags.length !== taskDto.tags.length) return true;
@@ -40,6 +45,7 @@ export class Task {
   toDto(): TaskDto {
     return {
       ...this,
+      date: this.dateString,
     };
   }
 }
