@@ -142,6 +142,9 @@ mat-card {
 }
 
 mat-panel-title {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
   font-weight: 500;
   font-size: large;
 }
@@ -159,6 +162,7 @@ mat-panel-title {
   font-weight: 500;
   font-variant: small-caps;
   font-size: large;
+  font-family: "Oswald";
 }
 
 // adds breaks to the mat-checkboxes with long labels

@@ -53,12 +53,15 @@
         <mat-expansion-panel class="habits-panel">
           <mat-expansion-panel-header>
             <mat-panel-title>
-              Habits
+              <span>Habits</span>
+              <span class="habits-success-percentage"
+                [style.color]="colourise(habitsPercentage)">{{habitsPercentage | percent}}</span>
             </mat-panel-title>
           </mat-expansion-panel-header>
 
           <ul class="habits-list">
-            <li class="habit" *ngFor="let habit of (habitsDetails$ | async)" [ngStyle]="{'color': habit.colour}">
+            <!-- <li class="habit" *ngFor="let habit of (habitsDetails$ | async)" [ngStyle]="{'color': habit.colour}"> -->
+            <li class="habit" *ngFor="let habit of (habitsDetails$ | async)">
               <mat-checkbox [checked]="habit.entry !== undefined" (change)="toggleHabit(habit.id, habit.entry)"
                 color="primary">
                 <span>{{habit.title}}</span></mat-checkbox>

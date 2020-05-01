@@ -10,13 +10,19 @@ import {
 import { FormControl } from '@angular/forms';
 import { TaskService } from 'src/app/tasks/task.service';
 import { Task } from 'src/app/tasks/models/task';
-import { Subscription, Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import {
+  Subscription,
+  Observable,
+  BehaviorSubject,
+  combineLatest,
+  Subject,
+} from 'rxjs';
 import { Options } from 'sortablejs';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../../tasks/components/edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
-import { take, map, first, last } from 'rxjs/operators';
+import { take, map, first, takeUntil } from 'rxjs/operators';
 import { HabitEntryDto } from 'src/app/habits/models/habit-entry.dto';
 import { HabitDetails } from 'src/app/habits/models/habit.dto';
 import { HabitsState } from 'src/app/habits/state/habits.state';
@@ -37,6 +43,7 @@ import { updateTasks, add } from 'src/app/tasks/state/tasks.actions';
 import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
 import { addDays, isToday, format } from 'date-fns';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
+import { interpolateRgb } from 'd3-interpolate';
 
 @Component({
   selector: 'app-day-view',
@@ -54,10 +61,12 @@ export class DayViewComponent implements OnInit, OnDestroy {
   );
   addingTask$ = new BehaviorSubject<boolean>(false);
   habitsDetails$: Observable<ReadonlyArray<HabitDetails>>;
+  habitsPercentage: number;
 
   tasksLoadingState = TasksLoadingState;
 
   private subscriptions = new Subscription();
+  private ngUnsubscribe$ = new Subject();
   newTaskControl = new FormControl('');
   options: Options; // SortableJs options
 
@@ -96,6 +105,19 @@ export class DayViewComponent implements OnInit, OnDestroy {
         return habitsDetails;
       })
     );
+
+    // determine habits percentage
+    this.habitsDetails$
+      .pipe(takeUntil(this.ngUnsubscribe$))
+      .subscribe((habitsDetails) => {
+        let count = 0;
+        for (const habitDetail of habitsDetails) {
+          if (habitDetail.entry) count += 1;
+        }
+        this.habitsPercentage = habitsDetails.length
+          ? count / habitsDetails.length
+          : 0;
+      });
 
     this.options = {
       group: 'draggable-tasks',
@@ -168,6 +190,8 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    this.ngUnsubscribe$.next();
+    this.ngUnsubscribe$.complete();
   }
 
   promptAddTask(): void {
@@ -352,5 +376,9 @@ export class DayViewComponent implements OnInit, OnDestroy {
         };
       })
     );
+  }
+
+  colourise(value: number): string {
+    return interpolateRgb('rgb(190, 50, 10)', 'rgb(60, 140, 40)')(value);
   }
 }

@@ -85,7 +85,7 @@ export class TaskService {
       taskDto.details,
       taskDto.complete,
       taskDto.duration,
-      taskDto.tags
+      taskDto.tags.sort((a, b) => a.localeCompare(b))
     );
   }
 
