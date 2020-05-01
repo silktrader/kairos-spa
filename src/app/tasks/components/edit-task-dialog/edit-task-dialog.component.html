@@ -71,19 +71,19 @@
 
     <mat-toolbar class="dialog-actions">
       <section class="secondary-actions">
-        <button mat-icon-button color="warn" (click)="deleteTask()">
+        <button type="button" mat-icon-button tabindex="-1" color="warn" (click)="deleteTask()">
           <mat-icon>delete</mat-icon>
         </button>
       </section>
       <section class="primary-actions">
-        <button mat-button [disabled]="!(canSave$ | async)" (click)="resetChanges()">
+        <button type="reset" mat-button [disabled]="!(canSave$ | async)" (click)="resetChanges()">
           <span>Reset</span>
         </button>
         <div class="save-controls">
           <mat-spinner [diameter]="30" *ngIf="(taskUpdating$ | async); else saveButton">
           </mat-spinner>
           <ng-template #saveButton>
-            <button mat-raised-button [disabled]="!(canSave$ | async)" color="primary"
+            <button type="submit" mat-raised-button [disabled]="!(canSave$ | async)" color="primary"
               (click)="saveTask()">Save</button>
           </ng-template>
         </div>
