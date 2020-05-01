@@ -1,12 +1,13 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { TasksErrorDialogComponent } from './components/error-dialog/tasks-error-dialog.component';
 import { MaterialModule } from '../material/material.module';
+import { GeneralErrorDialogComponent } from './components/general-error-dialog/general-error-dialog.component';
+import { GeneralErrorHandler } from './general-error-handler';
 
 @NgModule({
-  declarations: [TasksErrorDialogComponent],
+  declarations: [GeneralErrorDialogComponent],
   imports: [
     CommonModule,
     HttpClientModule,
@@ -15,6 +16,7 @@ import { MaterialModule } from '../material/material.module';
     MaterialModule,
   ],
   exports: [CommonModule, HttpClientModule, FormsModule, ReactiveFormsModule],
-  entryComponents: [TasksErrorDialogComponent],
+  entryComponents: [GeneralErrorDialogComponent],
+  providers: [{ provide: ErrorHandler, useClass: GeneralErrorHandler }],
 })
 export class CoreModule {}

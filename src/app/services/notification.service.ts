@@ -6,6 +6,8 @@ import { readTaskEvent } from '../store/schedule.actions';
 import { Router } from '@angular/router';
 import { AppState } from '../store/app-state';
 import { EventOperation } from '../store/event-operation.enum';
+import { MatDialog } from '@angular/material/dialog';
+import { GeneralErrorDialogComponent } from '../core/components/general-error-dialog/general-error-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +19,8 @@ export class NotificationService {
   constructor(
     private readonly store: Store<AppState>,
     private snackBar: MatSnackBar,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly matDialog: MatDialog
   ) {
     this.store.pipe(select(selectNotifiableEvent)).subscribe((event) => {
       // ignore new events until the one being read is dismissed
@@ -61,5 +64,12 @@ export class NotificationService {
       default:
         return 'Updated';
     }
+  }
+
+  warnError(error: Error): void {
+    this.matDialog.open(GeneralErrorDialogComponent, {
+      data: error,
+      panelClass: 'kairos-dialog',
+    });
   }
 }

@@ -20,7 +20,6 @@ import { HabitsSidebarComponent } from './pages/sidebar/habits-sidebar/habits-si
 import { HabitsModule } from './habits/habits.module';
 import { CoreModule } from './core/core.module';
 import { TasksModule } from './tasks/tasks.module';
-import { MatDialogRef } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -48,12 +47,6 @@ import { MatDialogRef } from '@angular/material/dialog';
     SortablejsModule.forRoot({ animation: 150 }),
     HabitsModule,
     TasksModule,
-  ],
-  providers: [
-    {
-      provide: MatDialogRef,
-      useValue: {},
-    },
   ],
   bootstrap: [AppComponent],
 })

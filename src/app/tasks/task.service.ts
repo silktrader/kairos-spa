@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { DeleteTaskDto } from './models/deleteTask.dto';
 import { TagDto } from './models/tag.dto';
-import { TasksErrorDialogComponent } from '../core/components/error-dialog/tasks-error-dialog.component';
+import { TasksErrorDialogComponent } from './components/tasks-error-dialog/tasks-error-dialog.component';
 
 @Injectable({
   providedIn: 'root',

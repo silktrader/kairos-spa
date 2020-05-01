@@ -22,3 +22,8 @@ export const toggleSidebar = createAction(
 /* Events */
 
 export const addEvent = createAction('Add Event', props<{ event: AppEvent }>());
+
+export const showUnhandledError = createAction(
+  'Add Error',
+  props<{ error: Error }>()
+);

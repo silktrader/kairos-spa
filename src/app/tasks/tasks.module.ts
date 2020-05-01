@@ -10,6 +10,7 @@ import { EditTaskDialogComponent } from './components/edit-task-dialog/edit-task
 import { TagsSidebarComponent } from './components/tags-sidebar/tags-sidebar.component';
 import { SidebarSectionTitleComponent } from '../core/components/sidebar-section-title/sidebar-section-title.component';
 import { EditTagDialogComponent } from './components/edit-tag-dialog/edit-tag-dialog.component';
+import { TasksErrorDialogComponent } from './components/tasks-error-dialog/tasks-error-dialog.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { EditTagDialogComponent } from './components/edit-tag-dialog/edit-tag-di
     SidebarSectionTitleComponent,
     TagsSidebarComponent,
     EditTagDialogComponent,
+    TasksErrorDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -26,6 +28,10 @@ import { EditTagDialogComponent } from './components/edit-tag-dialog/edit-tag-di
     EffectsModule.forFeature([TasksEffects]),
   ],
   exports: [SidebarSectionTitleComponent, TagsSidebarComponent],
-  entryComponents: [EditTaskDialogComponent, EditTagDialogComponent],
+  entryComponents: [
+    EditTaskDialogComponent,
+    EditTagDialogComponent,
+    TasksErrorDialogComponent,
+  ],
 })
 export class TasksModule {}

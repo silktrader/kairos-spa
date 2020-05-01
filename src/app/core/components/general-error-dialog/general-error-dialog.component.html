@@ -1,0 +1,23 @@
+<header>
+  <mat-icon>error</mat-icon>
+  <h1>Unexpected Error</h1>
+</header>
+<!-- must disable animation to avoid expansion panel angular issues still unresolved -->
+<main [@.disabled]="disableAnimation">
+  Blame the developer! The following error couldn't be handled:
+  <h3>{{error.name}}</h3>
+  <h4>{{error.message}}</h4>
+
+  <mat-expansion-panel [expanded]="false">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Stack Trace
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <pre><code>{{error.stack}}</code></pre>
+  </mat-expansion-panel>
+</main>
+<footer>
+  <button mat-stroked-button cdkFocusInitial mat-dialog-close>
+    Ok</button>
+</footer>

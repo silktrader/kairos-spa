@@ -1,0 +1,15 @@
+@import "../../../../styles/error-dialog.scss";
+
+main {
+  max-width: 40rem;
+}
+
+pre {
+  text-align: left;
+  overflow: auto;
+}
+
+code {
+  font-size: small;
+  color: darkred;
+}
