@@ -29,6 +29,7 @@ import { HabitsState } from 'src/app/habits/state/habits.state';
 import {
   selectHabits,
   selectHabitsEntries,
+  selectHabitsDetails,
 } from 'src/app/habits/state/habits.selectors';
 import {
   deleteHabitEntry,
@@ -89,22 +90,9 @@ export class DayViewComponent implements OnInit, OnDestroy {
         })
     );
 
-    // tk create better selector
-    this.habitsDetails$ = combineLatest([
-      this.habitsStore.pipe(select(selectHabits)),
-      this.habitsStore.pipe(select(selectHabitsEntries, { date: this.date })),
-    ]).pipe(
-      map(([habits, entries]) => {
-        const habitsDetails: Array<HabitDetails> = [];
-        for (const habit of habits) {
-          habitsDetails.push({
-            ...habit,
-            entry: entries.find((item) => item.habitId === habit.id),
-          });
-        }
-        return habitsDetails;
-      })
-    );
+    this.habitsDetails$ = this.habitsStore.select(selectHabitsDetails, {
+      date: this.date,
+    });
 
     // determine habits percentage
     this.habitsDetails$
