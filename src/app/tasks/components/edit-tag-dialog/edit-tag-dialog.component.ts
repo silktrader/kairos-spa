@@ -6,7 +6,12 @@ import { TagDto } from '../../models/tag.dto';
 import { takeUntil, first } from 'rxjs/operators';
 import { TasksState } from '../../state/tasks.state';
 import { Store, select } from '@ngrx/store';
-import { editTag, editTagSuccess, addTag } from '../../state/tasks.actions';
+import {
+  editTag,
+  editTagSuccess,
+  addTag,
+  addTagSuccess,
+} from '../../state/tasks.actions';
 import { Actions, ofType } from '@ngrx/effects';
 import { selectTagColoursList } from '../../state/tasks.selectors';
 
@@ -48,16 +53,19 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // update the form with the chosen colour, despite the absence of a matching input
-    this.selectedColour$
+    // detect changes to enable or disable buttons
+    this.tagForm.valueChanges
       .pipe(takeUntil(this.ngUnsubscribe$))
-      .subscribe((selectedColour) => {
-        this.tagForm.patchValue({ colour: selectedColour });
+      .subscribe(() => {
+        this.unchanged$.next(!this.hasChanged);
       });
 
     // close the dialog when the task is saved or deleted
     this.actions$
-      .pipe(ofType(editTagSuccess), takeUntil(this.ngUnsubscribe$))
+      .pipe(
+        ofType(editTagSuccess, addTagSuccess),
+        takeUntil(this.ngUnsubscribe$)
+      )
       .subscribe(() => this.dialogRef.close());
 
     this.resetChanges();
@@ -78,8 +86,20 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
     return randomColour;
   }
 
+  private get hasChanged(): boolean {
+    if (this.selectedColour$.value !== this.initialColour) return true;
+
+    if (!this.tag) return this.tagForm.dirty;
+
+    const { name, description } = this.tagForm.value;
+    if (this.tag.name !== name) return true;
+    if (this.tag.description !== description) return true;
+    return false;
+  }
+
   selectColour(colour: string): void {
     this.selectedColour$.next(colour);
+    this.unchanged$.next(!this.hasChanged);
   }
 
   resetChanges(): void {
