@@ -33,7 +33,7 @@
           <div class="colour-selector" matRipple [style.backgroundColor]="initialColour"
             [class.colour-selected]="initialColour === selectedColour" (click)="selectColour(initialColour)">
           </div>
-          <div class="colour-selector" matRipple *ngFor="let colour of (availableTagColours$ | async)"
+          <div class="colour-selector" matRipple *ngFor="let colour of (tagColoursList$ | async)"
             [style.backgroundColor]="colour" [class.colour-selected]="selectedColour === colour"
             (click)="selectColour(colour)">
           </div>

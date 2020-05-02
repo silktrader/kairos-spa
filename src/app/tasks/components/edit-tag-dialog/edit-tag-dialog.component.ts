@@ -6,9 +6,9 @@ import { TagDto } from '../../models/tag.dto';
 import { takeUntil } from 'rxjs/operators';
 import { TasksState } from '../../state/tasks.state';
 import { Store } from '@ngrx/store';
-import { selectAvailableTagColours } from '../../state/tasks.selectors';
 import { editTag, editTagSuccess } from '../../state/tasks.actions';
 import { Actions, ofType } from '@ngrx/effects';
+import { selectTagColoursList } from '../../state/tasks.selectors';
 
 @Component({
   selector: 'app-edit-tag-dialog',
@@ -36,7 +36,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   readonly unchanged$ = new BehaviorSubject(false);
   readonly ngUnsubscribe$ = new Subject();
 
-  availableTagColours$ = this.store.select(selectAvailableTagColours);
+  tagColoursList$ = this.store.select(selectTagColoursList);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public tag: TagDto,

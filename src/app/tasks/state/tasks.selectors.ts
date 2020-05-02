@@ -3,6 +3,7 @@ import { Task } from 'src/app/tasks/models/task';
 import { isSameDay } from 'date-fns';
 import { TasksState } from './tasks.state';
 import { TagDto } from '../models/tag.dto';
+import { baseTagColours } from './colours.state';
 
 export const selectTasksFeature = createFeatureSelector<TasksState>('tasks');
 
@@ -39,10 +40,11 @@ export const selectTags = createSelector(
   (state) => state.tags
 );
 
-export const selectAvailableTagColours = createSelector(
-  selectTasksFeature,
-  (state) => state.availableTagColours
-);
+export const selectTagColoursList = createSelector(selectTags, (tags) => {
+  return baseTagColours.filter(
+    (colour) => !tags.map((tag) => tag.colour).includes(colour)
+  );
+});
 
 export const selectTagColour = createSelector(
   selectTags,
