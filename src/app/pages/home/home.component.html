@@ -41,9 +41,9 @@
   <mat-sidenav #sidebar mode="side" position="end" class="sidebar mat-elevation-z4">
 
     <ng-container [ngSwitch]="(sidebarState$ | async)?.section">
-      <app-events *ngSwitchCase="sidebarSection.Events"></app-events>
-      <app-habits-sidebar *ngSwitchCase="sidebarSection.Habits"></app-habits-sidebar>
-      <app-tags-sidebar *ngSwitchCase="sidebarSection.Tags"></app-tags-sidebar>
+      <app-events class="sidebar-section" *ngSwitchCase="sidebarSection.Events"></app-events>
+      <app-habits-sidebar class="sidebar-section" *ngSwitchCase="sidebarSection.Habits"></app-habits-sidebar>
+      <app-tags-sidebar class="sidebar-section" *ngSwitchCase="sidebarSection.Tags"></app-tags-sidebar>
     </ng-container>
   </mat-sidenav>
 

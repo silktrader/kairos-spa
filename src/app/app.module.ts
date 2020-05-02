@@ -15,7 +15,7 @@ import { AuthComponent } from './pages/auth/auth.component';
 import { SigninComponent } from './pages/auth/signin/signin.component';
 import { SortablejsModule } from 'ngx-sortablejs';
 import { EffectsModule } from '@ngrx/effects';
-import { EventsComponent } from './pages/sidebar/events-sidebar/events.component';
+import { EventsSidebarComponent } from './pages/sidebar/events-sidebar/events-sidebar.component';
 import { HabitsSidebarComponent } from './pages/sidebar/habits-sidebar/habits-sidebar.component';
 import { HabitsModule } from './habits/habits.module';
 import { CoreModule } from './core/core.module';
@@ -28,7 +28,7 @@ import { TasksModule } from './tasks/tasks.module';
     DayViewComponent,
     AuthComponent,
     SigninComponent,
-    EventsComponent,
+    EventsSidebarComponent,
     HabitsSidebarComponent,
   ],
   imports: [

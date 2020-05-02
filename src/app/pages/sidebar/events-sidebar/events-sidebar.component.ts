@@ -18,10 +18,10 @@ import { TaskService } from 'src/app/tasks/task.service';
 
 @Component({
   selector: 'app-events',
-  templateUrl: './events.component.html',
-  styleUrls: ['./events.component.scss'],
+  templateUrl: './events-sidebar.component.html',
+  styleUrls: ['./events-sidebar.component.scss'],
 })
-export class EventsComponent implements OnInit, OnDestroy {
+export class EventsSidebarComponent implements OnInit, OnDestroy {
   visibleEvents$ = new BehaviorSubject<EventsView>('tasks');
 
   habitsEvents$ = this.store.select(selectHabitsEvents);

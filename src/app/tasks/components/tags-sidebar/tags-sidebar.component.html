@@ -1,15 +1,15 @@
-<main>
+<app-sidebar-section-title [title]="'Tags'"></app-sidebar-section-title>
 
-  <app-sidebar-section-title [title]="'Tags'"></app-sidebar-section-title>
+<ul>
+  <li *ngFor="let tag of (tags$ | async)">
+    <span class="tag-name" [style.backgroundColor]="tag.colour">{{tag.name}}</span>
+    <button mat-icon-button (click)="editTag(tag)">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button>
+      <mat-icon>date_range</mat-icon>
+    </button>
+  </li>
+</ul>
 
-  <ul>
-    <li *ngFor="let tag of (tags$ | async)">
-      {{tag.name}} <button mat-icon-button (click)="editTag(tag)">
-        <mat-icon>edit</mat-icon>
-      </button>
-    </li>
-  </ul>
-
-  <button mat-stroked-button (click)="addTag()">Add Tag</button>
-
-</main>
+<button mat-stroked-button (click)="addTag()">Add Tag</button>

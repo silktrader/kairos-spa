@@ -1,15 +1,12 @@
-<main>
+<app-sidebar-section-title [title]="'Habits'"></app-sidebar-section-title>
 
-  <app-sidebar-section-title [title]="'Habits'"></app-sidebar-section-title>
+<ul>
+  <li *ngFor="let habit of (habits$ | async)">
+    {{habit.title}}
+    <button mat-icon-button (click)="openEditHabitDialog(habit)">
+      <mat-icon>edit</mat-icon>
+    </button>
+  </li>
+</ul>
 
-  <ul>
-    <li *ngFor="let habit of (habits$ | async)">
-      {{habit.title}} <button mat-icon-button (click)="openEditHabitDialog(habit)">
-        <mat-icon>edit</mat-icon>
-      </button>
-    </li>
-  </ul>
-
-  <button mat-stroked-button (click)="openAddHabitDialog()">Add Habit</button>
-
-</main>
+<button mat-stroked-button (click)="openAddHabitDialog()">Add Habit</button>
