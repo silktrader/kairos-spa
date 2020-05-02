@@ -30,13 +30,16 @@
       <mat-icon class="section-icon">palette</mat-icon>
       <div class="colours-controls">
         <section class="colours-grid">
-          <div class="colour-selector" matRipple [style.backgroundColor]="initialColour"
-            [class.colour-selected]="initialColour === selectedColour" (click)="selectColour(initialColour)">
-          </div>
-          <div class="colour-selector" matRipple *ngFor="let colour of (tagColoursList$ | async)"
-            [style.backgroundColor]="colour" [class.colour-selected]="selectedColour === colour"
-            (click)="selectColour(colour)">
-          </div>
+          <ng-container *ngIf="selectedColour$ | async as selectedColour">
+            <!-- conditional display to avoid duplicated colour appearing when adding new tag -->
+            <div *ngIf="tag" class="colour-selector" matRipple [style.backgroundColor]="initialColour"
+              [class.colour-selected]="initialColour === selectedColour" (click)="selectColour(initialColour)">
+            </div>
+            <div class="colour-selector" matRipple *ngFor="let colour of (tagColoursList$ | async)"
+              [style.backgroundColor]="colour" [class.colour-selected]="selectedColour === colour"
+              (click)="selectColour(colour)">
+            </div>
+          </ng-container>
         </section>
       </div>
     </section>
@@ -44,7 +47,7 @@
 
   <mat-toolbar class="dialog-actions">
     <section class="secondary-actions">
-      <button type="button" mat-icon-button tabinder="-1" color="warn" (click)="deleteTag()">
+      <button *ngIf="tag" type="button" mat-icon-button tabinder="-1" color="warn" (click)="deleteTag()">
         <mat-icon>delete</mat-icon>
       </button>
     </section>

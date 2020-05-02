@@ -3,10 +3,10 @@ import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TagDto } from '../../models/tag.dto';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, first } from 'rxjs/operators';
 import { TasksState } from '../../state/tasks.state';
-import { Store } from '@ngrx/store';
-import { editTag, editTagSuccess } from '../../state/tasks.actions';
+import { Store, select } from '@ngrx/store';
+import { editTag, editTagSuccess, addTag } from '../../state/tasks.actions';
 import { Actions, ofType } from '@ngrx/effects';
 import { selectTagColoursList } from '../../state/tasks.selectors';
 
@@ -25,12 +25,14 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   readonly tagForm = new FormGroup({
     name: this.nameControl,
     description: new FormControl(),
-    colour: new FormControl(undefined, [Validators.required]),
   });
 
-  private selectedColour$ = new Subject<string>();
-  public selectedColour: string;
-  public readonly initialColour: string = this.tag.colour;
+  public readonly initialColour = this.tag
+    ? this.tag.colour
+    : this.getRandomColour();
+  public readonly selectedColour$ = new BehaviorSubject<string>(
+    this.initialColour
+  );
 
   tagUpdating$ = new BehaviorSubject(false);
   readonly unchanged$ = new BehaviorSubject(false);
@@ -39,7 +41,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   tagColoursList$ = this.store.select(selectTagColoursList);
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public tag: TagDto,
+    @Inject(MAT_DIALOG_DATA) public tag: TagDto | undefined,
     public dialogRef: MatDialogRef<EditTagDialogComponent>,
     private readonly store: Store<TasksState>,
     private readonly actions$: Actions
@@ -50,7 +52,6 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
     this.selectedColour$
       .pipe(takeUntil(this.ngUnsubscribe$))
       .subscribe((selectedColour) => {
-        this.selectedColour = selectedColour;
         this.tagForm.patchValue({ colour: selectedColour });
       });
 
@@ -67,25 +68,48 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe$.complete();
   }
 
+  private getRandomColour(): string {
+    let randomColour = '#fff';
+    this.store
+      .pipe(select(selectTagColoursList), first())
+      .subscribe((colours) => {
+        if (colours.length > 0) randomColour = colours[0];
+      });
+    return randomColour;
+  }
+
   selectColour(colour: string): void {
     this.selectedColour$.next(colour);
   }
 
   resetChanges(): void {
-    this.tagForm.patchValue(this.tag);
-    this.selectedColour$.next(this.tag.colour);
+    this.tagForm.patchValue(
+      this.tag ?? { name: undefined, description: undefined }
+    );
+    this.selectedColour$.next(this.initialColour);
   }
 
   saveTag(): void {
-    this.store.dispatch(
-      editTag({
-        tagDto: {
-          ...this.tagForm.value,
-          id: this.tag.id,
-          colour: this.selectedColour,
-        },
-      })
-    );
+    if (this.tag) {
+      this.store.dispatch(
+        editTag({
+          tagDto: {
+            ...this.tagForm.value,
+            id: this.tag.id,
+            colour: this.selectedColour$.value,
+          },
+        })
+      );
+    } else {
+      this.store.dispatch(
+        addTag({
+          tagDto: {
+            ...this.tagForm.value,
+            colour: this.selectedColour$.value,
+          },
+        })
+      );
+    }
   }
 
   deleteTag(): void {}

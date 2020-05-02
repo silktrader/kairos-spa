@@ -75,7 +75,7 @@ export const addTag = createAction(
 );
 
 export const addTagSuccess = createAction(
-  '[TASKS] Add Tag',
+  '[TASKS] Add Tag Success',
   props<{ tagDto: TagDto }>()
 );
 

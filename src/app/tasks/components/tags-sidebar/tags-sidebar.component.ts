@@ -24,7 +24,12 @@ export class TagsSidebarComponent implements OnInit {
     this.store.dispatch(getTags());
   }
 
-  addTag(): void {}
+  addTag(): void {
+    this.dialog.open(EditTagDialogComponent, {
+      panelClass: 'kairos-dialog',
+      data: undefined,
+    });
+  }
 
   editTag(tag: TagDto): void {
     this.dialog.open(EditTagDialogComponent, {
