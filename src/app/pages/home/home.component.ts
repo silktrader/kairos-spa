@@ -4,10 +4,11 @@ import {
   OnDestroy,
   ViewChild,
   AfterViewInit,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { AuthService } from 'auth';
-import { addDays } from 'date-fns';
-import { Observable, BehaviorSubject, Subscription } from 'rxjs';
+import { addDays, isSameDay } from 'date-fns';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { SidebarSection, AppState } from 'src/app/store/app-state';
 import {
@@ -18,8 +19,9 @@ import { MatSidenav } from '@angular/material/sidenav';
 import {
   selectSidebar,
   selectVisiblePeriod,
+  selectVisibleDates,
 } from 'src/app/store/schedule.selectors';
-import { delay } from 'rxjs/operators';
+import { delay, takeUntil, map, first } from 'rxjs/operators';
 import {
   getHabits,
   getHabitsEntries,
@@ -31,21 +33,20 @@ import * as TasksActions from 'src/app/tasks/state/tasks.actions';
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('sidebar') sidebar: MatSidenav;
 
-  private readonly visibleDates$$: BehaviorSubject<ReadonlyArray<Date>>;
-  public readonly visibleDates$: Observable<ReadonlyArray<Date>>;
-
+  private readonly ngUnsubscribe$ = new Subject();
+  public readonly visiblePeriod$ = this.store.select(selectVisiblePeriod);
+  public readonly visibleDates$ = this.store.select(selectVisibleDates);
   public readonly user$ = this.authService.user$;
-
-  private readonly subscriptions = new Subscription();
 
   public sidebarState$: Observable<{
     opened: boolean;
     section: SidebarSection;
-  }>;
+  }> = this.store.pipe(select(selectSidebar));
   private previousSidebarState: { opened: boolean; section: SidebarSection };
   public sidebarSection = SidebarSection;
 
@@ -53,18 +54,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     private readonly authService: AuthService,
     private readonly store: Store<AppState>,
     private readonly ns: NotificationService // needed to start up the service
-  ) {
-    // tk remove this and rely on the store's selector
-    this.visibleDates$$ = new BehaviorSubject<ReadonlyArray<Date>>(
-      this.currentDates()
-    );
-    this.visibleDates$ = this.visibleDates$$.asObservable();
-    this.sidebarState$ = this.store.pipe(select(selectSidebar));
-  }
-
-  private get visibleDates() {
-    return this.visibleDates$$?.value;
-  }
+  ) {}
 
   // tk should be conditional on sign in
   ngOnInit(): void {
@@ -74,69 +64,66 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     // get available tags
     this.store.dispatch(TasksActions.getTags());
 
-    this.subscriptions.add(
-      this.visibleDates$.subscribe((dates) => {
-        const dateRange = {
-          startDate: dates[0],
-          endDate: dates[dates.length - 1],
-        };
+    // get tasks and habits entries
+    this.store
+      .pipe(select(selectVisiblePeriod), takeUntil(this.ngUnsubscribe$))
+      .subscribe((period) => {
+        this.store.dispatch(TasksActions.get(period));
+        this.store.dispatch(getHabitsEntries(period));
+      });
 
-        this.store.dispatch(setVisiblePeriod(dateRange));
-      })
-    );
-
-    this.subscriptions.add(
-      this.store.pipe(select(selectVisiblePeriod)).subscribe((dateRange) => {
-        if (!dateRange) return;
-        this.store.dispatch(TasksActions.get(dateRange));
-        this.store.dispatch(getHabitsEntries(dateRange));
-      })
-    );
+    this.store.dispatch(setVisiblePeriod(this.currentPeriod()));
   }
 
   ngAfterViewInit(): void {
     // must run after the onInit cycle to catch the sidenav element
-    this.subscriptions.add(
-      // the delay fixes the `ExpressionChangedAfterItHasBeenCheckedError`
-      this.sidebarState$.pipe(delay(0)).subscribe((sidebarState) => {
+    // the delay fixes the `ExpressionChangedAfterItHasBeenCheckedError`
+    this.sidebarState$
+      .pipe(delay(0), takeUntil(this.ngUnsubscribe$))
+      .subscribe((sidebarState) => {
         sidebarState.opened ? this.sidebar.open() : this.sidebar.close();
         this.previousSidebarState = sidebarState;
-      })
-    );
+      });
   }
 
   ngOnDestroy(): void {
     // the home component is the root component so far, unsubscriptions aren't actually needed
-    this.subscriptions.unsubscribe();
+    this.ngUnsubscribe$.next();
+    this.ngUnsubscribe$.complete();
   }
 
   public showPrevious(): void {
-    this.visibleDates$$.next([
-      addDays(this.visibleDates[0], -1),
-      ...this.visibleDates.slice(0, this.visibleDates.length - 1),
-    ]);
+    this.visiblePeriod$.pipe(first()).subscribe((period) => {
+      this.store.dispatch(
+        setVisiblePeriod({
+          startDate: addDays(period.startDate, -1),
+          endDate: addDays(period.endDate, -1),
+        })
+      );
+    });
   }
 
   public showNext(): void {
-    this.visibleDates$$.next([
-      ...this.visibleDates.slice(1),
-      addDays(this.visibleDates[this.visibleDates.length - 1], 1),
-    ]);
+    this.visiblePeriod$.pipe(first()).subscribe((period) => {
+      this.store.dispatch(
+        setVisiblePeriod({
+          startDate: addDays(period.startDate, 1),
+          endDate: addDays(period.endDate, 1),
+        })
+      );
+    });
   }
 
   public showToday(): void {
-    this.visibleDates$$.next(this.currentDates());
+    this.store.dispatch(setVisiblePeriod(this.currentPeriod()));
   }
 
-  private currentDates(): ReadonlyArray<Date> {
-    const initialDate = addDays(new Date(), -2);
-    const currentDates: Array<Date> = [];
-
-    for (let index = 0; index < 5; index++) {
-      currentDates.push(addDays(initialDate, index));
-    }
-
-    return currentDates;
+  private currentPeriod(): { startDate: Date; endDate: Date } {
+    const today = new Date();
+    return {
+      startDate: addDays(today, -2),
+      endDate: addDays(today, 2),
+    };
   }
 
   handleSignout(): void {

@@ -3,9 +3,13 @@ import * as ScheduleActions from './schedule.actions';
 import { ScheduleState, SidebarSection } from './app-state';
 
 import { setVisiblePeriod } from './schedule.actions';
+import { addDays } from 'date-fns';
 
 export const initialState: ScheduleState = {
-  visiblePeriod: undefined,
+  visiblePeriod: {
+    startDate: addDays(new Date(), -2),
+    endDate: addDays(new Date(), 2),
+  },
   sidebar: { opened: false, section: SidebarSection.Events },
   notifiedEventsIds: new Set(),
 };

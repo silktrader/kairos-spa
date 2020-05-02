@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { formatDistanceToNow } from 'date-fns';
 import { AppState } from 'src/app/store/app-state';
 import { AppEvent, TaskEvent } from 'src/app/store/app-event.state';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { EventOperation } from 'src/app/store/event-operation.enum';
-import { first, map } from 'rxjs/operators';
+import { first, map, takeUntil } from 'rxjs/operators';
 import { selectHabitsEvents } from 'src/app/habits/state/habits.selectors';
 import {
   selectTaskEvents,
@@ -21,7 +21,7 @@ import { TaskService } from 'src/app/tasks/task.service';
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss'],
 })
-export class EventsComponent implements OnInit {
+export class EventsComponent implements OnInit, OnDestroy {
   visibleEvents$ = new BehaviorSubject<EventsView>('tasks');
 
   habitsEvents$ = this.store.select(selectHabitsEvents);
@@ -35,6 +35,8 @@ export class EventsComponent implements OnInit {
 
   eventsSwitcher = new FormControl('tasks');
 
+  private readonly ngUnsubscribe$ = new Subject();
+
   eventOperation = EventOperation;
 
   constructor(
@@ -43,11 +45,18 @@ export class EventsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.eventsSwitcher.valueChanges.subscribe((value) => {
-      // update the reference date without needing to create one new instance for each event
-      this.referenceNow = new Date();
-      this.visibleEvents$.next(value);
-    });
+    this.eventsSwitcher.valueChanges
+      .pipe(takeUntil(this.ngUnsubscribe$))
+      .subscribe((value) => {
+        // update the reference date without needing to create one new instance for each event
+        this.referenceNow = new Date();
+        this.visibleEvents$.next(value);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe$.next();
+    this.ngUnsubscribe$.complete();
   }
 
   timeAgo(taskEvent: AppEvent): string {

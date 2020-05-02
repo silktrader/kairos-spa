@@ -10,27 +10,16 @@ import {
 import { FormControl } from '@angular/forms';
 import { TaskService } from 'src/app/tasks/task.service';
 import { Task } from 'src/app/tasks/models/task';
-import {
-  Subscription,
-  Observable,
-  BehaviorSubject,
-  combineLatest,
-  Subject,
-} from 'rxjs';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Options } from 'sortablejs';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../../tasks/components/edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
-import { take, map, first, takeUntil } from 'rxjs/operators';
+import { map, first, takeUntil } from 'rxjs/operators';
 import { HabitEntryDto } from 'src/app/habits/models/habit-entry.dto';
-import { HabitDetails } from 'src/app/habits/models/habit.dto';
 import { HabitsState } from 'src/app/habits/state/habits.state';
-import {
-  selectHabits,
-  selectHabitsEntries,
-  selectHabitsDetails,
-} from 'src/app/habits/state/habits.selectors';
+import { selectHabitsDetails } from 'src/app/habits/state/habits.selectors';
 import {
   deleteHabitEntry,
   addHabitEntry,
@@ -45,6 +34,7 @@ import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
 import { addDays, isToday, format } from 'date-fns';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { interpolateRgb } from 'd3-interpolate';
+import { HabitDetails } from 'src/app/habits/models/habit.dto';
 
 @Component({
   selector: 'app-day-view',
@@ -66,7 +56,6 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   tasksLoadingState = TasksLoadingState;
 
-  private subscriptions = new Subscription();
   private ngUnsubscribe$ = new Subject();
   newTaskControl = new FormControl('');
   options: Options; // SortableJs options
@@ -79,17 +68,17 @@ export class DayViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.subscriptions.add(
-      this.store
-        .pipe(
-          select(selectTasksByDate, { date: this.date }),
-          map(this.ts.sortTasks)
-        )
-        .subscribe((tasks) => {
-          this.tasks = tasks;
-        })
-    );
+    this.store
+      .pipe(
+        select(selectTasksByDate, { date: this.date }),
+        map(this.ts.sortTasks),
+        takeUntil(this.ngUnsubscribe$)
+      )
+      .subscribe((tasks) => {
+        this.tasks = tasks;
+      });
 
+    // must run during onInit to ensure the date is set before
     this.habitsDetails$ = this.habitsStore.select(selectHabitsDetails, {
       date: this.date,
     });
@@ -123,7 +112,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
               date: targetDate,
             }),
             map(this.ts.sortTasks),
-            take(1)
+            first()
           )
           .subscribe((tasks) => {
             targetTasks = tasks;
@@ -177,7 +166,6 @@ export class DayViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
     this.ngUnsubscribe$.next();
     this.ngUnsubscribe$.complete();
   }
