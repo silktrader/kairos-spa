@@ -5,10 +5,11 @@ import {
   ViewChild,
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { AuthService } from 'auth';
-import { addDays, isSameDay } from 'date-fns';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { addDays } from 'date-fns';
+import { Observable, Subject } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { SidebarSection, AppState } from 'src/app/store/app-state';
 import {
@@ -53,7 +54,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private readonly authService: AuthService,
     private readonly store: Store<AppState>,
-    private readonly ns: NotificationService // needed to start up the service
+    private readonly ns: NotificationService, // needed to start up the service,
+    private readonly changeDetectorRef: ChangeDetectorRef
   ) {}
 
   // tk should be conditional on sign in
@@ -82,6 +84,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(delay(0), takeUntil(this.ngUnsubscribe$))
       .subscribe((sidebarState) => {
         sidebarState.opened ? this.sidebar.open() : this.sidebar.close();
+
+        // must check for changes when the strategy is set to `onPush`
+        this.changeDetectorRef.detectChanges();
         this.previousSidebarState = sidebarState;
       });
   }
