@@ -38,6 +38,8 @@ export const scheduleReducer = createReducer(
   /* User Interface Controls */
 
   on(ScheduleActions.toggleSidebar, (state, { opened, section }) => {
+    // keep the focused section when simple `open` or `close` actions are dispatched
+    section = section ?? state.sidebar.section;
     return { ...state, sidebar: { opened, section } };
   })
 );
