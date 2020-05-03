@@ -27,14 +27,7 @@
 
       <section class="form-section">
         <mat-icon class="section-icon">assignment_turned_in</mat-icon>
-        <div class="complete-controls">
-          <mat-checkbox color="primary" formControlName="complete">Complete</mat-checkbox>
-          <mat-form-field class="duration-input">
-            <mat-label>Duration</mat-label>
-            <input type="number" matInput formControlName="duration" autocomplete="off">
-            <span matSuffix>min.</span>
-          </mat-form-field>
-        </div>
+        <mat-checkbox color="primary" formControlName="complete">Complete</mat-checkbox>
       </section>
 
       <section class="form-section">
@@ -45,6 +38,27 @@
           <mat-datepicker-toggle matSuffix [for]="taskDate"></mat-datepicker-toggle>
           <mat-datepicker #taskDate></mat-datepicker>
         </mat-form-field>
+      </section>
+
+      <section class="form-section">
+        <mat-icon class="section-icon">schedule</mat-icon>
+        <div class="complete-controls">
+          <mat-form-field class="duration-input">
+            <mat-label>Duration</mat-label>
+            <input type="number" matInput formControlName="duration" autocomplete="off">
+            <span matSuffix>min.</span>
+          </mat-form-field>
+          <button *ngIf="(timer$ | async) as timer; else startTimerButton" class="timer-stop-button" mat-stroked-button
+            color="accent" (click)="endTimer()">
+            <span>Timer: {{timer}}</span>
+          </button>
+          <ng-template #startTimerButton>
+            <button class="timer-button" mat-stroked-button color="accent" (click)="startTimer()">
+              <mat-icon>timer</mat-icon>
+              <span>Add Time</span>
+            </button>
+          </ng-template>
+        </div>
       </section>
 
       <section class="form-section">

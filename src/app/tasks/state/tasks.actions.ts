@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { Task } from 'src/app/tasks/models/task';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { TagDto } from '../models/tag.dto';
+import { TaskTimer } from '../models/task-timer.dto';
 
 export const get = createAction(
   '[TASKS] Get',
@@ -87,4 +88,33 @@ export const editTag = createAction(
 export const editTagSuccess = createAction(
   '[TASKS] Edit Tag Success',
   props<{ tagDto: TagDto }>()
+);
+
+/* Timers */
+
+export const getTimers = createAction('[TASKS] Get Timers');
+
+export const getTimersSuccess = createAction(
+  '[TASKS] Get Timers Success',
+  props<{ timers: ReadonlyArray<TaskTimer> }>()
+);
+
+export const addTimer = createAction(
+  '[TASKS] Add Timer',
+  props<{ taskTimer: TaskTimer }>()
+);
+
+export const addTimerSuccess = createAction(
+  '[TASKS] Add Timer Success',
+  props<{ taskTimer: TaskTimer }>()
+);
+
+export const stopTimer = createAction(
+  '[TASKS] Stop Timer',
+  props<{ taskId: number }>()
+);
+
+export const stopTimerSuccess = createAction(
+  '[TASKS] Stop Timer Success',
+  props<{ taskId: number }>()
 );

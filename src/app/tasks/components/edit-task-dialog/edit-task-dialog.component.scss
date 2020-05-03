@@ -72,11 +72,20 @@ em {
 }
 
 .duration-input {
-  width: 8rem;
+  width: 6rem;
 }
 
 .date-input {
   width: 8rem;
+}
+
+.timer-button {
+  display: flex;
+  min-width: 5rem;
+  justify-content: space-around;
+  align-items: center;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 /* Tags */

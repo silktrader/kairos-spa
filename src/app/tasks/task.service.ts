@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 import { DeleteTaskDto } from './models/deleteTask.dto';
 import { TagDto } from './models/tag.dto';
 import { TasksErrorDialogComponent } from './components/tasks-error-dialog/tasks-error-dialog.component';
+import { TaskTimer } from './models/task-timer.dto';
 
 @Injectable({
   providedIn: 'root',
@@ -162,5 +163,20 @@ export class TaskService {
 
   editTag(tagDto: TagDto): Observable<TagDto> {
     return this.http.put<TagDto>(`${this.tagsUrl}/${tagDto.id}`, tagDto);
+  }
+
+  getTimers(): Observable<ReadonlyArray<TaskTimer>> {
+    return this.http.get<ReadonlyArray<TaskTimer>>(`${this.tasksUrl}/timers`);
+  }
+
+  addTimer(taskTimer: TaskTimer): Observable<TaskTimer> {
+    return this.http.post<TaskTimer>(
+      `${this.tasksUrl}/${taskTimer.taskId}/timer`,
+      { timestamp: taskTimer.timestamp }
+    );
+  }
+
+  stopTimer(taskId: number) {
+    return this.http.delete(`${this.tasksUrl}/${taskId}/timer`);
   }
 }

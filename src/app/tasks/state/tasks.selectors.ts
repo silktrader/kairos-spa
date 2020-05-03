@@ -4,6 +4,7 @@ import { isSameDay } from 'date-fns';
 import { TasksState } from './tasks.state';
 import { TagDto } from '../models/tag.dto';
 import { baseTagColours } from './colours.state';
+import { TaskTimer } from '../models/task-timer.dto';
 
 export const selectTasksFeature = createFeatureSelector<TasksState>('tasks');
 
@@ -50,4 +51,17 @@ export const selectTagColour = createSelector(
   selectTags,
   (tags: Array<TagDto>, props: { tagName: string }) =>
     tags.find((tag) => tag.name === props.tagName)?.colour
+);
+
+/* Timers */
+
+export const selectTimers = createSelector(
+  selectTasksFeature,
+  (state) => state.timers
+);
+
+export const selectTaskTimer = createSelector(
+  selectTimers,
+  (timers: Array<TaskTimer>, props: { taskId: number }) =>
+    timers.find((timer) => timer.taskId === props.taskId)
 );

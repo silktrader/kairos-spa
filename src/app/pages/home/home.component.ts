@@ -66,6 +66,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     // get available tags
     this.store.dispatch(TasksActions.getTags());
 
+    // get all timers
+    this.store.dispatch(TasksActions.getTimers());
+
     // get tasks and habits entries
     this.store
       .pipe(select(selectVisiblePeriod), takeUntil(this.ngUnsubscribe$))

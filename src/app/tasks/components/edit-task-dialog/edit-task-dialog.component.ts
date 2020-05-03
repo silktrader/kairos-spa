@@ -14,17 +14,27 @@ import { BehaviorSubject, Subject, Observable, combineLatest } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { takeUntil, first, startWith, map } from 'rxjs/operators';
+import {
+  takeUntil,
+  first,
+  startWith,
+  map,
+  sampleTime,
+  throttleTime,
+} from 'rxjs/operators';
 import { formatISO } from 'date-fns';
 import {
   selectTaskEditingId,
   selectTags,
+  selectTaskTimer,
 } from 'src/app/tasks/state/tasks.selectors';
 import {
   edit,
   remove,
   editSuccess,
   removeSuccess,
+  addTimer,
+  stopTimer,
 } from 'src/app/tasks/state/tasks.actions';
 import { Actions, ofType } from '@ngrx/effects';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -32,6 +42,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { TaskDto } from '../../models/task.dto';
 import { TaskService } from '../../task.service';
+import { formatDistanceStrict } from 'date-fns';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -55,6 +66,20 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   });
 
   readonly taskUpdating$ = this.store.select(selectTaskEditingId);
+  readonly timer$ = this.store
+    .select(selectTaskTimer, {
+      taskId: this.initialTask.id,
+    })
+    .pipe(
+      throttleTime(1000),
+      map((timer) =>
+        timer
+          ? formatDistanceStrict(new Date(timer.timestamp), Date.now(), {
+              unit: 'minute',
+            })
+          : ''
+      )
+    );
 
   readonly canSave$ = new BehaviorSubject<boolean>(false);
 
@@ -187,5 +212,17 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     return this.editedTags$.value.filter(
       (tag) => tag.toLowerCase().indexOf(filterValue) === 0
     );
+  }
+
+  public startTimer(): void {
+    const timestamp = Date.now();
+    console.log(timestamp);
+    this.store.dispatch(
+      addTimer({ taskTimer: { taskId: this.initialTask.id, timestamp } })
+    );
+  }
+
+  public endTimer(): void {
+    this.store.dispatch(stopTimer({ taskId: this.initialTask.id }));
   }
 }

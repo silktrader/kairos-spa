@@ -8,7 +8,6 @@ import {
   GenericTaskEvent,
 } from 'src/app/store/app-event.state';
 import { Task } from 'src/app/tasks/models/task';
-import { baseTagColours } from './colours.state';
 
 export const initialState: TasksState = {
   tasks: [],
@@ -16,6 +15,7 @@ export const initialState: TasksState = {
   editingTaskId: undefined,
   events: [],
   tags: [],
+  timers: [],
 };
 
 export const filteredTasks = (
@@ -158,5 +158,21 @@ export const tasksReducer = createReducer(
   on(TasksActions.editTagSuccess, (state, { tagDto }) => ({
     ...state,
     tags: [...state.tags.filter((tag) => tag.id !== tagDto.id), tagDto],
+  })),
+
+  /* Timers */
+  on(TasksActions.getTimersSuccess, (state, { timers }) => ({
+    ...state,
+    timers,
+  })),
+
+  on(TasksActions.addTimerSuccess, (state, { taskTimer }) => ({
+    ...state,
+    timers: [...state.timers, taskTimer],
+  })),
+
+  on(TasksActions.stopTimerSuccess, (state, { taskId }) => ({
+    ...state,
+    timers: state.timers.filter((timer) => timer.taskId !== taskId),
   }))
 );

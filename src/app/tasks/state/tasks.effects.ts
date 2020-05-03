@@ -8,6 +8,7 @@ import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { TasksErrorDialogComponent } from 'src/app/tasks/components/tasks-error-dialog/tasks-error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TagDto } from '../models/tag.dto';
+import { TaskTimer } from '../models/task-timer.dto';
 
 @Injectable()
 export class TasksEffects {
@@ -135,6 +136,42 @@ export class TasksEffects {
         this.ts
           .editTag(action.tagDto)
           .pipe(map((tagDto) => TasksActions.editTagSuccess({ tagDto })))
+      )
+    )
+  );
+
+  /* Timers */
+  getTimers$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.getTimers),
+      mergeMap(() =>
+        this.ts
+          .getTimers()
+          .pipe(map((timers) => TasksActions.getTimersSuccess({ timers })))
+      )
+    )
+  );
+
+  addTimer$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.addTimer),
+      mergeMap((action: { taskTimer: TaskTimer }) =>
+        this.ts
+          .addTimer(action.taskTimer)
+          .pipe(map((taskTimer) => TasksActions.addTimerSuccess({ taskTimer })))
+      )
+    )
+  );
+
+  stopTimer$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.stopTimer),
+      mergeMap((action: { taskId: number }) =>
+        this.ts
+          .stopTimer(action.taskId)
+          .pipe(
+            map(() => TasksActions.stopTimerSuccess({ taskId: action.taskId }))
+          )
       )
     )
   );
