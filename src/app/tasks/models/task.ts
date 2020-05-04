@@ -7,6 +7,6 @@ export class Task {
     public readonly details: string | null,
     public readonly complete: boolean,
     public readonly duration: number | null,
-    public readonly tags: Array<string>
+    public readonly tags: ReadonlyArray<string>
   ) {}
 }

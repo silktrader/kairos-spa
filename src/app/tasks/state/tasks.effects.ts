@@ -140,6 +140,19 @@ export class TasksEffects {
     )
   );
 
+  deleteTag$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.deleteTag),
+      mergeMap((action: { tagDto: TagDto }) =>
+        this.ts
+          .deleteTag(action.tagDto)
+          .pipe(
+            map(() => TasksActions.deleteTagSuccess({ tagDto: action.tagDto }))
+          )
+      )
+    )
+  );
+
   /* Timers */
   getTimers$ = createEffect(() =>
     this.actions$.pipe(

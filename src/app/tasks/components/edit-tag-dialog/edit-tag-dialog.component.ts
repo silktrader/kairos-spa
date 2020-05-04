@@ -11,6 +11,8 @@ import {
   editTagSuccess,
   addTag,
   addTagSuccess,
+  deleteTag,
+  deleteTagSuccess,
 } from '../../state/tasks.actions';
 import { Actions, ofType } from '@ngrx/effects';
 import { selectTagColoursList } from '../../state/tasks.selectors';
@@ -63,7 +65,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
     // close the dialog when the task is saved or deleted
     this.actions$
       .pipe(
-        ofType(editTagSuccess, addTagSuccess),
+        ofType(editTagSuccess, addTagSuccess, deleteTagSuccess),
         takeUntil(this.ngUnsubscribe$)
       )
       .subscribe(() => this.dialogRef.close());
@@ -132,5 +134,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  deleteTag(): void {}
+  deleteTag(): void {
+    if (this.tag) this.store.dispatch(deleteTag({ tagDto: this.tag }));
+  }
 }

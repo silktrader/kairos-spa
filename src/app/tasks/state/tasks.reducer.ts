@@ -160,6 +160,17 @@ export const tasksReducer = createReducer(
     tags: [...state.tags.filter((tag) => tag.id !== tagDto.id), tagDto],
   })),
 
+  on(TasksActions.deleteTagSuccess, (state, { tagDto }) => {
+    return {
+      ...state,
+      tasks: state.tasks.map((task) => ({
+        ...task,
+        tags: task.tags.filter((tag) => tag !== tagDto.name),
+      })),
+      tags: state.tags.filter((tag) => tag.id !== tagDto.id),
+    };
+  }),
+
   /* Timers */
   on(TasksActions.getTimersSuccess, (state, { timers }) => ({
     ...state,

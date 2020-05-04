@@ -90,6 +90,16 @@ export const editTagSuccess = createAction(
   props<{ tagDto: TagDto }>()
 );
 
+export const deleteTag = createAction(
+  '[TASKS] Delete Tag',
+  props<{ tagDto: TagDto }>()
+);
+
+export const deleteTagSuccess = createAction(
+  '[TASKS] Delete Tag Success',
+  props<{ tagDto: TagDto }>()
+);
+
 /* Timers */
 
 export const getTimers = createAction('[TASKS] Get Timers');

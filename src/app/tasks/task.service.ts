@@ -86,7 +86,7 @@ export class TaskService {
       taskDto.details,
       taskDto.complete,
       taskDto.duration,
-      taskDto.tags.sort((a, b) => a.localeCompare(b))
+      [...taskDto.tags].sort((a, b) => a.localeCompare(b))
     );
   }
 
@@ -163,6 +163,10 @@ export class TaskService {
 
   editTag(tagDto: TagDto): Observable<TagDto> {
     return this.http.put<TagDto>(`${this.tagsUrl}/${tagDto.id}`, tagDto);
+  }
+
+  deleteTag(tagDto: TagDto): Observable<void> {
+    return this.http.delete<void>(`${this.tagsUrl}/${tagDto.id}`);
   }
 
   getTimers(): Observable<ReadonlyArray<TaskTimer>> {
