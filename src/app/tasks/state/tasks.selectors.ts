@@ -65,11 +65,3 @@ export const selectTaskTimer = createSelector(
   (timers: Array<TaskTimer>, props: { taskId: number }) =>
     timers.find((timer) => timer.taskId === props.taskId)
 );
-
-export const selectTaskTimerValue = createSelector(selectTaskTimer, (timer) => {
-  return timer
-    ? formatDistanceStrict(parseISO(timer.timestamp), Date.now(), {
-        unit: 'minute',
-      })
-    : undefined;
-});

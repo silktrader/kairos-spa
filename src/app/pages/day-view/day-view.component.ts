@@ -10,13 +10,19 @@ import {
 import { FormControl } from '@angular/forms';
 import { TaskService } from 'src/app/tasks/task.service';
 import { Task } from 'src/app/tasks/models/task';
-import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import {
+  Observable,
+  BehaviorSubject,
+  Subject,
+  combineLatest,
+  timer,
+} from 'rxjs';
 import { Options } from 'sortablejs';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../../tasks/components/edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
-import { map, first, takeUntil } from 'rxjs/operators';
+import { map, first, takeUntil, tap } from 'rxjs/operators';
 import { HabitEntryDto } from 'src/app/habits/models/habit-entry.dto';
 import { HabitsState } from 'src/app/habits/state/habits.state';
 import { selectHabitsDetails } from 'src/app/habits/state/habits.selectors';
@@ -27,9 +33,6 @@ import {
 import {
   selectLoadingState,
   selectTasksByDate,
-  selectTagColour,
-  selectTaskTimer,
-  selectTaskTimerValue,
 } from 'src/app/tasks/state/tasks.selectors';
 import { updateTasks, add } from 'src/app/tasks/state/tasks.actions';
 import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
@@ -65,8 +68,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
   constructor(
     private readonly store: Store<AppState>,
     private readonly habitsStore: Store<HabitsState>,
-    private readonly ts: TaskService,
-    private editTaskDialog: MatDialog
+    private readonly ts: TaskService
   ) {}
 
   ngOnInit(): void {
@@ -257,13 +259,6 @@ export class DayViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  public openEditTaskDialog(task: Task) {
-    this.editTaskDialog.open(EditTaskDialogComponent, {
-      data: task,
-      panelClass: 'kairos-dialog',
-    });
-  }
-
   get isToday(): boolean {
     return isToday(this.date);
   }
@@ -337,30 +332,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
     this.moveTasks(incompleteTasks, previousDate);
   }
 
-  badgeCss$(badgeNumber: number, tagName: string) {
-    return this.store.select(selectTagColour, { tagName }).pipe(
-      map((colour) => {
-        const left = `${-30 * badgeNumber}px`;
-        const bottom = left;
-        const height = `${60 * badgeNumber}px`;
-        const width = height;
-        return {
-          backgroundColor: colour,
-          height,
-          left,
-          bottom,
-          width,
-          zIndex: -1 * badgeNumber, // display badges below task titles
-        };
-      })
-    );
-  }
-
   colourise(value: number): string {
     return interpolateRgb('rgb(190, 50, 10)', 'rgb(60, 140, 40)')(value);
-  }
-
-  getTaskTimerValue$(taskId: number) {
-    return this.store.select(selectTaskTimerValue, { taskId });
   }
 }

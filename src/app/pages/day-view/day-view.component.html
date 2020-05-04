@@ -42,7 +42,9 @@
 
         <div id="{{dayUrl}}" class="tasks" sortablejs [sortablejsOptions]="options">
 
-          <mat-card *ngFor="let task of tasks" class="mat-elevation-z2" matRipple (click)="openEditTaskDialog(task)"
+          <app-task-card *ngFor="let task of tasks" [task]="task"></app-task-card>
+
+          <!-- <mat-card *ngFor="let task of tasks" class="mat-elevation-z2" matRipple (click)="openEditTaskDialog(task)"
             [ngClass]="{'task-complete': task.complete}">
             <span class="task-title">{{task.title}}</span>
             <div class="badge" *ngFor="let tag of task.tags; let i = index" [ngStyle]="badgeCss$(i + 1, tag) | async">
@@ -50,7 +52,7 @@
             <div class="task-timer" *ngIf="(getTaskTimerValue$(task.id) | async) as taskTimerValue">
               <mat-icon>watch</mat-icon>{{taskTimerValue}}
             </div>
-          </mat-card>
+          </mat-card> -->
         </div>
 
         <mat-expansion-panel class="habits-panel">

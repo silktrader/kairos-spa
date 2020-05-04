@@ -20,7 +20,7 @@ import {
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { takeUntil, first, startWith, map } from 'rxjs/operators';
+import { takeUntil, first, startWith, map, tap } from 'rxjs/operators';
 import { formatISO, differenceInMinutes, parseISO } from 'date-fns';
 import {
   selectTaskEditingId,
@@ -41,7 +41,6 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { TaskDto } from '../../models/task.dto';
 import { TaskService } from '../../task.service';
-import { formatDistanceStrict } from 'date-fns';
 
 @Component({
   selector: 'app-edit-task-dialog',
@@ -65,22 +64,26 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   });
 
   readonly taskUpdating$ = this.store.select(selectTaskEditingId);
-  readonly timer$ = this.store.select(selectTaskTimer, {
+  readonly taskTimer$ = this.store.select(selectTaskTimer, {
     taskId: this.initialTask.id,
   });
 
   /* Observable emitting the timer's value, in minutes, every minute */
-  readonly timerMinutes$ = combineLatest([timer(0, 60000), this.timer$]).pipe(
-    map(([timerObservable, taskTimer]) =>
+  readonly taskTimerMinutes$ = combineLatest([
+    timer(0, 60000),
+    this.taskTimer$,
+  ]).pipe(
+    map(([, taskTimer]) =>
       taskTimer
-        ? formatDistanceStrict(parseISO(taskTimer.timestamp), Date.now(), {
-            unit: 'minute',
-          })
-        : ''
+        ? differenceInMinutes(Date.now(), parseISO(taskTimer.timestamp))
+        : undefined
     )
   );
 
   readonly canSave$ = new BehaviorSubject<boolean>(false);
+  readonly disabledTimer$ = new BehaviorSubject<boolean>(
+    this.initialTask.complete
+  );
 
   readonly autoCompletableTags: Observable<
     string[]
@@ -120,13 +123,16 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     // when the original task value and the form's contents differ allow changes to be reverted
     combineLatest([this.taskForm.valueChanges, this.editedTags$])
       .pipe(takeUntil(this.ngUnsubscribe$))
-      .subscribe((args) => {
+      .subscribe(([formValue, tags]: [TaskDto, Array<string>]) => {
         this.canSave$.next(
           this.ts.haveDifferentValues(
             this.initialTask,
-            this.buildTaskDto(args[0])
+            this.buildTaskDto(formValue)
           )
         );
+
+        // disable the timer when the task is set as complete
+        this.disabledTimer$.next(formValue.complete);
       });
 
     // close the dialog when the task is saved or deleted
@@ -134,10 +140,18 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
       .pipe(ofType(editSuccess, removeSuccess), takeUntil(this.ngUnsubscribe$))
       .subscribe(() => this.dialogRef.close());
 
-    // disable the duration control when the timer is ongoing
-    this.timer$.pipe(takeUntil(this.ngUnsubscribe$)).subscribe((timer) => {
-      timer ? this.durationControl.disable() : this.durationControl.enable();
-    });
+    // disable duration and complete controls when the timer is ongoing
+    this.taskTimer$
+      .pipe(takeUntil(this.ngUnsubscribe$))
+      .subscribe((taskTimerValue) => {
+        if (taskTimerValue) {
+          this.durationControl.disable();
+          this.completeControl.disable();
+        } else {
+          this.durationControl.enable();
+          this.completeControl.enable();
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -231,11 +245,15 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
 
   public endTimer(): void {
     const timerEnd = Date.now();
-    this.timer$.pipe(first()).subscribe((taskTimer) => {
-      if (taskTimer) {
+    this.taskTimer$.pipe(first()).subscribe((taskTimerValue) => {
+      if (taskTimerValue) {
+        console.log(this.durationControl.value);
+        console.log(
+          differenceInMinutes(timerEnd, parseISO(taskTimerValue.timestamp))
+        );
         this.durationControl.setValue(
-          +this.durationControl.value +
-            differenceInMinutes(timerEnd, parseISO(taskTimer.timestamp))
+          (parseInt(this.durationControl.value, 10) || 0) +
+            differenceInMinutes(timerEnd, parseISO(taskTimerValue.timestamp))
         );
       }
       this.store.dispatch(stopTimer({ taskId: this.initialTask.id }));

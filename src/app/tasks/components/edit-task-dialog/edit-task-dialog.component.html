@@ -48,13 +48,14 @@
             <input type="number" matInput formControlName="duration" autocomplete="off">
             <span matSuffix>min.</span>
           </mat-form-field>
-          <button *ngIf="(timerMinutes$ | async) as timerMinutes; else startTimerButton" class="timer-stop-button"
+          <button *ngIf="(taskTimerMinutes$ | async) !== undefined; else startTimerButton" class="timer-stop-button"
             mat-stroked-button color="accent" (click)="endTimer()">
-            <mat-icon class="timer-hourglass">hourglass_empty</mat-icon><span>{{timerMinutes}}</span>
+            <mat-icon class="timer-hourglass">watch</mat-icon><span>{{taskTimerMinutes$ | async}} min.</span>
           </button>
           <ng-template #startTimerButton>
-            <button class="timer-button" mat-stroked-button color="accent" (click)="startTimer()">
-              <mat-icon>timer</mat-icon>
+            <button class="timer-button" mat-stroked-button color="accent" [disabled]="disabledTimer$ | async"
+              (click)="startTimer()">
+              <mat-icon>watch</mat-icon>
               <span>Add Time</span>
             </button>
           </ng-template>
