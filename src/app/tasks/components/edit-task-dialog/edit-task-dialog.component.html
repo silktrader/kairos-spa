@@ -48,9 +48,9 @@
             <input type="number" matInput formControlName="duration" autocomplete="off">
             <span matSuffix>min.</span>
           </mat-form-field>
-          <button *ngIf="(timer$ | async) as timer; else startTimerButton" class="timer-stop-button" mat-stroked-button
-            color="accent" (click)="endTimer()">
-            <span>Timer: {{timer}}</span>
+          <button *ngIf="(timerMinutes$ | async) as timerMinutes; else startTimerButton" class="timer-stop-button"
+            mat-stroked-button color="accent" (click)="endTimer()">
+            <mat-icon class="timer-hourglass">hourglass_empty</mat-icon><span>{{timerMinutes}}</span>
           </button>
           <ng-template #startTimerButton>
             <button class="timer-button" mat-stroked-button color="accent" (click)="startTimer()">

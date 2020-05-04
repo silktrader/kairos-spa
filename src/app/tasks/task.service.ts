@@ -172,7 +172,7 @@ export class TaskService {
   addTimer(taskTimer: TaskTimer): Observable<TaskTimer> {
     return this.http.post<TaskTimer>(
       `${this.tasksUrl}/${taskTimer.taskId}/timer`,
-      { timestamp: taskTimer.timestamp }
+      { timestamp: parseInt(taskTimer.timestamp) }
     );
   }
 

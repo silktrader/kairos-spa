@@ -10,19 +10,18 @@ import {
 import { FormBuilder, FormControl } from '@angular/forms';
 import { Task } from 'src/app/tasks/models/task';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BehaviorSubject, Subject, Observable, combineLatest } from 'rxjs';
+import {
+  BehaviorSubject,
+  Subject,
+  Observable,
+  combineLatest,
+  timer,
+} from 'rxjs';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import {
-  takeUntil,
-  first,
-  startWith,
-  map,
-  sampleTime,
-  throttleTime,
-} from 'rxjs/operators';
-import { formatISO } from 'date-fns';
+import { takeUntil, first, startWith, map } from 'rxjs/operators';
+import { formatISO, differenceInMinutes, parseISO } from 'date-fns';
 import {
   selectTaskEditingId,
   selectTags,
@@ -66,20 +65,20 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   });
 
   readonly taskUpdating$ = this.store.select(selectTaskEditingId);
-  readonly timer$ = this.store
-    .select(selectTaskTimer, {
-      taskId: this.initialTask.id,
-    })
-    .pipe(
-      throttleTime(1000),
-      map((timer) =>
-        timer
-          ? formatDistanceStrict(new Date(timer.timestamp), Date.now(), {
-              unit: 'minute',
-            })
-          : ''
-      )
-    );
+  readonly timer$ = this.store.select(selectTaskTimer, {
+    taskId: this.initialTask.id,
+  });
+
+  /* Observable emitting the timer's value, in minutes, every minute */
+  readonly timerMinutes$ = combineLatest([timer(0, 60000), this.timer$]).pipe(
+    map(([timerObservable, taskTimer]) =>
+      taskTimer
+        ? formatDistanceStrict(parseISO(taskTimer.timestamp), Date.now(), {
+            unit: 'minute',
+          })
+        : ''
+    )
+  );
 
   readonly canSave$ = new BehaviorSubject<boolean>(false);
 
@@ -110,6 +109,9 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // begin by filling the form with values to avoid undefined dates, etc. in observables
+    this.resetChanges();
+
     this.store
       .select(selectTags)
       .pipe(takeUntil(this.ngUnsubscribe$))
@@ -118,9 +120,12 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     // when the original task value and the form's contents differ allow changes to be reverted
     combineLatest([this.taskForm.valueChanges, this.editedTags$])
       .pipe(takeUntil(this.ngUnsubscribe$))
-      .subscribe(() => {
+      .subscribe((args) => {
         this.canSave$.next(
-          this.ts.haveDifferentValues(this.initialTask, this.updatedTask)
+          this.ts.haveDifferentValues(
+            this.initialTask,
+            this.buildTaskDto(args[0])
+          )
         );
       });
 
@@ -129,7 +134,10 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
       .pipe(ofType(editSuccess, removeSuccess), takeUntil(this.ngUnsubscribe$))
       .subscribe(() => this.dialogRef.close());
 
-    this.resetChanges();
+    // disable the duration control when the timer is ongoing
+    this.timer$.pipe(takeUntil(this.ngUnsubscribe$)).subscribe((timer) => {
+      timer ? this.durationControl.disable() : this.durationControl.enable();
+    });
   }
 
   ngOnDestroy(): void {
@@ -137,15 +145,15 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe$.complete();
   }
 
-  get updatedTask(): TaskDto {
+  buildTaskDto(formValue: any): TaskDto {
     // ensure that the date is set to UTC
-    const date = formatISO(this.taskForm.value.date, {
+    const date = formatISO(formValue.date, {
       representation: 'date',
     });
     return {
       id: this.initialTask.id, // ensures the ID is present
       previousId: this.initialTask.previousId,
-      ...this.taskForm.value,
+      ...formValue,
       date,
       tags: this.editedTags$.value,
     };
@@ -156,7 +164,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       edit({
         originalTask: this.ts.serialise(this.initialTask),
-        updatedTask: this.updatedTask,
+        updatedTask: this.buildTaskDto(this.taskForm.value),
       })
     );
   }
@@ -215,14 +223,22 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   }
 
   public startTimer(): void {
-    const timestamp = Date.now();
-    console.log(timestamp);
+    const timestamp = Date.now().toString();
     this.store.dispatch(
       addTimer({ taskTimer: { taskId: this.initialTask.id, timestamp } })
     );
   }
 
   public endTimer(): void {
-    this.store.dispatch(stopTimer({ taskId: this.initialTask.id }));
+    const timerEnd = Date.now();
+    this.timer$.pipe(first()).subscribe((taskTimer) => {
+      if (taskTimer) {
+        this.durationControl.setValue(
+          +this.durationControl.value +
+            differenceInMinutes(timerEnd, parseISO(taskTimer.timestamp))
+        );
+      }
+      this.store.dispatch(stopTimer({ taskId: this.initialTask.id }));
+    });
   }
 }
