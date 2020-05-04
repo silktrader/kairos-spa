@@ -61,15 +61,12 @@ h3 {
 
 mat-card {
   display: flex;
+  flex-direction: column;
   margin: 0.5rem;
   margin-top: 0;
   cursor: pointer;
-  height: 35px;
   overflow: hidden;
-
-  span {
-    width: 100%;
-  }
+  align-items: center;
 }
 
 .task-complete {
@@ -79,6 +76,8 @@ mat-card {
 
 .task-title {
   display: flex;
+  width: 100%;
+  height: 35px;
   justify-content: center;
   align-items: center;
 }
@@ -94,6 +93,34 @@ mat-card {
   position: absolute;
   opacity: 0.6;
   transform: rotate(45deg);
+}
+
+.task-timer {
+  display: flex;
+  font-size: small;
+  align-items: center;
+  padding: 0.4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 5px;
+  color: rgba(59, 151, 162, 1);
+  animation: shadow-pulse 3s infinite;
+
+  mat-icon {
+    margin-right: 5px;
+  }
+}
+
+@keyframes shadow-pulse {
+  0% {
+    background-color: rgba(59, 151, 162, 0);
+  }
+  50% {
+    background-color: rgba(59, 151, 162, 0.2);
+  }
+  100% {
+    background-color: rgba(59, 151, 162, 0);
+  }
 }
 
 /* Add Task Prompt */

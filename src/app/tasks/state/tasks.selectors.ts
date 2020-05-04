@@ -1,6 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { Task } from 'src/app/tasks/models/task';
-import { isSameDay } from 'date-fns';
+import { isSameDay, formatDistanceStrict, parseISO } from 'date-fns';
 import { TasksState } from './tasks.state';
 import { TagDto } from '../models/tag.dto';
 import { baseTagColours } from './colours.state';
@@ -65,3 +65,11 @@ export const selectTaskTimer = createSelector(
   (timers: Array<TaskTimer>, props: { taskId: number }) =>
     timers.find((timer) => timer.taskId === props.taskId)
 );
+
+export const selectTaskTimerValue = createSelector(selectTaskTimer, (timer) => {
+  return timer
+    ? formatDistanceStrict(parseISO(timer.timestamp), Date.now(), {
+        unit: 'minute',
+      })
+    : undefined;
+});

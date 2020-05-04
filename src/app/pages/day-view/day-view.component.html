@@ -47,6 +47,9 @@
             <span class="task-title">{{task.title}}</span>
             <div class="badge" *ngFor="let tag of task.tags; let i = index" [ngStyle]="badgeCss$(i + 1, tag) | async">
             </div>
+            <div class="task-timer" *ngIf="(getTaskTimerValue$(task.id) | async) as taskTimerValue">
+              <mat-icon>watch</mat-icon>{{taskTimerValue}}
+            </div>
           </mat-card>
         </div>
 

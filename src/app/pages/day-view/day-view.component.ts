@@ -28,6 +28,8 @@ import {
   selectLoadingState,
   selectTasksByDate,
   selectTagColour,
+  selectTaskTimer,
+  selectTaskTimerValue,
 } from 'src/app/tasks/state/tasks.selectors';
 import { updateTasks, add } from 'src/app/tasks/state/tasks.actions';
 import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
@@ -356,5 +358,9 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
   colourise(value: number): string {
     return interpolateRgb('rgb(190, 50, 10)', 'rgb(60, 140, 40)')(value);
+  }
+
+  getTaskTimerValue$(taskId: number) {
+    return this.store.select(selectTaskTimerValue, { taskId });
   }
 }
