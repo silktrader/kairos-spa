@@ -10,16 +10,8 @@ import {
 import { FormControl } from '@angular/forms';
 import { TaskService } from 'src/app/tasks/task.service';
 import { Task } from 'src/app/tasks/models/task';
-import {
-  Observable,
-  BehaviorSubject,
-  Subject,
-  combineLatest,
-  timer,
-} from 'rxjs';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Options } from 'sortablejs';
-import { MatDialog } from '@angular/material/dialog';
-import { EditTaskDialogComponent } from '../../tasks/components/edit-task-dialog/edit-task-dialog.component';
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { map, first, takeUntil, tap } from 'rxjs/operators';
@@ -40,6 +32,7 @@ import { addDays, isToday, format } from 'date-fns';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { interpolateRgb } from 'd3-interpolate';
 import { HabitDetails } from 'src/app/habits/models/habit.dto';
+import { tagConstraints } from 'src/app/tasks/models/tag.dto';
 
 @Component({
   selector: 'app-day-view',
@@ -174,31 +167,14 @@ export class DayViewComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe$.complete();
   }
 
-  promptAddTask(): void {
-    this.addingTask$.next(true);
-    setTimeout(() => {
-      this.addTaskInput.nativeElement.focus();
-    }, 0);
-  }
+  private parseInput(input: string): { title: string; tags: Array<string> } {
+    if (!input) return { title: '', tags: [] };
 
-  leavePromptAddTask(): void {
-    const title = this.newTaskControl.value;
-    this.cancelPromptAddTask();
-    if (title) {
-      this.addTask(title);
-    }
-  }
-
-  cancelPromptAddTask(): void {
-    this.newTaskControl.reset();
-    this.addingTask$.next(false);
-  }
-
-  parseTitle(text: string): { title: string; tags: Array<string> } {
     const tags = [];
     let title = '';
-    for (const block of text.split(' ')) {
-      if (block.startsWith('#')) tags.push(block.substring(1));
+    for (const block of input.split(' ')) {
+      // remove the '#' and force lowercase
+      if (block.startsWith('#')) tags.push(block.substring(1).toLowerCase());
       else {
         title += block + ' ';
       }
@@ -210,9 +186,52 @@ export class DayViewComponent implements OnInit, OnDestroy {
     return { title, tags };
   }
 
-  addTask(text: string): void {
-    const { title, tags } = this.parseTitle(text);
+  promptAddTask(): void {
+    this.addingTask$.next(true);
+    setTimeout(() => {
+      this.addTaskInput.nativeElement.focus();
+    }, 0);
+  }
 
+  confirmPromptTask(): void {
+    const { title, tags } = this.parseInput(this.newTaskControl.value);
+
+    // ensure that titles abide to length rules
+    if (title.length > 50 || title.length < 5) {
+      this.newTaskControl.setErrors({ titleLength: true });
+      console.log(this.newTaskControl.valid);
+      return;
+    }
+
+    // ensure that tag names are valid
+    for (const tagName of tags) {
+      if (
+        tagName.length > tagConstraints.maxLength ||
+        tagName.length < tagConstraints.minLength
+      ) {
+        this.newTaskControl.setErrors({ tagLength: true });
+        return;
+      }
+    }
+
+    this.cancelPromptAddTask();
+    this.addTask({ title, tags });
+  }
+
+  cancelPromptAddTask(): void {
+    this.newTaskControl.reset();
+    this.addingTask$.next(false);
+  }
+
+  get titleErrorMessage(): string {
+    return 'Titles length must be within 5 and  50 characters';
+  }
+
+  get tagsErrorMessage(): string {
+    return `Hashtags length must be within ${tagConstraints.minLength} and ${tagConstraints.maxLength} characters`;
+  }
+
+  addTask({ title, tags }: { title: string; tags: Array<string> }): void {
     // check whether this is the first task
     const previousId =
       this.tasks.length > 0 ? this.tasks[this.tasks.length - 1].id : null;

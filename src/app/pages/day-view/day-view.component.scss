@@ -70,7 +70,7 @@ h3 {
     flex-direction: column;
     margin: 0.5rem;
     margin-top: 0;
-    cursor: pointer;
+    padding-top: 0.2rem; // allows for icons space
     align-items: center;
   }
 }
@@ -81,6 +81,18 @@ h3 {
   font-weight: 500;
   font-family: "Oswald";
   text-align: center;
+}
+
+.add-task-notice {
+  display: flex;
+  width: 100%;
+  margin-top: 0.2rem;
+  height: 0.8rem;
+  justify-content: flex-end;
+
+  mat-icon {
+    cursor: pointer;
+  }
 }
 
 .editing {

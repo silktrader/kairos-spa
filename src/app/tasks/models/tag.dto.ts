@@ -4,3 +4,8 @@ export interface TagDto {
   description?: string;
   colour: string;
 }
+
+export const tagConstraints = {
+  minLength: 3,
+  maxLength: 12,
+};

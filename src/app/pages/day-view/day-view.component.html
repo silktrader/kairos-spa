@@ -32,10 +32,18 @@
 
         <div class="add-task-card" [ngClass]="{'editing': addingTask$ | async}">
           <mat-card>
+            <div class="add-task-notice">
+              <mat-icon matTooltip="You can tag tasks by entering new or existing hashtags">
+                info</mat-icon>
+              <mat-icon *ngIf="newTaskControl.errors?.titleLength" color="warn" matTooltip="{{titleErrorMessage}}">error
+              </mat-icon>
+              <mat-icon *ngIf="newTaskControl.errors?.tagLength" color="warn" matTooltip="{{tagsErrorMessage}}">error
+              </mat-icon>
+            </div>
             <mat-form-field class="add-task-field">
               <mat-label></mat-label>
               <input type="text" #addTaskInput autocomplete="off" matInput [formControl]="newTaskControl"
-                (keyup.enter)="leavePromptAddTask()" (blur)="leavePromptAddTask()" (keyup.esc)="cancelPromptAddTask()">
+                (keyup.enter)="confirmPromptTask()" (blur)="cancelPromptAddTask()" (keyup.esc)="cancelPromptAddTask()">
             </mat-form-field>
           </mat-card>
         </div>

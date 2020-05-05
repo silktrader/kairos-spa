@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { TagDto } from '../../models/tag.dto';
+import { TagDto, tagConstraints } from '../../models/tag.dto';
 import { takeUntil, first } from 'rxjs/operators';
 import { TasksState } from '../../state/tasks.state';
 import { Store, select } from '@ngrx/store';
@@ -25,8 +25,8 @@ import { selectTagColoursList } from '../../state/tasks.selectors';
 export class EditTagDialogComponent implements OnInit, OnDestroy {
   readonly nameControl = new FormControl(undefined, [
     Validators.required,
-    Validators.minLength(3),
-    Validators.maxLength(12),
+    Validators.minLength(tagConstraints.minLength),
+    Validators.maxLength(tagConstraints.maxLength),
     Validators.pattern('^[a-z]+$'),
   ]);
   readonly tagForm = new FormGroup({
