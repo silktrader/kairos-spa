@@ -93,12 +93,10 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   );
 
   readonly autoCompletableTags: Observable<
-    string[]
+    Array<string>
   > = this.tagsControl.valueChanges.pipe(
     startWith(null),
-    map((tag: string | null) =>
-      tag ? this.filterTag(tag) : [...this.existingTags]
-    )
+    map((tag: string | null) => (tag ? this.filterTag(tag) : this.existingTags))
   );
 
   // tk remove below?
@@ -242,9 +240,14 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   private filterTag(value: string): string[] {
     const filterValue = value.toLowerCase();
 
-    return this.editedTags$.value.filter(
+    return this.existingTags.filter(
       (tag) => tag.toLowerCase().indexOf(filterValue) === 0
     );
+  }
+
+  /** Remove partially entered tags, ones that weren't confirmed with delimiters */
+  public clearTags(): void {
+    this.tagsInput.nativeElement.value = '';
   }
 
   public startTimer(): void {
