@@ -59,7 +59,7 @@
         <mat-spinner [diameter]="30" *ngIf="(tagUpdating$ | async); else saveButton">
         </mat-spinner>
         <ng-template #saveButton>
-          <button type="submit" mat-raised-button [disabled]="(unchanged$ | async) || !tagForm.valid" color="primary"
+          <button type="submit" mat-raised-button [disabled]="(unchanged$ | async) || tagForm.invalid" color="primary"
             (click)="saveTag()">Save</button>
         </ng-template>
       </div>

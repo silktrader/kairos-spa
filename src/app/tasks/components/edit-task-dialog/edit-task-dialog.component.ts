@@ -7,7 +7,7 @@ import {
   OnDestroy,
   ElementRef,
 } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Task } from 'src/app/tasks/models/task';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
@@ -51,14 +51,21 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
   @ViewChild('tagsInput') tagsInput: ElementRef<HTMLInputElement>;
 
-  private readonly durationControl = new FormControl(undefined);
+  private readonly durationControl = new FormControl(undefined, [
+    Validators.min(0),
+    Validators.max(1440),
+  ]);
   private readonly completeControl = new FormControl(false);
   public readonly tagsControl = new FormControl(undefined);
 
-  readonly taskForm = this.formBuilder.group({
-    title: [undefined],
-    details: [undefined],
-    date: [undefined],
+  readonly taskForm = new FormGroup({
+    title: new FormControl(undefined, [
+      Validators.required,
+      Validators.minLength(5),
+      Validators.maxLength(50),
+    ]),
+    details: new FormControl(undefined),
+    date: new FormControl(undefined, [Validators.required]),
     complete: this.completeControl,
     duration: this.durationControl,
   });
@@ -106,7 +113,6 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(MAT_DIALOG_DATA) public initialTask: Task,
     public dialogRef: MatDialogRef<EditTaskDialogComponent>,
-    private readonly formBuilder: FormBuilder,
     private readonly store: Store<AppState>,
     private readonly actions$: Actions,
     private readonly ngZone: NgZone,
@@ -163,9 +169,12 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
 
   buildTaskDto(formValue: any): TaskDto {
     // ensure that the date is set to UTC
-    const date = formatISO(formValue.date, {
-      representation: 'date',
-    });
+    // the form field might be cleared while editing hence the null check
+    const date = formValue.date
+      ? formatISO(formValue.date, {
+          representation: 'date',
+        })
+      : undefined;
     return {
       id: this.initialTask.id, // ensures the ID is present
       previousId: this.initialTask.previousId,

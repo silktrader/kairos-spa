@@ -40,7 +40,7 @@ mat-card {
   height: 35px;
   border-radius: 5px;
   color: rgba(59, 151, 162, 1);
-  animation: shadow-pulse 3s infinite;
+  animation: background-pulse 3s infinite;
   margin-top: calc(0.5rem + 16px);
 
   mat-icon {
@@ -48,7 +48,7 @@ mat-card {
   }
 }
 
-@keyframes shadow-pulse {
+@keyframes background-pulse {
   0% {
     background-color: rgba(59, 151, 162, 0);
   }

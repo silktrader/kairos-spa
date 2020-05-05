@@ -40,7 +40,6 @@ export class TaskCardComponent implements OnInit {
 
     this.timerValue$ = combineLatest([timer(0, 60000), this.timer$]).pipe(
       map(([, taskTimer]) => {
-        console.log('called');
         return taskTimer
           ? differenceInMinutes(Date.now(), parseISO(taskTimer.timestamp))
           : undefined;

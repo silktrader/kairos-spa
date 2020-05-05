@@ -10,6 +10,7 @@
         <mat-form-field class="title-input">
           <mat-label>Title</mat-label>
           <input type="text" formControlName="title" matInput autocomplete="off" maxlength="50" cdkFocusInitial>
+          <mat-error>Must be shorter than 50 characters and longer than 5</mat-error>
         </mat-form-field>
       </mat-toolbar-row>
     </mat-toolbar>
@@ -37,6 +38,7 @@
           <input matInput [matDatepicker]="taskDate" formControlName="date">
           <mat-datepicker-toggle matSuffix [for]="taskDate"></mat-datepicker-toggle>
           <mat-datepicker #taskDate></mat-datepicker>
+          <mat-error>Must be a valid date</mat-error>
         </mat-form-field>
       </section>
 
@@ -47,6 +49,7 @@
             <mat-label>Duration</mat-label>
             <input type="number" matInput formControlName="duration" autocomplete="off">
             <span matSuffix>min.</span>
+            <mat-error>Must be positive and shorter than 24 hours</mat-error>
           </mat-form-field>
           <button *ngIf="(taskTimerMinutes$ | async) !== undefined; else startTimerButton" class="timer-stop-button"
             mat-stroked-button color="accent" (click)="endTimer()">
@@ -98,7 +101,7 @@
           <mat-spinner [diameter]="30" *ngIf="(taskUpdating$ | async); else saveButton">
           </mat-spinner>
           <ng-template #saveButton>
-            <button type="submit" mat-raised-button [disabled]="!(canSave$ | async)" color="primary"
+            <button type="submit" mat-raised-button [disabled]="!(canSave$ | async) || taskForm.invalid" color="primary"
               (click)="saveTask()">Save</button>
           </ng-template>
         </div>
