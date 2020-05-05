@@ -96,7 +96,9 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
 
   // tk remove below?
   existingTags: Array<string>;
-  editedTags$ = new BehaviorSubject<Array<string>>(this.initialTask.tags);
+  editedTags$ = new BehaviorSubject<ReadonlyArray<string>>(
+    this.initialTask.tags
+  );
   readonly tagSeparators: number[] = [ENTER, COMMA];
 
   private ngUnsubscribe$ = new Subject();

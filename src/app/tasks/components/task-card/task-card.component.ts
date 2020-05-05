@@ -2,7 +2,6 @@ import {
   Component,
   OnInit,
   Input,
-  OnDestroy,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { Task } from '../../models/task';

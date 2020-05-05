@@ -1,7 +1,6 @@
-<mat-card class="mat-elevation-z2" matRipple (click)="openEditTaskDialog(task)"
-  [ngClass]="{'task-complete': task.complete}">
+<mat-card class="mat-elevation-z2" matRipple (click)="openEditTaskDialog(task)" [class.task-complete]="task.complete">
   <span class="task-title">{{task.title}}</span>
-  <div class="badge" *ngFor="let tag of task.tags; let i = index" [ngStyle]="badgeCss$(i + 1, tag) | async">
+  <div class="task-tag" *ngFor="let tag of task.tags; let i = index" [ngStyle]="badgeCss$(i + 1, tag) | async">
   </div>
   <div class="task-timer" *ngIf="(timer$ | async)">
     <mat-icon>watch</mat-icon>{{timerValue$ | async}} min.

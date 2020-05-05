@@ -21,18 +21,13 @@ mat-card {
   height: 35px;
   justify-content: center;
   align-items: center;
-}
-
-.task-title,
-.add-task-field {
   font-weight: 500;
   font-family: "Oswald";
   text-align: center;
 }
 
-.badge {
+.task-tag {
   position: absolute;
-  opacity: 0.6;
   transform: rotate(45deg);
 }
 
