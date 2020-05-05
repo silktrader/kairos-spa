@@ -261,10 +261,6 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     const timerEnd = Date.now();
     this.taskTimer$.pipe(first()).subscribe((taskTimerValue) => {
       if (taskTimerValue) {
-        console.log(this.durationControl.value);
-        console.log(
-          differenceInMinutes(timerEnd, parseISO(taskTimerValue.timestamp))
-        );
         this.durationControl.setValue(
           (parseInt(this.durationControl.value, 10) || 0) +
             differenceInMinutes(timerEnd, parseISO(taskTimerValue.timestamp))

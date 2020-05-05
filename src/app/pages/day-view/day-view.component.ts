@@ -194,7 +194,25 @@ export class DayViewComponent implements OnInit, OnDestroy {
     this.addingTask$.next(false);
   }
 
-  addTask(title: string): void {
+  parseTitle(text: string): { title: string; tags: Array<string> } {
+    const tags = [];
+    let title = '';
+    for (const block of text.split(' ')) {
+      if (block.startsWith('#')) tags.push(block.substring(1));
+      else {
+        title += block + ' ';
+      }
+    }
+
+    // there will always be a last space, this also takes care of rogue initial ones
+    title = title.trim();
+
+    return { title, tags };
+  }
+
+  addTask(text: string): void {
+    const { title, tags } = this.parseTitle(text);
+
     // check whether this is the first task
     const previousId =
       this.tasks.length > 0 ? this.tasks[this.tasks.length - 1].id : null;
@@ -208,7 +226,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
           details: null,
           complete: false,
           duration: null,
-          tags: [],
+          tags,
         },
       })
     );
