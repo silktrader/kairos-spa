@@ -2,13 +2,17 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TaskService } from 'src/app/tasks/task.service';
 import * as TasksActions from './tasks.actions';
-import { mergeMap, map, catchError, tap } from 'rxjs/operators';
+import { mergeMap, map, catchError, tap, first } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { TasksErrorDialogComponent } from 'src/app/tasks/components/tasks-error-dialog/tasks-error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TagDto } from '../models/tag.dto';
 import { TaskTimer } from '../models/task-timer.dto';
+import { Task } from '../models/task';
+import { AppState } from 'src/app/store/app-state';
+import { Store, select } from '@ngrx/store';
+import { selectTags } from './tasks.selectors';
 
 @Injectable()
 export class TasksEffects {
@@ -60,6 +64,42 @@ export class TasksEffects {
           .pipe(map((task) => TasksActions.addSuccess({ task })))
       )
     )
+  );
+
+  addSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(TasksActions.addSuccess),
+        tap((action: { task: Task }) => {
+          this.store.pipe(select(selectTags), first()).subscribe((tags) => {
+            const existingTags = tags.map((tag) => tag.name);
+            for (const tag of action.task.tags) {
+              if (!existingTags.includes(tag)) {
+                this.store.dispatch(TasksActions.getTags());
+              }
+            }
+          });
+        })
+      ),
+    { dispatch: false }
+  );
+
+  editSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(TasksActions.editSuccess),
+        tap((action: { originalTask: TaskDto; updatedTask: Task }) => {
+          this.store.pipe(select(selectTags), first()).subscribe((tags) => {
+            const existingTags = tags.map((tag) => tag.name);
+            for (const tag of action.updatedTask.tags) {
+              if (!existingTags.includes(tag)) {
+                this.store.dispatch(TasksActions.getTags());
+              }
+            }
+          });
+        })
+      ),
+    { dispatch: false }
   );
 
   edit$ = createEffect(() =>
@@ -192,6 +232,7 @@ export class TasksEffects {
   constructor(
     private actions$: Actions,
     private ts: TaskService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private readonly store: Store<AppState>
   ) {}
 }
