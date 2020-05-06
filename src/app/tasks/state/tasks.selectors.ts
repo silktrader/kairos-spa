@@ -1,6 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { Task } from 'src/app/tasks/models/task';
-import { isSameDay, formatDistanceStrict, parseISO } from 'date-fns';
+import { isSameDay } from 'date-fns';
 import { TasksState } from './tasks.state';
 import { TagDto } from '../models/tag.dto';
 import { baseTagColours } from './colours.state';

@@ -7,5 +7,5 @@ export interface TagDto {
 
 export const tagConstraints = {
   minLength: 3,
-  maxLength: 12,
+  maxLength: 15,
 };

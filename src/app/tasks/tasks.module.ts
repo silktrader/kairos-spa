@@ -12,6 +12,7 @@ import { SidebarSectionTitleComponent } from '../core/components/sidebar-section
 import { EditTagDialogComponent } from './components/edit-tag-dialog/edit-tag-dialog.component';
 import { TasksErrorDialogComponent } from './components/tasks-error-dialog/tasks-error-dialog.component';
 import { TaskCardComponent } from './components/task-card/task-card.component';
+import { TasksOrderErrorDialogComponent } from './components/tasks-order-error-dialog/tasks-order-error-dialog.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { TaskCardComponent } from './components/task-card/task-card.component';
     EditTagDialogComponent,
     TasksErrorDialogComponent,
     TaskCardComponent,
+    TasksOrderErrorDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -38,6 +40,7 @@ import { TaskCardComponent } from './components/task-card/task-card.component';
     EditTaskDialogComponent,
     EditTagDialogComponent,
     TasksErrorDialogComponent,
+    TasksOrderErrorDialogComponent,
   ],
 })
 export class TasksModule {}

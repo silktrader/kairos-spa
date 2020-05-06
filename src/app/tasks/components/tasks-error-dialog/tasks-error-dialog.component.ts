@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AppState } from 'src/app/store/app-state';
 import { Store, select } from '@ngrx/store';
 import { selectVisiblePeriod } from 'src/app/store/schedule.selectors';
-import { first, map } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 import { selectLoadingState } from 'src/app/tasks/state/tasks.selectors';
 import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
 import { get } from 'src/app/tasks/state/tasks.actions';

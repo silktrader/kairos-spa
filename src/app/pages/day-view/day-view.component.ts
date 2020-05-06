@@ -14,7 +14,7 @@ import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Options } from 'sortablejs';
 import { Store, select } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
-import { map, first, takeUntil, tap } from 'rxjs/operators';
+import { map, first, takeUntil } from 'rxjs/operators';
 import { HabitEntryDto } from 'src/app/habits/models/habit-entry.dto';
 import { HabitsState } from 'src/app/habits/state/habits.state';
 import { selectHabitsDetails } from 'src/app/habits/state/habits.selectors';
@@ -33,6 +33,7 @@ import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { interpolateRgb } from 'd3-interpolate';
 import { HabitDetails } from 'src/app/habits/models/habit.dto';
 import { tagConstraints } from 'src/app/tasks/models/tag.dto';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-day-view',
@@ -45,6 +46,8 @@ export class DayViewComponent implements OnInit, OnDestroy {
   @ViewChild('addTaskInput') addTaskInput: ElementRef;
 
   tasks: ReadonlyArray<Task>;
+  handlingError = false;
+
   loadingState$: Observable<TasksLoadingState> = this.store.pipe(
     select(selectLoadingState)
   );
@@ -61,18 +64,27 @@ export class DayViewComponent implements OnInit, OnDestroy {
   constructor(
     private readonly store: Store<AppState>,
     private readonly habitsStore: Store<HabitsState>,
-    private readonly ts: TaskService
+    private readonly ts: TaskService,
+    private readonly ns: NotificationService
   ) {}
 
   ngOnInit(): void {
     this.store
-      .pipe(
-        select(selectTasksByDate, { date: this.date }),
-        map(this.ts.sortTasks),
-        takeUntil(this.ngUnsubscribe$)
-      )
+      .select(selectTasksByDate, { date: this.date })
+      .pipe(takeUntil(this.ngUnsubscribe$))
       .subscribe((tasks) => {
-        this.tasks = tasks;
+        // an alternative to catching errors synchronously would be use RxJS' catchError and switchMap to keep the main observable alive
+        // tasks need to be stored locally anyway so a try-catch block is relevant
+        try {
+          this.tasks = this.ts.sortTasks(tasks);
+          this.handlingError = false;
+        } catch (error) {
+          // the selector will trigger various updates; this is how we prevent multiple dialogs (less than ideal)
+          if (this.handlingError) return;
+          this.handlingError = true;
+          this.ns.warnTasksOrderError(this.date);
+          this.tasks = [];
+        }
       });
 
     // must run during onInit to ensure the date is set before
@@ -94,7 +106,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
       });
 
     this.options = {
-      group: 'draggable-tasks',
+      group: 'draggable-tasks', // tk export
       onRemove: (event: any) => {
         const movedTask = this.tasks[event.oldIndex];
 
@@ -108,8 +120,8 @@ export class DayViewComponent implements OnInit, OnDestroy {
             select(selectTasksByDate, {
               date: targetDate,
             }),
-            map(this.ts.sortTasks),
-            first()
+            first(),
+            map(this.ts.sortTasks)
           )
           .subscribe((tasks) => {
             targetTasks = tasks;

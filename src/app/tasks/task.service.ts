@@ -8,7 +8,6 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { DeleteTaskDto } from './models/deleteTask.dto';
 import { TagDto } from './models/tag.dto';
-import { TasksErrorDialogComponent } from './components/tasks-error-dialog/tasks-error-dialog.component';
 import { TaskTimer } from './models/task-timer.dto';
 
 @Injectable({
@@ -54,17 +53,9 @@ export class TaskService {
           break;
         }
       }
-      if (foundTask) {
-        unorderedTasks.delete(foundTask);
-      } else {
-        console.error(
-          'Could not reconstruct tasks order. Ordered tasks:',
-          orderedTasks,
-          'Unordered tasks:',
-          tasks
-        );
-        return tasks; // avoid infinite loops in case of error
-      } // tk
+
+      if (foundTask) unorderedTasks.delete(foundTask);
+      else throw new Error();
     }
 
     return orderedTasks;

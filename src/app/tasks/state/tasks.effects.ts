@@ -12,7 +12,6 @@ import {
 } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
-import { TasksErrorDialogComponent } from 'src/app/tasks/components/tasks-error-dialog/tasks-error-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { TagDto } from '../models/tag.dto';
 import { TaskTimer } from '../models/task-timer.dto';
@@ -34,32 +33,32 @@ export class TasksEffects {
     )
   );
 
-  getSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(TasksActions.getSuccess),
-        tap(() => {
-          // close error dialogs when present
-          this.matDialog.closeAll();
-        })
-      ),
-    { dispatch: false }
-  );
+  // getSuccess$ = createEffect(
+  //   () =>
+  //     this.actions$.pipe(
+  //       ofType(TasksActions.getSuccess),
+  //       tap(() => {
+  //         // close error dialogs when present
+  //         this.matDialog.closeAll();
+  //       })
+  //     ),
+  //   { dispatch: false }
+  // );
 
-  getFailed$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(TasksActions.getFailed),
-        tap(() => {
-          this.matDialog.closeAll(); // avoid the stacking of errors dialogs when retrying
-          this.matDialog.open(TasksErrorDialogComponent, {
-            panelClass: 'kairos-dialog',
-            disableClose: true,
-          });
-        })
-      ),
-    { dispatch: false }
-  );
+  // getFailed$ = createEffect(
+  //   () =>
+  //     this.actions$.pipe(
+  //       ofType(TasksActions.getFailed),
+  //       tap(() => {
+  //         this.matDialog.closeAll(); // avoid the stacking of errors dialogs when retrying
+  //         this.matDialog.open(TasksErrorDialogComponent, {
+  //           panelClass: 'kairos-dialog',
+  //           disableClose: true,
+  //         });
+  //       })
+  //     ),
+  //   { dispatch: false }
+  // );
 
   add$ = createEffect(() =>
     this.actions$.pipe(

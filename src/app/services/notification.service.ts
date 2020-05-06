@@ -8,6 +8,7 @@ import { AppState } from '../store/app-state';
 import { EventOperation } from '../store/event-operation.enum';
 import { MatDialog } from '@angular/material/dialog';
 import { GeneralErrorDialogComponent } from '../core/components/general-error-dialog/general-error-dialog.component';
+import { TasksOrderErrorDialogComponent } from '../tasks/components/tasks-order-error-dialog/tasks-order-error-dialog.component';
 
 @Injectable({
   providedIn: 'root',
@@ -69,6 +70,13 @@ export class NotificationService {
   warnError(error: Error): void {
     this.matDialog.open(GeneralErrorDialogComponent, {
       data: error,
+      panelClass: 'kairos-dialog',
+    });
+  }
+
+  warnTasksOrderError(date: Date): void {
+    this.matDialog.open(TasksOrderErrorDialogComponent, {
+      data: date,
       panelClass: 'kairos-dialog',
     });
   }

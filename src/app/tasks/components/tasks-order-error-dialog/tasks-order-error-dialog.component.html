@@ -1,0 +1,13 @@
+<header>
+  <mat-icon>error</mat-icon>
+  <h1>Tasks Ordering Error</h1>
+</header>
+<main>
+  <p>We couldn't order <em>{{unorderedTasks.length}}</em> tasks set for <em>{{date | date:'fullDate'}}.</em></p>
+  <p>While we're unsure as to what caused the issue, we can recover from it by generating a new list based on partial
+    data.</p>
+</main>
+<footer>
+  <button mat-stroked-button cdkFocusInitial mat-dialog-close (click)="recover()">
+    Recover</button>
+</footer>
