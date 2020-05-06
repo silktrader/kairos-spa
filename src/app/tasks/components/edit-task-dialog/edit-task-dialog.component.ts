@@ -174,7 +174,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
         })
       : undefined;
     return {
-      id: this.initialTask.id, // ensures the ID is present
+      ...this.initialTask, // ensures the ID is present and that duration and complete aren't null
       previousId: this.initialTask.previousId,
       ...formValue,
       date,
