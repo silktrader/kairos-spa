@@ -2,7 +2,6 @@ import { TaskDto } from '../tasks/models/task.dto';
 import { generate } from 'shortid';
 import { HabitDto } from '../habits/models/habit.dto';
 import { EventOperation } from './event-operation.enum';
-import { Task } from '../tasks/models/task';
 
 export abstract class AppEvent {
   public readonly id = generate();
@@ -13,7 +12,7 @@ export abstract class AppEvent {
 }
 
 export abstract class TaskEvent extends AppEvent {
-  constructor(public readonly task: Task) {
+  constructor(public readonly task: TaskDto) {
     super();
   }
 
@@ -59,7 +58,7 @@ export class EditTaskEvent extends TaskEvent {
   operation = EventOperation.EditedTask;
 
   constructor(
-    public readonly task: Task,
+    public readonly task: TaskDto,
     public readonly originalTaskDto: TaskDto
   ) {
     super(task);

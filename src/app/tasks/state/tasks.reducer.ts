@@ -7,7 +7,7 @@ import {
   DeleteTaskEvent,
   GenericTaskEvent,
 } from 'src/app/store/app-event.state';
-import { Task } from 'src/app/tasks/models/task';
+import { TaskDto } from '../models/task.dto';
 
 export const initialState: TasksState = {
   tasks: [],
@@ -19,12 +19,12 @@ export const initialState: TasksState = {
 };
 
 export const filteredTasks = (
-  tasks: ReadonlyArray<Task>,
+  tasks: ReadonlyArray<TaskDto>,
   ...removedTasksIds: Array<number>
-): Array<Task> => {
+): Array<TaskDto> => {
   const removedIds = new Set<number>(removedTasksIds);
 
-  const finalTasks: Array<Task> = [];
+  const finalTasks: Array<TaskDto> = [];
 
   for (const task of tasks) {
     if (removedIds.has(task.id)) {
@@ -110,7 +110,7 @@ export const tasksReducer = createReducer(
   on(
     TasksActions.removeSuccess,
     (state, { removedTaskId: deletedTaskId, affectedTask }) => {
-      const newTasks: Array<Task> = [];
+      const newTasks: Array<TaskDto> = [];
 
       let deletedTask;
       for (const task of state.tasks) {
@@ -135,7 +135,7 @@ export const tasksReducer = createReducer(
         events: [
           ...state.events,
           // purposedly not signaling the affected task's move
-          new DeleteTaskEvent(deletedTask as Task),
+          new DeleteTaskEvent(deletedTask as TaskDto),
         ],
       };
     }

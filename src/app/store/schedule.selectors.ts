@@ -2,7 +2,7 @@ import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { ScheduleState } from './app-state';
 import { selectHabitsEvents } from '../habits/state/habits.selectors';
 import { selectTaskEvents } from '../tasks/state/tasks.selectors';
-import { isSameDay, addDays } from 'date-fns';
+import { isSameDay, addDays, format } from 'date-fns';
 
 export const selectFeature = createFeatureSelector<
   { schedule: ScheduleState },
@@ -23,7 +23,7 @@ export const selectVisibleDates = createSelector(
       focusedDate = addDays(focusedDate, 1);
       dates.push(focusedDate);
     }
-    return dates;
+    return dates.map((date) => format(date, 'yyyy-MM-dd'));
   }
 );
 

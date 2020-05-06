@@ -74,7 +74,7 @@ export class NotificationService {
     });
   }
 
-  warnTasksOrderError(date: Date): void {
+  warnTasksOrderError(date: string): void {
     this.matDialog.open(TasksOrderErrorDialogComponent, {
       data: date,
       panelClass: 'kairos-dialog',

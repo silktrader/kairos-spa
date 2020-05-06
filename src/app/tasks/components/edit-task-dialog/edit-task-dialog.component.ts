@@ -8,7 +8,6 @@ import {
   ElementRef,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Task } from 'src/app/tasks/models/task';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   BehaviorSubject,
@@ -109,7 +108,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   private ngUnsubscribe$ = new Subject();
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public initialTask: Task,
+    @Inject(MAT_DIALOG_DATA) public initialTask: TaskDto,
     public dialogRef: MatDialogRef<EditTaskDialogComponent>,
     private readonly store: Store<AppState>,
     private readonly actions$: Actions,
@@ -168,8 +167,9 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   buildTaskDto(formValue: any): TaskDto {
     // ensure that the date is set to UTC
     // the form field might be cleared while editing hence the null check
+    // will create a date from either a string or a date object
     const date = formValue.date
-      ? formatISO(formValue.date, {
+      ? formatISO(new Date(formValue.date), {
           representation: 'date',
         })
       : undefined;
@@ -186,7 +186,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     // merge data with spread operator
     this.store.dispatch(
       edit({
-        originalTask: this.ts.serialise(this.initialTask),
+        originalTask: this.initialTask,
         updatedTask: this.buildTaskDto(this.taskForm.value),
       })
     );

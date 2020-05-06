@@ -39,33 +39,23 @@ export class HabitsService {
     startDate: Date,
     endDate: Date
   ): Observable<ReadonlyArray<HabitEntryDto>> {
-    return this.http
-      .get<ReadonlyArray<HabitEntryDto>>(this.habitsEntriesUrl, {
-        params: {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
-        },
-      })
-      .pipe(map((dtos) => dtos.map(this.mapDto)));
-  }
-
-  private mapDto(dto: any): HabitEntryDto {
-    return { ...dto, date: new Date(dto.date) };
+    return this.http.get<ReadonlyArray<HabitEntryDto>>(this.habitsEntriesUrl, {
+      params: {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      },
+    });
   }
 
   addHabitEntry(
     habitEntryDto: Omit<HabitEntryDto, 'id'>
   ): Observable<HabitEntryDto> {
-    return this.http
-      .post<HabitEntryDto>(this.habitsEntriesUrl, habitEntryDto)
-      .pipe(map(this.mapDto));
+    return this.http.post<HabitEntryDto>(this.habitsEntriesUrl, habitEntryDto);
   }
 
   deleteHabitEntry(habitEntryDto: HabitEntryDto): Observable<boolean> {
     return this.http.delete<boolean>(
-      `${this.habitsEntriesUrl}/${formatISO(habitEntryDto.date, {
-        representation: 'date',
-      })}/${habitEntryDto.habitId}`
+      `${this.habitsEntriesUrl}/${habitEntryDto.date}/${habitEntryDto.habitId}`
     );
   }
 }

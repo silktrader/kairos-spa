@@ -1,12 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Task } from '../../models/task';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { selectTasksByDate } from '../../state/tasks.selectors';
 import { first } from 'rxjs/operators';
 import { updateTasks } from '../../state/tasks.actions';
-import { TaskService } from '../../task.service';
 import { TaskDto } from '../../models/task.dto';
 
 @Component({
@@ -15,12 +13,11 @@ import { TaskDto } from '../../models/task.dto';
   styleUrls: ['./tasks-order-error-dialog.component.scss'],
 })
 export class TasksOrderErrorDialogComponent implements OnInit {
-  public unorderedTasks: ReadonlyArray<Task>;
+  public unorderedTasks: ReadonlyArray<TaskDto>;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public date: Date,
-    private readonly store: Store<AppState>,
-    private readonly ts: TaskService
+    @Inject(MAT_DIALOG_DATA) public date: string,
+    private readonly store: Store<AppState>
   ) {}
 
   ngOnInit(): void {
@@ -39,11 +36,11 @@ export class TasksOrderErrorDialogComponent implements OnInit {
     );
   }
 
-  private reorderTasks(tasks: ReadonlyArray<Task>): ReadonlyArray<TaskDto> {
+  private reorderTasks(tasks: ReadonlyArray<TaskDto>): ReadonlyArray<TaskDto> {
     // build a set of DTOs
     const unorderedTasks = new Set<TaskDto>();
     for (const task of tasks) {
-      unorderedTasks.add(this.ts.serialise(task));
+      unorderedTasks.add(task);
     }
 
     const orderedTasks: Array<TaskDto> = [];

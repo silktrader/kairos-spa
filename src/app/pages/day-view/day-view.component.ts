@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TaskService } from 'src/app/tasks/task.service';
-import { Task } from 'src/app/tasks/models/task';
 import { Observable, BehaviorSubject, Subject } from 'rxjs';
 import { Options } from 'sortablejs';
 import { Store, select } from '@ngrx/store';
@@ -42,10 +41,12 @@ import { NotificationService } from 'src/app/services/notification.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DayViewComponent implements OnInit, OnDestroy {
-  @Input() date: Date;
+  @Input() date: string;
+  private dateObject: Date;
+
   @ViewChild('addTaskInput') addTaskInput: ElementRef;
 
-  tasks: ReadonlyArray<Task>;
+  tasks: ReadonlyArray<TaskDto>;
   handlingError = false;
 
   loadingState$: Observable<TasksLoadingState> = this.store.pipe(
@@ -69,6 +70,9 @@ export class DayViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // store date object to avoid constant parsing
+    this.dateObject = new Date(this.date);
+
     this.store
       .select(selectTasksByDate, { date: this.date })
       .pipe(takeUntil(this.ngUnsubscribe$))
@@ -111,8 +115,8 @@ export class DayViewComponent implements OnInit, OnDestroy {
         const movedTask = this.tasks[event.oldIndex];
 
         // watch out for the date's timezone
-        const targetDate: Date = new Date(event.to.id);
-        let targetTasks: ReadonlyArray<Task> = [];
+        const targetDate: string = event.to.id;
+        let targetTasks: ReadonlyArray<TaskDto> = [];
 
         // get the target date's sorted tasks
         this.store
@@ -133,7 +137,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
             ? null
             : targetTasks[event.newIndex - 1].id;
 
-        const updatedTasks = [this.ts.serialise(movedTask)];
+        const updatedTasks = [movedTask];
 
         // change the task that references the one being changed
         const orphanTask = this.tasks.find(
@@ -141,7 +145,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
         );
         if (orphanTask) {
           updatedTasks.push({
-            ...this.ts.serialise(orphanTask),
+            ...orphanTask,
             previousId: movedTask.previousId,
           });
         }
@@ -152,14 +156,17 @@ export class DayViewComponent implements OnInit, OnDestroy {
         );
         if (pushedDown) {
           updatedTasks.push({
-            ...this.ts.serialise(pushedDown),
+            ...pushedDown,
             previousId: movedTask.id,
           });
         }
 
         // finally change the moved task
-        updatedTasks[0].date = this.ts.getDateString(targetDate);
-        updatedTasks[0].previousId = antecedentId;
+        updatedTasks[0] = {
+          ...updatedTasks[0],
+          date: targetDate,
+          previousId: antecedentId,
+        };
 
         // dispatch the effect
         this.store.dispatch(
@@ -253,7 +260,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
         task: {
           title,
           previousId,
-          date: this.ts.getDateString(this.date),
+          date: this.date,
           details: null,
           complete: false,
           duration: null,
@@ -269,7 +276,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
     // when moving down assign the [newIndex].id, when moving up assing the [newIndex - 1].id
     const updatedMainTask = {
-      ...this.ts.serialise(mainTask),
+      ...mainTask,
       previousId:
         oldIndex < newIndex
           ? this.tasks[newIndex].id
@@ -286,7 +293,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
       // change the task that referenced the moved task
       if (task.previousId === mainTask.id) {
         updatedTasks.push({
-          ...this.ts.serialise(task),
+          ...task,
           previousId: mainTask.previousId,
         });
         continue;
@@ -295,7 +302,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
       // change the task that referenced the one on top of the moving task
       if (task.previousId === updatedMainTask.previousId) {
         updatedTasks.push({
-          ...this.ts.serialise(task),
+          ...task,
           previousId: mainTask.id,
         });
       }
@@ -309,19 +316,15 @@ export class DayViewComponent implements OnInit, OnDestroy {
   }
 
   get isToday(): boolean {
-    return isToday(this.date);
+    return isToday(this.dateObject);
   }
 
   get dayName(): string {
-    return format(this.date, 'cccc');
+    return format(this.dateObject, 'cccc');
   }
 
   get daySubtitle(): string {
-    return format(this.date, 'LLLL d');
-  }
-
-  get dayUrl(): string {
-    return this.ts.getDateString(this.date);
+    return format(this.dateObject, 'LLLL d');
   }
 
   toggleHabit(habitId: number, habitEntry: HabitEntryDto): void {
@@ -338,13 +341,13 @@ export class DayViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  private moveTasks(movedTasks: Array<Task>, date: Date): void {
+  private moveTasks(movedTasks: Array<TaskDto>, date: Date): void {
     // fetch tasks via service without changing the state
     // might change behaviour from `append` to `insert`
     this.ts
       .getTasksBetweenDates(date, date)
       .pipe(first())
-      .subscribe((tasks: Array<Task>) => {
+      .subscribe((tasks: Array<TaskDto>) => {
         let lastTaskId =
           tasks.length > 0
             ? this.ts.sortTasks(tasks)[tasks.length - 1].id
@@ -353,7 +356,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
         for (const task of movedTasks) {
           updatedTasks.push({
-            ...this.ts.serialise(task),
+            ...task,
             date: this.ts.getDateString(date),
             previousId: lastTaskId,
           });
@@ -370,14 +373,14 @@ export class DayViewComponent implements OnInit, OnDestroy {
   /* Move incomplete tasks to the following day */
   postponeIncompleteTasks(): void {
     const incompleteTasks = this.tasks.filter((task) => !task.complete);
-    const nextDate = addDays(this.date, 1);
+    const nextDate = addDays(this.dateObject, 1);
     this.moveTasks(incompleteTasks, nextDate);
   }
 
   /* Move incomplete tasks to the previous day */
   anticipateIncompleteTasks(): void {
     const incompleteTasks = this.tasks.filter((task) => !task.complete);
-    const previousDate = addDays(this.date, -1);
+    const previousDate = addDays(this.dateObject, -1);
     this.moveTasks(incompleteTasks, previousDate);
   }
 

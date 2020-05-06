@@ -1,10 +1,10 @@
 export interface TaskDto {
-  id: number;
-  previousId: number | null;
-  date: string;
-  title: string;
-  details: string | null;
-  complete: boolean;
-  duration: number | null;
-  tags: ReadonlyArray<string>;
+  readonly id: number;
+  readonly previousId: number | null;
+  readonly date: string;
+  readonly title: string;
+  readonly details: string | null;
+  readonly complete: boolean;
+  readonly duration: number | null;
+  readonly tags: ReadonlyArray<string>;
 }

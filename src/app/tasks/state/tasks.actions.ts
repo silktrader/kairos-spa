@@ -1,5 +1,4 @@
 import { createAction, props } from '@ngrx/store';
-import { Task } from 'src/app/tasks/models/task';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { TagDto } from '../models/tag.dto';
 import { TaskTimer } from '../models/task-timer.dto';
@@ -11,7 +10,7 @@ export const get = createAction(
 
 export const getSuccess = createAction(
   '[TASKS] Get Success',
-  props<{ tasks: ReadonlyArray<Task> }>()
+  props<{ tasks: ReadonlyArray<TaskDto> }>()
 );
 
 export const getFailed = createAction(
@@ -26,7 +25,7 @@ export const add = createAction(
 
 export const addSuccess = createAction(
   '[TASKS] Add Success',
-  props<{ task: Task }>()
+  props<{ task: TaskDto }>()
 );
 
 export const edit = createAction(
@@ -36,7 +35,7 @@ export const edit = createAction(
 
 export const editSuccess = createAction(
   '[TASKS] Edit Success',
-  props<{ originalTask: TaskDto; updatedTask: Task }>()
+  props<{ originalTask: TaskDto; updatedTask: TaskDto }>()
 );
 
 export const updateTasks = createAction(
@@ -46,7 +45,7 @@ export const updateTasks = createAction(
 
 export const updateTasksSuccess = createAction(
   '[TASKS] Update Tasks Success',
-  props<{ tasks: ReadonlyArray<Task> }>()
+  props<{ tasks: ReadonlyArray<TaskDto> }>()
 );
 
 export const remove = createAction(
@@ -56,7 +55,7 @@ export const remove = createAction(
 
 export const removeSuccess = createAction(
   '[TASKS] Remove Success',
-  props<{ removedTaskId: number; affectedTask: Task | null }>()
+  props<{ removedTaskId: number; affectedTask: TaskDto | null }>()
 );
 
 /* Tags */

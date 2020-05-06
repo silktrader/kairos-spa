@@ -1,10 +1,9 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { Task } from 'src/app/tasks/models/task';
-import { isSameDay } from 'date-fns';
 import { TasksState } from './tasks.state';
 import { TagDto } from '../models/tag.dto';
 import { baseTagColours } from './colours.state';
 import { TaskTimer } from '../models/task-timer.dto';
+import { TaskDto } from '../models/task.dto';
 
 export const selectTasksFeature = createFeatureSelector<TasksState>('tasks');
 
@@ -15,8 +14,8 @@ export const selectTasks = createSelector(
 
 export const selectTasksByDate = createSelector(
   selectTasks,
-  (tasks: ReadonlyArray<Task>, props: { date: Date }) =>
-    tasks.filter((task) => isSameDay(task.date, props.date))
+  (tasks: ReadonlyArray<TaskDto>, props: { date: string }) =>
+    tasks.filter((task) => task.date === props.date)
 );
 
 export const selectTaskEditingId = createSelector(

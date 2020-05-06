@@ -48,7 +48,7 @@
           </mat-card>
         </div>
 
-        <div id="{{dayUrl}}" class="tasks" sortablejs [sortablejsOptions]="options">
+        <div id="{{date}}" class="tasks" sortablejs [sortablejsOptions]="options">
           <app-task-card *ngFor="let task of tasks" [task]="task"></app-task-card>
         </div>
 

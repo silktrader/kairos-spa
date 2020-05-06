@@ -1,5 +1,5 @@
 export interface HabitEntryDto {
   habitId: number;
-  date: Date;
+  date: string;
   comment: string;
 }

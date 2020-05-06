@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Task } from './models/task';
 import { format } from 'date-fns';
 import { HttpClient } from '@angular/common/http';
 import { TaskDto } from './models/task.dto';
@@ -26,25 +25,23 @@ export class TaskService {
   getTasksBetweenDates(
     startDate: Date,
     endDate: Date
-  ): Observable<ReadonlyArray<Task>> {
-    return this.http
-      .get<ReadonlyArray<TaskDto>>(this.tasksUrl, {
-        params: {
-          startDate: this.getDateString(startDate),
-          endDate: this.getDateString(endDate),
-        },
-      })
-      .pipe(map((taskDtos) => taskDtos.map(this.deserialise)));
+  ): Observable<ReadonlyArray<TaskDto>> {
+    return this.http.get<ReadonlyArray<TaskDto>>(this.tasksUrl, {
+      params: {
+        startDate: this.getDateString(startDate),
+        endDate: this.getDateString(endDate),
+      },
+    });
   }
 
   /** Sort tasks according to their previous ID references */
-  sortTasks(tasks: Array<Task>): ReadonlyArray<Task> {
+  sortTasks(tasks: Array<TaskDto>): ReadonlyArray<TaskDto> {
     const unorderedTasks = new Set(tasks);
-    const orderedTasks: Array<Task> = [];
+    const orderedTasks: Array<TaskDto> = [];
     let lastTaskId: number | null = null;
 
     while (unorderedTasks.size > 0) {
-      let foundTask: Task | undefined;
+      let foundTask: TaskDto | undefined;
       for (const task of unorderedTasks) {
         if (task.previousId === lastTaskId) {
           orderedTasks.push(task);
@@ -61,39 +58,8 @@ export class TaskService {
     return orderedTasks;
   }
 
-  addTask(taskDto: Omit<TaskDto, 'id'>): Observable<Task> {
-    return this.http
-      .post<TaskDto>(this.tasksUrl, taskDto)
-      .pipe(map(this.deserialise));
-  }
-
-  // might create an adapter service or use class-transformer later tk
-  private deserialise(taskDto: TaskDto): Task {
-    return new Task(
-      taskDto.id,
-      taskDto.previousId,
-      new Date(taskDto.date),
-      taskDto.title,
-      taskDto.details,
-      taskDto.complete,
-      taskDto.duration,
-      [...taskDto.tags].sort((a, b) => a.localeCompare(b))
-    );
-  }
-
-  /** Turn a Task into a TaskDto */
-  serialise(task: Task): TaskDto {
-    const { id, title, details, complete, duration, previousId, tags } = task;
-    return {
-      id,
-      title,
-      details,
-      complete,
-      duration,
-      previousId,
-      tags,
-      date: format(task.date, 'yyyy-MM-dd'),
-    };
+  addTask(taskDto: Omit<TaskDto, 'id'>): Observable<TaskDto> {
+    return this.http.post<TaskDto>(this.tasksUrl, taskDto);
   }
 
   deleteTask(taskId: number): Observable<DeleteTaskDto> {
@@ -105,27 +71,24 @@ export class TaskService {
         map((response) => {
           return {
             deletedTaskId: response.deletedTaskId,
-            affectedTask: response.affectedTask
-              ? this.deserialise(response.affectedTask)
-              : null,
+            affectedTask: response.affectedTask ? response.affectedTask : null,
           };
         })
       );
   }
 
-  updateTask(task: TaskDto): Observable<Task> {
-    return this.http
-      .put<TaskDto>(`${this.tasksUrl}/${task.id}`, task)
-      .pipe(map(this.deserialise));
+  updateTask(task: TaskDto): Observable<TaskDto> {
+    return this.http.put<TaskDto>(`${this.tasksUrl}/${task.id}`, task);
   }
 
-  updateTasks(tasks: ReadonlyArray<TaskDto>): Observable<ReadonlyArray<Task>> {
-    return this.http
-      .put<ReadonlyArray<TaskDto>>(this.tasksUrl, tasks)
-      .pipe(map((tasksDtos) => tasksDtos.map(this.deserialise)));
+  updateTasks(
+    tasks: ReadonlyArray<TaskDto>
+  ): Observable<ReadonlyArray<TaskDto>> {
+    return this.http.put<ReadonlyArray<TaskDto>>(this.tasksUrl, tasks);
   }
 
-  haveDifferentValues(task: Task, dto: TaskDto): boolean {
+  // tk better implementation?
+  haveDifferentValues(task: TaskDto, dto: TaskDto): boolean {
     // compare basic values in order of most likely to be different
     if (task.title !== dto.title) return true;
     if (task.complete !== dto.complete) return true;
@@ -133,7 +96,7 @@ export class TaskService {
     if (task.details !== dto.details) return true;
 
     // compare formatted dates
-    if (this.getDateString(task.date) !== dto.date) return true;
+    if (task.date !== dto.date) return true;
 
     // determine whether the tags are the same
     if (task.tags.length !== dto.tags.length) return true;

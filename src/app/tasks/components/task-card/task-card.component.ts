@@ -4,7 +4,6 @@ import {
   Input,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { Task } from '../../models/task';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { Store } from '@ngrx/store';
@@ -14,6 +13,7 @@ import { map } from 'rxjs/operators';
 import { timer, combineLatest, Subject, Observable } from 'rxjs';
 import { parseISO, differenceInMinutes } from 'date-fns';
 import { TaskTimer } from '../../models/task-timer.dto';
+import { TaskDto } from '../../models/task.dto';
 
 @Component({
   selector: 'app-task-card',
@@ -22,7 +22,7 @@ import { TaskTimer } from '../../models/task-timer.dto';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskCardComponent implements OnInit {
-  @Input() task: Task;
+  @Input() task: TaskDto;
 
   // must assign it after input's received
   public timer$: Observable<TaskTimer | undefined>;
@@ -47,7 +47,7 @@ export class TaskCardComponent implements OnInit {
     );
   }
 
-  public openEditTaskDialog(task: Task) {
+  public openEditTaskDialog(task: TaskDto) {
     this.editTaskDialog.open(EditTaskDialogComponent, {
       data: task,
       panelClass: 'kairos-dialog',

@@ -18,8 +18,8 @@ export const selectEntries = createSelector(
 
 export const selectHabitsEntries = createSelector(
   selectEntries,
-  (entries: Array<HabitEntryDto>, props: { date: Date }) => {
-    return entries.filter((entry) => isSameDay(entry.date, props.date));
+  (entries: Array<HabitEntryDto>, props: { date: string }) => {
+    return entries.filter((entry) => entry.date === props.date);
   }
 );
 

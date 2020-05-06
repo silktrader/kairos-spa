@@ -78,7 +78,7 @@ export class EventsSidebarComponent implements OnInit, OnDestroy {
     // we assume that to delete a task its ancestors were fetched, displayed and in the store
     this.store
       .pipe(
-        select(selectTasksByDate, { date: new Date(taskDto.date) }),
+        select(selectTasksByDate, { date: taskDto.date }),
         map(this.ts.sortTasks),
         first()
       )
