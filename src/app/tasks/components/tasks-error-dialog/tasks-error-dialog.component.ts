@@ -1,24 +1,44 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AppState } from 'src/app/store/app-state';
 import { Store, select } from '@ngrx/store';
-import { first } from 'rxjs/operators';
+import { first, takeUntil } from 'rxjs/operators';
 import { selectLoadingState } from 'src/app/tasks/state/tasks.selectors';
 import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
-import { get } from 'src/app/tasks/state/tasks.actions';
+import { get, getSuccess } from 'src/app/tasks/state/tasks.actions';
 import { selectVisibleDates } from 'src/app/store/schedule.selectors';
+import { Actions, ofType } from '@ngrx/effects';
+import { Subject } from 'rxjs';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-tasks-error-dialog',
   templateUrl: './tasks-error-dialog.component.html',
   styleUrls: ['./tasks-error-dialog.component.scss'],
 })
-export class TasksErrorDialogComponent implements OnInit {
+export class TasksErrorDialogComponent implements OnInit, OnDestroy {
   loading$ = this.store.pipe(select(selectLoadingState));
   loadingState = TasksLoadingState;
 
-  constructor(private readonly store: Store<AppState>) {}
+  readonly ngUnsubscribe$ = new Subject();
 
-  ngOnInit(): void {}
+  constructor(
+    private readonly store: Store<AppState>,
+    private readonly actions$: Actions,
+    public dialogRef: MatDialogRef<TasksErrorDialogComponent>
+  ) {}
+
+  ngOnInit(): void {
+    this.actions$
+      .pipe(ofType(getSuccess), takeUntil(this.ngUnsubscribe$))
+      .subscribe(() => {
+        this.dialogRef.close();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe$.next();
+    this.ngUnsubscribe$.complete();
+  }
 
   retry(): void {
     this.store.pipe(select(selectVisibleDates), first()).subscribe((dates) => {
