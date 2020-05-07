@@ -62,6 +62,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
   private ngUnsubscribe$ = new Subject();
   newTaskControl = new FormControl('');
   options: Options; // SortableJs options
+  readonly draggableTasksIdentifier = 'draggableTasks';
 
   constructor(
     private readonly store: Store<AppState>,
@@ -111,13 +112,10 @@ export class DayViewComponent implements OnInit, OnDestroy {
       });
 
     this.options = {
-      group: 'draggable-tasks', // tk export
+      group: this.draggableTasksIdentifier,
       onRemove: (event: any) => {
         const movedTask = this.tasks[event.oldIndex];
-
-        // watch out for the date's timezone
         const targetDate: string = event.to.id;
-        let targetTasks: ReadonlyArray<TaskDto> = [];
 
         // get the target date's sorted tasks
         this.store
@@ -128,53 +126,52 @@ export class DayViewComponent implements OnInit, OnDestroy {
             first(),
             map(this.ts.sortTasks)
           )
-          .subscribe((tasks) => {
-            targetTasks = tasks;
+          .subscribe((targetedTasks) => {
+            // pick the ID above the moved task
+            const antecedentId =
+              targetedTasks.length === 0 || event.newIndex === 0
+                ? null
+                : targetedTasks[event.newIndex - 1].id;
+
+            const updatedTasks = [movedTask];
+
+            let orphan: TaskDto | undefined;
+            let pushedDown: TaskDto | undefined;
+            for (const task of this.tasks) {
+              if (task.previousId === movedTask.id) orphan = task;
+              else if (task.previousId === antecedentId) pushedDown = task;
+            }
+
+            // change the task that references the one being changed
+            if (orphan) {
+              updatedTasks.push({
+                ...orphan,
+                previousId: movedTask.previousId,
+              });
+            }
+
+            // replace the task whose previous ID matches the new reference
+            if (pushedDown) {
+              updatedTasks.push({
+                ...pushedDown,
+                previousId: movedTask.id,
+              });
+            }
+
+            // finally change the moved task
+            updatedTasks[0] = {
+              ...updatedTasks[0],
+              date: targetDate,
+              previousId: antecedentId,
+            };
+
+            // dispatch the effect
+            this.store.dispatch(
+              updateTasks({
+                tasksDtos: updatedTasks,
+              })
+            );
           });
-
-        // pick the ID above the moved task
-        const antecedentId =
-          targetTasks.length === 0 || event.newIndex === 0
-            ? null
-            : targetTasks[event.newIndex - 1].id;
-
-        const updatedTasks = [movedTask];
-
-        // change the task that references the one being changed
-        const orphanTask = this.tasks.find(
-          (task) => task.previousId === movedTask.id
-        );
-        if (orphanTask) {
-          updatedTasks.push({
-            ...orphanTask,
-            previousId: movedTask.previousId,
-          });
-        }
-
-        // replace the task whose previous ID matches the new reference
-        const pushedDown = targetTasks.find(
-          (task) => task.previousId === antecedentId
-        );
-        if (pushedDown) {
-          updatedTasks.push({
-            ...pushedDown,
-            previousId: movedTask.id,
-          });
-        }
-
-        // finally change the moved task
-        updatedTasks[0] = {
-          ...updatedTasks[0],
-          date: targetDate,
-          previousId: antecedentId,
-        };
-
-        // dispatch the effect
-        this.store.dispatch(
-          updateTasks({
-            tasksDtos: updatedTasks,
-          })
-        );
       },
       onUpdate: (event: any) => {
         this.changeTaskPosition(event.oldIndex, event.newIndex);
@@ -219,7 +216,6 @@ export class DayViewComponent implements OnInit, OnDestroy {
     // ensure that titles abide to length rules
     if (title.length > 50 || title.length < 5) {
       this.newTaskControl.setErrors({ titleLength: true });
-      console.log(this.newTaskControl.valid);
       return;
     }
 
@@ -342,11 +338,11 @@ export class DayViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  private moveTasks(movedTasks: Array<TaskDto>, date: Date): void {
+  private moveTasks(movedTasks: Array<TaskDto>, date: string): void {
     // fetch tasks via service without changing the state
     // might change behaviour from `append` to `insert`
     this.ts
-      .getTasksFromDates([formatDate(date)])
+      .getTasksFromDates([date])
       .pipe(first())
       .subscribe((tasks: Array<TaskDto>) => {
         let lastTaskId =
@@ -358,11 +354,14 @@ export class DayViewComponent implements OnInit, OnDestroy {
         for (const task of movedTasks) {
           updatedTasks.push({
             ...task,
-            date: this.ts.getDateString(date),
+            date,
             previousId: lastTaskId,
           });
           lastTaskId = task.id;
         }
+
+        // tk must reset previous IDs of the tasks not moved
+
         this.store.dispatch(
           updateTasks({
             tasksDtos: updatedTasks,
@@ -374,14 +373,14 @@ export class DayViewComponent implements OnInit, OnDestroy {
   /* Move incomplete tasks to the following day */
   postponeIncompleteTasks(): void {
     const incompleteTasks = this.tasks.filter((task) => !task.complete);
-    const nextDate = addDays(this.dateObject, 1);
+    const nextDate = formatDate(addDays(this.dateObject, 1));
     this.moveTasks(incompleteTasks, nextDate);
   }
 
   /* Move incomplete tasks to the previous day */
   anticipateIncompleteTasks(): void {
     const incompleteTasks = this.tasks.filter((task) => !task.complete);
-    const previousDate = addDays(this.dateObject, -1);
+    const previousDate = formatDate(addDays(this.dateObject, -1));
     this.moveTasks(incompleteTasks, previousDate);
   }
 
