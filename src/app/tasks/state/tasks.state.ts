@@ -5,6 +5,8 @@ import { TaskDto } from '../models/task.dto';
 
 export interface TasksState {
   readonly tasks: ReadonlyArray<TaskDto>;
+  readonly loadingDates: ReadonlyArray<string>;
+  readonly errorDates: ReadonlyArray<string>;
   readonly loadingState: TasksLoadingState;
   readonly editingTaskId: number | undefined;
   readonly events: ReadonlyArray<AppEvent>;

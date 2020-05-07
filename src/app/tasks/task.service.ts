@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { TaskDto } from './models/task.dto';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
@@ -22,14 +22,12 @@ export class TaskService {
     return format(date, 'yyyy-MM-dd');
   }
 
-  getTasksBetweenDates(
-    startDate: Date,
-    endDate: Date
+  getTasksFromDates(
+    dates: ReadonlyArray<string>
   ): Observable<ReadonlyArray<TaskDto>> {
     return this.http.get<ReadonlyArray<TaskDto>>(this.tasksUrl, {
       params: {
-        startDate: this.getDateString(startDate),
-        endDate: this.getDateString(endDate),
+        dates: dates as Array<string>,
       },
     });
   }

@@ -5,7 +5,7 @@ import { TaskTimer } from '../models/task-timer.dto';
 
 export const get = createAction(
   '[TASKS] Get',
-  props<{ startDate: Date; endDate: Date }>()
+  props<{ dates: ReadonlyArray<string> }>()
 );
 
 export const getSuccess = createAction(

@@ -33,6 +33,7 @@ import { interpolateRgb } from 'd3-interpolate';
 import { HabitDetails } from 'src/app/habits/models/habit.dto';
 import { tagConstraints } from 'src/app/tasks/models/tag.dto';
 import { NotificationService } from 'src/app/services/notification.service';
+import { formatDate } from 'src/app/core/format-date';
 
 @Component({
   selector: 'app-day-view',
@@ -345,7 +346,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
     // fetch tasks via service without changing the state
     // might change behaviour from `append` to `insert`
     this.ts
-      .getTasksBetweenDates(date, date)
+      .getTasksFromDates([formatDate(date)])
       .pipe(first())
       .subscribe((tasks: Array<TaskDto>) => {
         let lastTaskId =

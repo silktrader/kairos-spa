@@ -11,8 +11,10 @@ import { TaskDto } from '../models/task.dto';
 
 export const initialState: TasksState = {
   tasks: [],
-  loadingState: TasksLoadingState.Loading,
   editingTaskId: undefined,
+  loadingState: TasksLoadingState.Loaded,
+  loadingDates: [],
+  errorDates: [],
   events: [],
   tags: [],
   timers: [],
@@ -85,9 +87,9 @@ export const tasksReducer = createReducer(
     };
   }),
 
-  on(TasksActions.get, (schedule) => {
+  on(TasksActions.get, (state) => {
     return {
-      ...schedule,
+      ...state,
       loadingState: TasksLoadingState.Loading,
     };
   }),

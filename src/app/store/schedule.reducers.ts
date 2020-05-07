@@ -2,25 +2,19 @@ import { createReducer, on } from '@ngrx/store';
 import * as ScheduleActions from './schedule.actions';
 import { ScheduleState, SidebarSection } from './app-state';
 
-import { setVisiblePeriod } from './schedule.actions';
-import { addDays } from 'date-fns';
-
 export const initialState: ScheduleState = {
-  visiblePeriod: {
-    startDate: addDays(new Date(), -2),
-    endDate: addDays(new Date(), 2),
-  },
+  visibleDates: [],
   sidebar: { opened: false, section: SidebarSection.Events },
-  notifiedEventsIds: new Set(),
+  notifiedEventsIds: new Set(), // tk use serialisable array?
 };
 
 export const scheduleReducer = createReducer(
   initialState,
 
-  on(setVisiblePeriod, (schedule, { startDate, endDate }) => {
+  on(ScheduleActions.setVisibleDates, (state, { dates }) => {
     return {
-      ...schedule,
-      visiblePeriod: { startDate, endDate },
+      ...state,
+      visibleDates: dates,
     };
   }),
 

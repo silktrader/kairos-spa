@@ -6,7 +6,6 @@ import {
   mergeMap,
   map,
   catchError,
-  tap,
   first,
   withLatestFrom,
 } from 'rxjs/operators';
@@ -24,8 +23,8 @@ export class TasksEffects {
   get$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TasksActions.get),
-      mergeMap((action: { startDate: Date; endDate: Date }) =>
-        this.ts.getTasksBetweenDates(action.startDate, action.endDate).pipe(
+      mergeMap((action: { dates: ReadonlyArray<string> }) =>
+        this.ts.getTasksFromDates(action.dates).pipe(
           map((tasks) => TasksActions.getSuccess({ tasks })),
           catchError((error) => of(TasksActions.getFailed({ error })))
         )

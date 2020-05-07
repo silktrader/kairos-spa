@@ -82,9 +82,9 @@ export class HabitsEffects {
   getHabitsEntries$ = createEffect(() =>
     this.actions$.pipe(
       ofType(getHabitsEntries),
-      mergeMap((action: { startDate: Date; endDate: Date }) =>
+      mergeMap((action: { dates: ReadonlyArray<string> }) =>
         this.hs
-          .getHabitsEntries(action.startDate, action.endDate)
+          .getHabitsEntries(action.dates)
           .pipe(
             map((habitsEntries) => getHabitsEntriesSuccess({ habitsEntries }))
           )

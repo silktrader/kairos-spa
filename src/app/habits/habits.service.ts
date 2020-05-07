@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HabitDto } from './models/habit.dto';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { HabitEntryDto } from './models/habit-entry.dto';
 import { map } from 'rxjs/operators';
@@ -36,13 +36,11 @@ export class HabitsService {
   }
 
   getHabitsEntries(
-    startDate: Date,
-    endDate: Date
+    dates: ReadonlyArray<string>
   ): Observable<ReadonlyArray<HabitEntryDto>> {
     return this.http.get<ReadonlyArray<HabitEntryDto>>(this.habitsEntriesUrl, {
       params: {
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
+        dates: dates as Array<string>,
       },
     });
   }

@@ -8,27 +8,24 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { AuthService } from 'auth';
-import { addDays } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { Observable, Subject } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { SidebarSection, AppState } from 'src/app/store/app-state';
-import {
-  toggleSidebar,
-  setVisiblePeriod,
-} from 'src/app/store/schedule.actions';
+import { toggleSidebar, setVisibleDates } from 'src/app/store/schedule.actions';
 import { MatSidenav } from '@angular/material/sidenav';
 import {
   selectSidebar,
-  selectVisiblePeriod,
   selectVisibleDates,
 } from 'src/app/store/schedule.selectors';
-import { delay, takeUntil, map, first } from 'rxjs/operators';
+import { delay, takeUntil, first } from 'rxjs/operators';
 import {
   getHabits,
   getHabitsEntries,
 } from 'src/app/habits/state/habits.actions';
 import { NotificationService } from 'src/app/services/notification.service';
 import * as TasksActions from 'src/app/tasks/state/tasks.actions';
+import { formatDate } from 'src/app/core/format-date';
 
 @Component({
   selector: 'app-home',
@@ -40,7 +37,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('sidebar') sidebar: MatSidenav;
 
   private readonly ngUnsubscribe$ = new Subject();
-  public readonly visiblePeriod$ = this.store.select(selectVisiblePeriod);
   public readonly visibleDates$ = this.store.select(selectVisibleDates);
   public readonly user$ = this.authService.user$;
 
@@ -71,13 +67,16 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // get tasks and habits entries
     this.store
-      .pipe(select(selectVisiblePeriod), takeUntil(this.ngUnsubscribe$))
-      .subscribe((period) => {
-        this.store.dispatch(TasksActions.get(period));
-        this.store.dispatch(getHabitsEntries(period));
+      .pipe(select(selectVisibleDates), takeUntil(this.ngUnsubscribe$))
+      .subscribe((dates) => {
+        // avoid calls when no dates are set
+        if (dates.length > 0) {
+          this.store.dispatch(TasksActions.get({ dates }));
+          this.store.dispatch(getHabitsEntries({ dates }));
+        }
       });
 
-    this.store.dispatch(setVisiblePeriod(this.currentPeriod()));
+    this.showToday();
   }
 
   ngAfterViewInit(): void {
@@ -100,38 +99,38 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.ngUnsubscribe$.complete();
   }
 
+  private consecutiveDates(start: Date, period: number): ReadonlyArray<string> {
+    const dates = [formatDate(start)];
+    for (let i = 1; i < 5; i++) {
+      dates.push(formatDate(addDays(start, i)));
+    }
+    return dates;
+  }
+
   public showPrevious(): void {
-    this.visiblePeriod$.pipe(first()).subscribe((period) => {
-      this.store.dispatch(
-        setVisiblePeriod({
-          startDate: addDays(period.startDate, -1),
-          endDate: addDays(period.endDate, -1),
-        })
+    this.visibleDates$.pipe(first()).subscribe((oldDates) => {
+      const dates = this.consecutiveDates(
+        addDays(new Date(oldDates[0]), -1),
+        5
       );
+      this.store.dispatch(setVisibleDates({ dates }));
     });
   }
 
   public showNext(): void {
-    this.visiblePeriod$.pipe(first()).subscribe((period) => {
-      this.store.dispatch(
-        setVisiblePeriod({
-          startDate: addDays(period.startDate, 1),
-          endDate: addDays(period.endDate, 1),
-        })
-      );
+    this.visibleDates$.pipe(first()).subscribe((oldDates) => {
+      const dates = this.consecutiveDates(addDays(new Date(oldDates[0]), 1), 5);
+      this.store.dispatch(setVisibleDates({ dates }));
     });
   }
 
   public showToday(): void {
-    this.store.dispatch(setVisiblePeriod(this.currentPeriod()));
+    this.store.dispatch(setVisibleDates({ dates: this.currentPeriod() }));
   }
 
-  private currentPeriod(): { startDate: Date; endDate: Date } {
-    const today = new Date();
-    return {
-      startDate: addDays(today, -2),
-      endDate: addDays(today, 2),
-    };
+  private currentPeriod(): ReadonlyArray<string> {
+    const start = addDays(new Date(), -2);
+    return this.consecutiveDates(start, 5);
   }
 
   handleSignout(): void {

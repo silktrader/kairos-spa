@@ -41,7 +41,7 @@ export const getHabitsSuccess = createAction(
 
 export const getHabitsEntries = createAction(
   '[HABITS] Get Entries',
-  props<{ startDate: Date; endDate: Date }>()
+  props<{ dates: ReadonlyArray<string> }>()
 );
 
 export const getHabitsEntriesSuccess = createAction(

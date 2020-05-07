@@ -2,29 +2,15 @@ import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { ScheduleState } from './app-state';
 import { selectHabitsEvents } from '../habits/state/habits.selectors';
 import { selectTaskEvents } from '../tasks/state/tasks.selectors';
-import { isSameDay, addDays, format } from 'date-fns';
 
 export const selectFeature = createFeatureSelector<
   { schedule: ScheduleState },
   ScheduleState
 >('schedule');
 
-export const selectVisiblePeriod = createSelector(
-  selectFeature,
-  (state: ScheduleState) => state.visiblePeriod
-);
-
 export const selectVisibleDates = createSelector(
-  selectVisiblePeriod,
-  (period) => {
-    const dates = [period.startDate];
-    let focusedDate = period.startDate;
-    while (!isSameDay(focusedDate, period.endDate)) {
-      focusedDate = addDays(focusedDate, 1);
-      dates.push(focusedDate);
-    }
-    return dates.map((date) => format(date, 'yyyy-MM-dd'));
-  }
+  selectFeature,
+  (state) => state.visibleDates
 );
 
 export const selectSidebar = createSelector(
