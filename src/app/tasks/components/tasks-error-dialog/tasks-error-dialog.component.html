@@ -6,7 +6,7 @@
   We couldn't load the tasks from our server; please check your network connection.
 </main>
 <footer>
-  <mat-spinner *ngIf="(loading$ | async) === loadingState.Loading; else retryButton" [diameter]="30"></mat-spinner>
+  <mat-spinner *ngIf="(loading$ | async); else retryButton" [diameter]="30"></mat-spinner>
   <ng-template #retryButton>
     <button mat-stroked-button cdkFocusInitial (click)="retry()">
       Retry</button>

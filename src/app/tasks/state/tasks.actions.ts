@@ -15,7 +15,7 @@ export const getSuccess = createAction(
 
 export const getFailed = createAction(
   '[TASKS] Get Failed',
-  props<{ error: string }>()
+  props<{ dates: ReadonlyArray<string> }>()
 );
 
 export const add = createAction(

@@ -12,7 +12,6 @@ import { TaskDto } from '../models/task.dto';
 export const initialState: TasksState = {
   tasks: [],
   editingTaskId: undefined,
-  loadingState: TasksLoadingState.Loaded,
   loadingDates: [],
   errorDates: [],
   events: [],
@@ -87,25 +86,25 @@ export const tasksReducer = createReducer(
     };
   }),
 
-  on(TasksActions.get, (state) => {
+  on(TasksActions.get, (state, props) => ({
+    ...state,
+    loadingDates: [...props.dates],
+  })),
+
+  on(TasksActions.getSuccess, (state, { tasks }) => {
     return {
       ...state,
-      loadingState: TasksLoadingState.Loading,
-    };
-  }),
-
-  on(TasksActions.getSuccess, (schedule, { tasks }) => {
-    return {
-      ...schedule,
       tasks,
-      loadingState: TasksLoadingState.Loaded,
+      loadingDates: [],
+      errorDates: [],
     };
   }),
 
-  on(TasksActions.getFailed, (schedule, { error }) => {
+  on(TasksActions.getFailed, (schedule, { dates }) => {
     return {
       ...schedule,
-      loadingState: TasksLoadingState.Error,
+      loadingDates: [],
+      errorDates: [...dates],
     };
   }),
 

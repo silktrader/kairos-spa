@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { TasksState } from './tasks.state';
+import { TasksState, TasksLoadingState } from './tasks.state';
 import { TagDto } from '../models/tag.dto';
 import { baseTagColours } from './colours.state';
 import { TaskTimer } from '../models/task-timer.dto';
@@ -30,9 +30,21 @@ export const selectTaskEvents = createSelector(
 
 export const selectLoadingState = createSelector(
   selectTasksFeature,
-  (state) => state.loadingState
+  (state: TasksState, props: { date: string }) => {
+    if (state.errorDates.includes(props.date)) {
+      return TasksLoadingState.Error;
+    }
+    if (state.loadingDates.includes(props.date)) {
+      return TasksLoadingState.Loading;
+    }
+    return TasksLoadingState.Loaded;
+  }
 );
 
+export const selectLoadingTasks = createSelector(
+  selectTasksFeature,
+  (state) => state.loadingDates.length > 0
+);
 /* Tags */
 
 export const selectTags = createSelector(

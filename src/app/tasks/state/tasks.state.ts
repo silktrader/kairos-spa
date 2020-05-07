@@ -7,15 +7,15 @@ export interface TasksState {
   readonly tasks: ReadonlyArray<TaskDto>;
   readonly loadingDates: ReadonlyArray<string>;
   readonly errorDates: ReadonlyArray<string>;
-  readonly loadingState: TasksLoadingState;
   readonly editingTaskId: number | undefined;
   readonly events: ReadonlyArray<AppEvent>;
   readonly tags: ReadonlyArray<TagDto>;
   readonly timers: ReadonlyArray<TaskTimer>;
 }
 
+// use strings to avoid falsy values
 export enum TasksLoadingState {
-  Loading,
-  Loaded,
-  Error,
+  Loading = 'Loading',
+  Loaded = 'Loaded',
+  Error = 'Error',
 }

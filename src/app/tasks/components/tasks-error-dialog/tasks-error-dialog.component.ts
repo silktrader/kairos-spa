@@ -2,8 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AppState } from 'src/app/store/app-state';
 import { Store, select } from '@ngrx/store';
 import { first, takeUntil } from 'rxjs/operators';
-import { selectLoadingState } from 'src/app/tasks/state/tasks.selectors';
-import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
+import { selectLoadingTasks } from 'src/app/tasks/state/tasks.selectors';
 import { get, getSuccess } from 'src/app/tasks/state/tasks.actions';
 import { selectVisibleDates } from 'src/app/store/schedule.selectors';
 import { Actions, ofType } from '@ngrx/effects';
@@ -16,8 +15,7 @@ import { MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./tasks-error-dialog.component.scss'],
 })
 export class TasksErrorDialogComponent implements OnInit, OnDestroy {
-  loading$ = this.store.pipe(select(selectLoadingState));
-  loadingState = TasksLoadingState;
+  loading$ = this.store.select(selectLoadingTasks);
 
   readonly ngUnsubscribe$ = new Subject();
 

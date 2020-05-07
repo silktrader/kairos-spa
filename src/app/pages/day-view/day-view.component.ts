@@ -50,9 +50,8 @@ export class DayViewComponent implements OnInit, OnDestroy {
   tasks: ReadonlyArray<TaskDto>;
   handlingError = false;
 
-  loadingState$: Observable<TasksLoadingState> = this.store.pipe(
-    select(selectLoadingState)
-  );
+  loadingState$: Observable<TasksLoadingState>;
+
   addingTask$ = new BehaviorSubject<boolean>(false);
   habitsDetails$: Observable<ReadonlyArray<HabitDetails>>;
   habitsPercentage: number;
@@ -74,6 +73,11 @@ export class DayViewComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // store date object to avoid constant parsing
     this.dateObject = new Date(this.date);
+
+    // ensure that date is initialised before calling the selector
+    this.loadingState$ = this.store.select(selectLoadingState, {
+      date: this.date,
+    });
 
     this.store
       .select(selectTasksByDate, { date: this.date })
