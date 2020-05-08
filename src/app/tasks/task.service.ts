@@ -22,14 +22,18 @@ export class TaskService {
     return format(date, 'yyyy-MM-dd');
   }
 
-  getTasksFromDates(
-    dates: ReadonlyArray<string>
-  ): Observable<ReadonlyArray<TaskDto>> {
+  getTasksFromDates(dates: Array<string>): Observable<ReadonlyArray<TaskDto>> {
     return this.http.get<ReadonlyArray<TaskDto>>(this.tasksUrl, {
       params: {
-        dates: dates as Array<string>,
+        dates,
       },
     });
+  }
+
+  getDateTasks(date: string): Observable<ReadonlyArray<TaskDto>> {
+    return this.http.get<ReadonlyArray<TaskDto>>(
+      `${this.tasksUrl}/date/${date}`
+    );
   }
 
   /** Sort tasks according to their previous ID references */

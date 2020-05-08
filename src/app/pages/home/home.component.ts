@@ -68,7 +68,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     // get tasks and habits entries
     this.store
       .pipe(select(selectVisibleDates), takeUntil(this.ngUnsubscribe$))
-      .subscribe((dates) => {
+      .subscribe((dates: Array<string>) => {
         // avoid calls when no dates are set
         if (dates.length > 0) {
           this.store.dispatch(TasksActions.get({ dates }));

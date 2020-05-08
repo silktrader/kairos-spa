@@ -39,9 +39,11 @@ export class TasksErrorDialogComponent implements OnInit, OnDestroy {
   }
 
   retry(): void {
-    this.store.pipe(select(selectVisibleDates), first()).subscribe((dates) => {
-      if (dates) this.store.dispatch(get({ dates }));
-      // the dialog's closed by a successful loading of tasks
-    });
+    this.store
+      .pipe(select(selectVisibleDates), first())
+      .subscribe((dates: Array<string>) => {
+        if (dates) this.store.dispatch(get({ dates }));
+        // the dialog's closed by a successful loading of tasks
+      });
   }
 }

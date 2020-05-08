@@ -25,7 +25,7 @@ export class TasksEffects {
   get$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TasksActions.get),
-      mergeMap((action: { dates: ReadonlyArray<string> }) =>
+      mergeMap((action: { dates: Array<string> }) =>
         this.ts.getTasksFromDates(action.dates).pipe(
           map((tasks) => TasksActions.getSuccess({ tasks })),
           catchError(() => of(TasksActions.getFailed({ dates: action.dates })))

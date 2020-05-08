@@ -139,14 +139,10 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
             const updatedTasks = [movedTask];
 
-            let orphan: TaskDto | undefined;
-            let pushedDown: TaskDto | undefined;
-            for (const task of this.tasks) {
-              if (task.previousId === movedTask.id) orphan = task;
-              else if (task.previousId === antecedentId) pushedDown = task;
-            }
-
             // change the task that references the one being changed
+            const orphan = this.tasks.find(
+              (task) => task.previousId === movedTask.id
+            );
             if (orphan) {
               updatedTasks.push({
                 ...orphan,
@@ -155,6 +151,9 @@ export class DayViewComponent implements OnInit, OnDestroy {
             }
 
             // replace the task whose previous ID matches the new reference
+            const pushedDown = targetedTasks.find(
+              (task) => task.previousId === antecedentId
+            );
             if (pushedDown) {
               updatedTasks.push({
                 ...pushedDown,
@@ -345,33 +344,28 @@ export class DayViewComponent implements OnInit, OnDestroy {
   private moveTasks(movedTasks: Array<TaskDto>, date: string): void {
     // fetch tasks via service without changing the state
     // might change behaviour from `append` to `insert`
-    this.ts
-      .getTasksFromDates([date])
-      .pipe(first())
-      .subscribe((tasks: Array<TaskDto>) => {
-        let lastTaskId =
-          tasks.length > 0
-            ? this.ts.sortTasks(tasks)[tasks.length - 1].id
-            : null;
-        const updatedTasks: Array<TaskDto> = [];
+    this.ts.getDateTasks(date).subscribe((tasks: Array<TaskDto>) => {
+      let lastTaskId =
+        tasks.length > 0 ? this.ts.sortTasks(tasks)[tasks.length - 1].id : null;
+      const updatedTasks: Array<TaskDto> = [];
 
-        for (const task of movedTasks) {
-          updatedTasks.push({
-            ...task,
-            date,
-            previousId: lastTaskId,
-          });
-          lastTaskId = task.id;
-        }
+      for (const task of movedTasks) {
+        updatedTasks.push({
+          ...task,
+          date,
+          previousId: lastTaskId,
+        });
+        lastTaskId = task.id;
+      }
 
-        // tk must reset previous IDs of the tasks not moved
+      // tk must reset previous IDs of the tasks not moved
 
-        this.store.dispatch(
-          updateTasks({
-            tasksDtos: updatedTasks,
-          })
-        );
-      });
+      this.store.dispatch(
+        updateTasks({
+          tasksDtos: updatedTasks,
+        })
+      );
+    });
   }
 
   /* Move incomplete tasks to the following day */
