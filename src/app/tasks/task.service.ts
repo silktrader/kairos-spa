@@ -60,6 +60,39 @@ export class TaskService {
     return orderedTasks;
   }
 
+  /** Reorder the tasks so that completed ones are on top, then according to the original order */
+  reorderTasksCompletion(
+    tasks: ReadonlyArray<TaskDto>
+  ): ReadonlyArray<TaskDto> {
+    let lastId = null;
+    const unorderedTasks = new Set<TaskDto>(); // sets maintain insertion order
+    const updatedTasks = new Array<TaskDto>();
+
+    // keep the ordered complete tasks unchanged
+    for (const task of tasks) {
+      if (task.complete && task.previousId === lastId) {
+        lastId = task.id;
+      } else unorderedTasks.add(task);
+    }
+
+    // sort the unordered tasks by completion
+    for (const task of [...unorderedTasks]) {
+      if (task.complete) {
+        updatedTasks.push({ ...task, previousId: lastId });
+        lastId = task.id;
+        unorderedTasks.delete(task);
+      }
+    }
+
+    // add the remaining tasks
+    for (const task of unorderedTasks) {
+      updatedTasks.push({ ...task, previousId: lastId });
+      lastId = task.id;
+    }
+
+    return updatedTasks;
+  }
+
   addTask(taskDto: Omit<TaskDto, 'id'>): Observable<TaskDto> {
     return this.http.post<TaskDto>(this.tasksUrl, taskDto);
   }
