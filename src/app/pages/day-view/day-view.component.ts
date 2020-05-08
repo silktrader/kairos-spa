@@ -329,52 +329,49 @@ export class DayViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  /** Move tasks to other dates */
-  private moveTasks(movedTasks: Array<TaskDto>, date: string): void {
-    // fetch tasks via service without changing the state
-    // might change behaviour from `append` to `insert`
-    this.ts.getDateTasks(date).subscribe((tasks: Array<TaskDto>) => {
-      let lastTaskId =
-        tasks.length > 0 ? this.ts.sortTasks(tasks)[tasks.length - 1].id : null;
-      const updatedTasks: Array<TaskDto> = [];
-
-      for (const task of movedTasks) {
-        updatedTasks.push({
-          ...task,
-          date,
-          previousId: lastTaskId,
-        });
-        lastTaskId = task.id;
-      }
-
-      // tk must reset previous IDs of the tasks not moved
-
-      this.store.dispatch(
-        updateTasks({
-          tasks: updatedTasks,
-        })
-      );
-    });
+  private moveTasks(tasks: ReadonlyArray<TaskDto>): void {
+    this.store.dispatch(
+      updateTasks({
+        tasks,
+      })
+    );
   }
 
-  /** Move incomplete tasks to the following day */
+  private rescheduleIncompleteTasks(dayDifference: number): void {
+    const nextDate = formatDate(addDays(this.dateObject, dayDifference));
+
+    // change tasks positions within current date when needed
+    const sortedTasks = this.ts.createSortedCompleteTasks(this.tasks);
+
+    const final = new Array<TaskDto>();
+    const incomplete = new Array<TaskDto>();
+    for (const task of sortedTasks) {
+      if (task.complete) final.push(task);
+      else incomplete.push(task);
+    }
+
+    // move incomplete tasks at the bottom of the schedule date's list
+    this.ts
+      .createAppendedTasks(incomplete, nextDate)
+      .subscribe((rescheduled) => {
+        this.moveTasks([...final, ...rescheduled]);
+      });
+  }
+
+  /** Move incomplete tasks to the next day */
   postponeIncompleteTasks(): void {
-    const incompleteTasks = this.tasks.filter((task) => !task.complete);
-    const nextDate = formatDate(addDays(this.dateObject, 1));
-    this.moveTasks(incompleteTasks, nextDate);
+    this.rescheduleIncompleteTasks(1);
   }
 
   /** Move incomplete tasks to the previous day */
   anticipateIncompleteTasks(): void {
-    const incompleteTasks = this.tasks.filter((task) => !task.complete);
-    const previousDate = formatDate(addDays(this.dateObject, -1));
-    this.moveTasks(incompleteTasks, previousDate);
+    this.rescheduleIncompleteTasks(-1);
   }
 
   /** Reorder tasks according to their completion status, then original order */
-  reorderTasksCompletion(): void {
+  reorderCompleteTasks(): void {
     this.store.dispatch(
-      updateTasks({ tasks: this.ts.reorderTasksCompletion(this.tasks) })
+      updateTasks({ tasks: this.ts.createSortedCompleteTasks(this.tasks) })
     );
   }
 

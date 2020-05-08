@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { format } from 'date-fns';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { TaskDto } from './models/task.dto';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
@@ -37,7 +37,7 @@ export class TaskService {
   }
 
   /** Sort tasks according to their previous ID references */
-  sortTasks(tasks: Array<TaskDto>): ReadonlyArray<TaskDto> {
+  sortTasks(tasks: ReadonlyArray<TaskDto>): ReadonlyArray<TaskDto> {
     const unorderedTasks = new Set(tasks);
     const orderedTasks: Array<TaskDto> = [];
     let lastTaskId: number | null = null;
@@ -58,39 +58,6 @@ export class TaskService {
     }
 
     return orderedTasks;
-  }
-
-  /** Reorder the tasks so that completed ones are on top, then according to the original order */
-  reorderTasksCompletion(
-    tasks: ReadonlyArray<TaskDto>
-  ): ReadonlyArray<TaskDto> {
-    let lastId = null;
-    const unorderedTasks = new Set<TaskDto>(); // sets maintain insertion order
-    const updatedTasks = new Array<TaskDto>();
-
-    // keep the ordered complete tasks unchanged
-    for (const task of tasks) {
-      if (task.complete && task.previousId === lastId) {
-        lastId = task.id;
-      } else unorderedTasks.add(task);
-    }
-
-    // sort the unordered tasks by completion
-    for (const task of [...unorderedTasks]) {
-      if (task.complete) {
-        updatedTasks.push({ ...task, previousId: lastId });
-        lastId = task.id;
-        unorderedTasks.delete(task);
-      }
-    }
-
-    // add the remaining tasks
-    for (const task of unorderedTasks) {
-      updatedTasks.push({ ...task, previousId: lastId });
-      lastId = task.id;
-    }
-
-    return updatedTasks;
   }
 
   addTask(taskDto: Omit<TaskDto, 'id'>): Observable<TaskDto> {
@@ -171,5 +138,63 @@ export class TaskService {
 
   stopTimer(taskId: number) {
     return this.http.delete(`${this.tasksUrl}/${taskId}/timer`);
+  }
+
+  /** Reorder the tasks so that completed ones are on top, then according to the original order */
+  createSortedCompleteTasks(
+    tasks: ReadonlyArray<TaskDto>
+  ): ReadonlyArray<TaskDto> {
+    let lastId = null;
+    const unorderedTasks = new Set<TaskDto>(); // sets maintain insertion order
+    const updatedTasks = new Array<TaskDto>();
+
+    // keep the ordered complete tasks unchanged
+    for (const task of tasks) {
+      if (task.complete && task.previousId === lastId) {
+        lastId = task.id;
+      } else unorderedTasks.add(task);
+    }
+
+    // sort the unordered tasks by completion
+    for (const task of [...unorderedTasks]) {
+      if (task.complete) {
+        updatedTasks.push({ ...task, previousId: lastId });
+        lastId = task.id;
+        unorderedTasks.delete(task);
+      }
+    }
+
+    // add the remaining tasks
+    for (const task of unorderedTasks) {
+      updatedTasks.push({ ...task, previousId: lastId });
+      lastId = task.id;
+    }
+
+    return updatedTasks;
+  }
+
+  /** Append tasks to the bottom of another date's list */
+  public createAppendedTasks(
+    movedTasks: ReadonlyArray<TaskDto>,
+    date: string
+  ): Observable<ReadonlyArray<TaskDto>> {
+    // fetch tasks via service without changing the state
+    return this.getDateTasks(date).pipe(
+      map((tasks) => {
+        let lastTaskId =
+          tasks.length > 0 ? this.sortTasks(tasks)[tasks.length - 1].id : null;
+        const updatedTasks = new Array<TaskDto>();
+
+        for (const task of movedTasks) {
+          updatedTasks.push({
+            ...task,
+            date,
+            previousId: lastTaskId,
+          });
+          lastTaskId = task.id;
+        }
+        return updatedTasks;
+      })
+    );
   }
 }
