@@ -127,9 +127,9 @@ export class TasksEffects {
   updateTasks$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TasksActions.updateTasks),
-      mergeMap((action: { tasksDtos: ReadonlyArray<TaskDto> }) =>
+      mergeMap((action: { tasks: ReadonlyArray<TaskDto> }) =>
         this.ts
-          .updateTasks(action.tasksDtos)
+          .updateTasks(action.tasks)
           .pipe(map((tasks) => TasksActions.updateTasksSuccess({ tasks })))
       )
     )

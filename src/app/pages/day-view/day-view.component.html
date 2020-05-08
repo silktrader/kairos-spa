@@ -9,6 +9,9 @@
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #dateMenu="matMenu">
+        <button mat-menu-item (click)="reorderTasksCompletion()">
+          <mat-icon>check_circle</mat-icon>Sort Completed
+        </button>
         <button mat-menu-item (click)="postponeIncompleteTasks()">
           <mat-icon>navigate_next</mat-icon>Postpone Incomplete
         </button>

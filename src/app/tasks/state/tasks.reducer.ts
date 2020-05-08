@@ -67,7 +67,7 @@ export const tasksReducer = createReducer(
     };
   }),
 
-  on(TasksActions.updateTasks, (schedule, { tasksDtos }) => {
+  on(TasksActions.updateTasks, (schedule, { tasks: tasksDtos }) => {
     return {
       ...schedule,
       updatingTasks: [...tasksDtos.map((task) => task.id)],

@@ -117,68 +117,18 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
     this.options = {
       group: this.draggableTasksIdentifier,
-      onRemove: (event: any) => {
-        const movedTask = this.tasks[event.oldIndex];
-        const targetDate: string = event.to.id;
 
-        // get the target date's sorted tasks
-        this.store
-          .pipe(
-            select(selectTasksByDate, {
-              date: targetDate,
-            }),
-            first(),
-            map(this.ts.sortTasks)
-          )
-          .subscribe((targetedTasks) => {
-            // pick the ID above the moved task
-            const antecedentId =
-              targetedTasks.length === 0 || event.newIndex === 0
-                ? null
-                : targetedTasks[event.newIndex - 1].id;
+      // reordering tasks accross dates
+      onRemove: (event: any) =>
+        this.orderTaskOtherDate(
+          this.tasks[event.oldIndex],
+          event.to.id,
+          event.newIndex
+        ),
 
-            const updatedTasks = [movedTask];
-
-            // change the task that references the one being changed
-            const orphan = this.tasks.find(
-              (task) => task.previousId === movedTask.id
-            );
-            if (orphan) {
-              updatedTasks.push({
-                ...orphan,
-                previousId: movedTask.previousId,
-              });
-            }
-
-            // replace the task whose previous ID matches the new reference
-            const pushedDown = targetedTasks.find(
-              (task) => task.previousId === antecedentId
-            );
-            if (pushedDown) {
-              updatedTasks.push({
-                ...pushedDown,
-                previousId: movedTask.id,
-              });
-            }
-
-            // finally change the moved task
-            updatedTasks[0] = {
-              ...updatedTasks[0],
-              date: targetDate,
-              previousId: antecedentId,
-            };
-
-            // dispatch the effect
-            this.store.dispatch(
-              updateTasks({
-                tasksDtos: updatedTasks,
-              })
-            );
-          });
-      },
-      onUpdate: (event: any) => {
-        this.changeTaskPosition(event.oldIndex, event.newIndex);
-      },
+      // intra date task reordering
+      onUpdate: (event: any) =>
+        this.orderTaskSameDate(event.oldIndex, event.newIndex),
     };
   }
 
@@ -250,6 +200,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
     return `Hashtags length must be within ${tagConstraints.minLength} and ${tagConstraints.maxLength} characters`;
   }
 
+  /** Add a new task with default values, a title and tags */
   addTask({ title, tags }: { title: string; tags: Array<string> }): void {
     // check whether this is the first task
     const previousId =
@@ -270,47 +221,84 @@ export class DayViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  private changeTaskPosition(oldIndex: number, newIndex: number): void {
-    // the original task being moved around
-    const mainTask = this.tasks[oldIndex];
-
+  /** Move around tasks that belong to the same date */
+  private orderTaskSameDate(oldIndex: number, newIndex: number): void {
     // when moving down assign the [newIndex].id, when moving up assing the [newIndex - 1].id
-    const updatedMainTask = {
-      ...mainTask,
-      previousId:
-        oldIndex < newIndex
-          ? this.tasks[newIndex].id
-          : newIndex === 0
-          ? null
-          : this.tasks[newIndex - 1].id,
-    };
+    const aboveId =
+      oldIndex < newIndex
+        ? this.tasks[newIndex].id
+        : newIndex === 0
+        ? null
+        : this.tasks[newIndex - 1].id;
 
-    // initialise the list of updated tasks with new positions
-    const updatedTasks = [updatedMainTask];
+    this.orderTasks(
+      this.tasks,
+      this.tasks,
+      this.tasks[oldIndex],
+      aboveId,
+      this.date
+    );
+  }
 
-    // browse the tasks and mark those whose previous ID needs to be changed
-    for (const task of this.tasks) {
-      // change the task that referenced the moved task
-      if (task.previousId === mainTask.id) {
-        updatedTasks.push({
-          ...task,
-          previousId: mainTask.previousId,
-        });
-        continue;
-      }
+  private orderTaskOtherDate(
+    movedTask: TaskDto,
+    date: string,
+    newPosition: number
+  ) {
+    // get the target date's sorted tasks
+    this.store
+      .pipe(
+        select(selectTasksByDate, {
+          date,
+        }),
+        first(),
+        map(this.ts.sortTasks)
+      )
+      .subscribe((dropTasks) => {
+        // pick the ID above the moved task
+        const aboveId =
+          dropTasks.length === 0 || newPosition === 0
+            ? null
+            : dropTasks[newPosition - 1].id;
 
-      // change the task that referenced the one on top of the moving task
-      if (task.previousId === updatedMainTask.previousId) {
-        updatedTasks.push({
-          ...task,
-          previousId: mainTask.id,
-        });
-      }
+        this.orderTasks(this.tasks, dropTasks, movedTask, aboveId, date);
+      });
+  }
+
+  private orderTasks(
+    dragTasks: ReadonlyArray<TaskDto>,
+    dropTasks: ReadonlyArray<TaskDto>,
+    movedTask: TaskDto,
+    aboveId: number | null,
+    dropDate: string
+  ): void {
+    // update the tasks to be reordered with an updated copy of the moved one
+    const updatedTasks: Array<TaskDto> = [
+      { ...movedTask, previousId: aboveId, date: dropDate },
+    ];
+
+    // change the task that references the one being changed
+    const orphan = dragTasks.find((task) => task.previousId === movedTask.id);
+    if (orphan) {
+      updatedTasks.push({
+        ...orphan,
+        previousId: movedTask.previousId,
+      });
     }
 
+    // replace the task whose previous ID matches the new reference
+    const pushedDown = dropTasks.find((task) => task.previousId === aboveId);
+    if (pushedDown) {
+      updatedTasks.push({
+        ...pushedDown,
+        previousId: movedTask.id,
+      });
+    }
+
+    // dispatch the effect
     this.store.dispatch(
       updateTasks({
-        tasksDtos: updatedTasks,
+        tasks: updatedTasks,
       })
     );
   }
@@ -341,6 +329,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** Move tasks to other dates */
   private moveTasks(movedTasks: Array<TaskDto>, date: string): void {
     // fetch tasks via service without changing the state
     // might change behaviour from `append` to `insert`
@@ -362,24 +351,31 @@ export class DayViewComponent implements OnInit, OnDestroy {
 
       this.store.dispatch(
         updateTasks({
-          tasksDtos: updatedTasks,
+          tasks: updatedTasks,
         })
       );
     });
   }
 
-  /* Move incomplete tasks to the following day */
+  /** Move incomplete tasks to the following day */
   postponeIncompleteTasks(): void {
     const incompleteTasks = this.tasks.filter((task) => !task.complete);
     const nextDate = formatDate(addDays(this.dateObject, 1));
     this.moveTasks(incompleteTasks, nextDate);
   }
 
-  /* Move incomplete tasks to the previous day */
+  /** Move incomplete tasks to the previous day */
   anticipateIncompleteTasks(): void {
     const incompleteTasks = this.tasks.filter((task) => !task.complete);
     const previousDate = formatDate(addDays(this.dateObject, -1));
     this.moveTasks(incompleteTasks, previousDate);
+  }
+
+  /** Reorder tasks according to their completion status, then original order */
+  reorderTasksCompletion(): void {
+    this.store.dispatch(
+      updateTasks({ tasks: this.ts.reorderTasksCompletion(this.tasks) })
+    );
   }
 
   colourise(value: number): string {

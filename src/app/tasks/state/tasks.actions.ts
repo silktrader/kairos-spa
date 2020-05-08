@@ -40,7 +40,7 @@ export const editSuccess = createAction(
 
 export const updateTasks = createAction(
   '[TASKS] Update Tasks',
-  props<{ tasksDtos: ReadonlyArray<TaskDto> }>()
+  props<{ tasks: ReadonlyArray<TaskDto> }>()
 );
 
 export const updateTasksSuccess = createAction(

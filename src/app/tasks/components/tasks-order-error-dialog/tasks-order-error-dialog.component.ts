@@ -31,7 +31,7 @@ export class TasksOrderErrorDialogComponent implements OnInit {
   public recover(): void {
     this.store.dispatch(
       updateTasks({
-        tasksDtos: this.reorderTasks(this.unorderedTasks),
+        tasks: this.reorderTasks(this.unorderedTasks),
       })
     );
   }
