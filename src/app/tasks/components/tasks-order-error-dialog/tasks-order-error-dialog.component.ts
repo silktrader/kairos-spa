@@ -68,7 +68,8 @@ export class TasksOrderErrorDialogComponent implements OnInit {
       for (const task of remainingTasks) {
         orderedTasks.push({
           ...task,
-          previousId: orderedTasks[orderedTasks.length - 1].id,
+          // the first task referencing null might be missing
+          previousId: orderedTasks[orderedTasks.length - 1]?.id ?? null,
         });
       }
     }
