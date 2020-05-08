@@ -28,23 +28,32 @@
 
       <section class="form-section">
         <mat-icon class="section-icon">assignment_turned_in</mat-icon>
-        <mat-checkbox color="primary" formControlName="complete">Complete</mat-checkbox>
-      </section>
-
-      <section class="form-section">
-        <mat-icon class="section-icon">event</mat-icon>
-        <mat-form-field class="date-input">
-          <mat-label>Date</mat-label>
-          <input matInput [matDatepicker]="taskDate" formControlName="date">
-          <mat-datepicker-toggle matSuffix [for]="taskDate"></mat-datepicker-toggle>
-          <mat-datepicker #taskDate></mat-datepicker>
-          <mat-error>Must be a valid date</mat-error>
-        </mat-form-field>
+        <div class="section-row">
+          <button class="complete-button" mat-flat-button color="accent" (click)="toggleCompletion()"
+            *ngIf="completed$ | async; else markComplete">
+            <span class="complete-button-label">Completed
+              <mat-icon>done</mat-icon>
+            </span>
+          </button>
+          <ng-template #markComplete>
+            <button class="complete-button" mat-stroked-button [disabled]="taskTimer$ | async" color="accent"
+              (click)="toggleCompletion()">
+              Mark Complete
+            </button>
+          </ng-template>
+          <mat-form-field class="date-input">
+            <mat-label>Date</mat-label>
+            <input matInput [matDatepicker]="taskDate" formControlName="date">
+            <mat-datepicker-toggle matSuffix [for]="taskDate"></mat-datepicker-toggle>
+            <mat-datepicker #taskDate></mat-datepicker>
+            <mat-error>Must be a valid date</mat-error>
+          </mat-form-field>
+        </div>
       </section>
 
       <section class="form-section">
         <mat-icon class="section-icon">schedule</mat-icon>
-        <div class="complete-controls">
+        <div class="section-row">
           <mat-form-field class="duration-input">
             <mat-label>Duration</mat-label>
             <input type="number" matInput formControlName="duration" autocomplete="off">

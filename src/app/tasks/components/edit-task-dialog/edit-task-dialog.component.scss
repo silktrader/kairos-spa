@@ -28,7 +28,7 @@ mat-toolbar {
 .form-section {
   display: flex;
   align-items: center;
-  margin-bottom: 1rem;
+  min-height: 5rem;
 }
 
 .title-section {
@@ -43,9 +43,16 @@ mat-toolbar {
   margin-right: 2rem;
 }
 
+.section-row {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .title-input {
   font-size: large;
-  min-width: 36ch;
+  min-width: 40ch;
 }
 
 .date {
@@ -55,20 +62,29 @@ mat-toolbar {
   opacity: 0.8;
 }
 
+.complete-button {
+  min-width: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .complete-button-label {
+    display: flex;
+    align-items: center;
+  }
+
+  mat-icon {
+    margin-left: 0.5rem;
+  }
+}
+
 em {
   text-decoration: underline;
 }
 
 .details-input {
-  min-width: 30ch;
-  font-size: medium;
-}
-
-.complete-controls {
-  display: flex;
   width: 100%;
-  justify-content: space-between;
-  align-items: center;
+  font-size: medium;
 }
 
 .duration-input {

@@ -54,8 +54,8 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     Validators.min(0),
     Validators.max(1440),
   ]);
-  private readonly completeControl = new FormControl(false);
   public readonly tagsControl = new FormControl(undefined);
+  public readonly completed$ = new BehaviorSubject(false);
 
   readonly taskForm = new FormGroup({
     title: new FormControl(undefined, [
@@ -65,7 +65,6 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     ]),
     details: new FormControl(undefined),
     date: new FormControl(undefined, [Validators.required]),
-    complete: this.completeControl,
     duration: this.durationControl,
   });
 
@@ -126,19 +125,25 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
       .subscribe((tags) => (this.existingTags = tags.map((tag) => tag.name)));
 
     // when the original task value and the form's contents differ allow changes to be reverted
-    combineLatest([this.taskForm.valueChanges, this.editedTags$])
+    combineLatest([
+      this.taskForm.valueChanges,
+      this.editedTags$,
+      this.completed$,
+    ])
       .pipe(takeUntil(this.ngUnsubscribe$))
-      .subscribe(([formValue, tags]: [TaskDto, Array<string>]) => {
-        this.canSave$.next(
-          this.ts.haveDifferentValues(
-            this.initialTask,
-            this.buildTaskDto(formValue)
-          )
-        );
+      .subscribe(
+        ([formValue, tags, completed]: [any, Array<string>, boolean]) => {
+          this.canSave$.next(
+            this.ts.haveDifferentValues(
+              this.initialTask,
+              this.buildTaskDto(formValue)
+            )
+          );
 
-        // disable the timer when the task is set as complete
-        this.disabledTimer$.next(formValue.complete);
-      });
+          // disable the timer when the task is set as complete
+          this.disabledTimer$.next(completed);
+        }
+      );
 
     // close the dialog when the task is saved or deleted
     this.actions$
@@ -149,13 +154,9 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.taskTimer$
       .pipe(takeUntil(this.ngUnsubscribe$))
       .subscribe((taskTimerValue) => {
-        if (taskTimerValue) {
-          this.durationControl.disable();
-          this.completeControl.disable();
-        } else {
-          this.durationControl.enable();
-          this.completeControl.enable();
-        }
+        taskTimerValue
+          ? this.durationControl.disable()
+          : this.durationControl.enable();
       });
   }
 
@@ -168,18 +169,23 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     // ensure that the date is set to UTC
     // the form field might be cleared while editing hence the null check
     // will create a date from either a string or a date object
-    const date = formValue.date
-      ? formatISO(new Date(formValue.date), {
-          representation: 'date',
-        })
-      : undefined;
+    const date = formatISO(new Date(formValue.date || Date.now()), {
+      representation: 'date',
+    });
     return {
       ...this.initialTask, // ensures the ID is present and that duration and complete aren't null
       previousId: this.initialTask.previousId,
-      ...formValue,
+      title: formValue.title,
+      details: formValue.details,
+      complete: this.completed$.value,
+      duration: formValue.duration,
       date,
       tags: this.editedTags$.value,
     };
+  }
+
+  toggleCompletion(): void {
+    this.completed$.next(!this.completed$.value);
   }
 
   saveTask(): void {
@@ -194,6 +200,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
 
   resetChanges(): void {
     this.taskForm.patchValue(this.initialTask);
+    this.completed$.next(this.initialTask.complete);
   }
 
   deleteTask(): void {

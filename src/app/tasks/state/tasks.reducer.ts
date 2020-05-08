@@ -1,4 +1,4 @@
-import { TasksState, TasksLoadingState } from './tasks.state';
+import { TasksState } from './tasks.state';
 import { createReducer, on } from '@ngrx/store';
 import * as TasksActions from './tasks.actions';
 import {
