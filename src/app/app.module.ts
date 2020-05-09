@@ -10,7 +10,6 @@ import { DayViewComponent } from './pages/day-view/day-view.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material/material.module';
 import { environment } from '../environments/environment'; // Angular CLI environment
-import { AuthModule } from 'auth';
 import { AuthComponent } from './pages/auth/auth.component';
 import { SigninComponent } from './pages/auth/signin/signin.component';
 import { SortablejsModule } from 'ngx-sortablejs';
@@ -20,6 +19,7 @@ import { HabitsSidebarComponent } from './pages/sidebar/habits-sidebar/habits-si
 import { HabitsModule } from './habits/habits.module';
 import { CoreModule } from './core/core.module';
 import { TasksModule } from './tasks/tasks.module';
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [

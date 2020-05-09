@@ -7,8 +7,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from '@angular/core';
-import { AuthService } from 'auth';
-import { addDays, format } from 'date-fns';
+import { addDays } from 'date-fns';
 import { Observable, Subject } from 'rxjs';
 import { Store, select } from '@ngrx/store';
 import { SidebarSection, AppState } from 'src/app/store/app-state';
@@ -26,6 +25,7 @@ import {
 import { NotificationService } from 'src/app/services/notification.service';
 import * as TasksActions from 'src/app/tasks/state/tasks.actions';
 import { formatDate } from 'src/app/core/format-date';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-home',
