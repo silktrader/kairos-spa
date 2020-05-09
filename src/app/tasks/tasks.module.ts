@@ -25,9 +25,7 @@ import { TasksOrderErrorDialogComponent } from './components/tasks-order-error-d
     TasksOrderErrorDialogComponent,
   ],
   imports: [
-    CommonModule,
     CoreModule,
-    MaterialModule,
     StoreModule.forFeature('tasks', tasksReducer),
     EffectsModule.forFeature([TasksEffects]),
   ],

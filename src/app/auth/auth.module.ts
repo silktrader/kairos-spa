@@ -7,8 +7,15 @@ import {
 import { AuthConfig } from './auth-config.model';
 import { AuthInterceptor } from './auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthenticationPromptComponent } from './components/authentication-prompt/authentication-prompt.component';
+import { SigninPromptComponent } from './components/signin-prompt/signin-prompt.component';
+import { CoreModule } from '../core/core.module';
 
-@NgModule()
+@NgModule({
+  declarations: [AuthenticationPromptComponent, SigninPromptComponent],
+  imports: [CoreModule],
+  exports: [AuthenticationPromptComponent, SigninPromptComponent],
+})
 export class AuthModule {
   // looks for an AuthModule in an ancestor injector, when found throw an error to avoid multiple instances
   constructor(@Optional() @SkipSelf() parentModule?: AuthModule) {

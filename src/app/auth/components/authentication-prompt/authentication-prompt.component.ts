@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
-  selector: 'app-auth',
-  templateUrl: './auth.component.html',
-  styleUrls: ['./auth.component.scss'],
+  selector: 'app-authentication-prompt',
+  templateUrl: './authentication-prompt.component.html',
+  styleUrls: ['./authentication-prompt.component.scss'],
 })
-export class AuthComponent implements OnInit {
+export class AuthenticationPromptComponent implements OnInit {
   constructor(private readonly authService: AuthService) {}
 
   ngOnInit(): void {}
