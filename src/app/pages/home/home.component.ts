@@ -26,6 +26,11 @@ import { NotificationService } from 'src/app/services/notification.service';
 import * as TasksActions from 'src/app/tasks/state/tasks.actions';
 import { formatDate } from 'src/app/core/format-date';
 import { AuthService } from 'src/app/auth/auth.service';
+import {
+  ShortcutInput,
+  ShortcutEventOutput,
+  KeyboardShortcutsComponent,
+} from 'ng-keyboard-shortcuts';
 
 @Component({
   selector: 'app-home',
@@ -46,6 +51,8 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
   }> = this.store.pipe(select(selectSidebar));
   private previousSidebarState: { opened: boolean; section: SidebarSection };
   public sidebarSection = SidebarSection;
+
+  public shortcuts = new Array<ShortcutInput>();
 
   constructor(
     private readonly authService: AuthService,
@@ -91,6 +98,27 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         this.changeDetectorRef.detectChanges();
         this.previousSidebarState = sidebarState;
       });
+
+    // define shortcuts
+    this.shortcuts.push(
+      {
+        key: ['ctrl + left'],
+        label: 'Schedule Navigation',
+        description: 'Show the previous date',
+        preventDefault: true,
+        command: () => this.showPrevious(),
+      },
+      {
+        key: ['ctrl + right'],
+        label: 'Schedule Navigation',
+        description: 'Show the next date',
+        preventDefault: true,
+        command: () => {
+          this.showNext();
+          console.log('asd');
+        },
+      }
+    );
   }
 
   ngOnDestroy(): void {

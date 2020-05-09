@@ -50,6 +50,9 @@
   <mat-sidenav-content>
     <div class="container">
 
+      <ng-keyboard-shortcuts [shortcuts]="shortcuts"></ng-keyboard-shortcuts>
+      <ng-keyboard-shortcuts-help [key]="'f1'" [closeKey]="'escape'" [title]="'Help'"></ng-keyboard-shortcuts-help>
+
       <main *ngIf="user$ | async; else authPrompt" class="visible-days">
         <app-day-view *ngFor="let date of (visibleDates$ | async); let last = last" [date]="date"
           [ngClass]="{'last-day': last, 'day': true}"></app-day-view>
@@ -68,7 +71,7 @@
       </main>
 
       <ng-template #authPrompt>
-        <app-auth></app-auth>
+        <app-authentication-prompt></app-authentication-prompt>
       </ng-template>
     </div>
   </mat-sidenav-content>
