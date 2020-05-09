@@ -25,7 +25,7 @@ import {
   selectLoadingState,
   selectTasksByDate,
 } from 'src/app/tasks/state/tasks.selectors';
-import { updateTasks, add } from 'src/app/tasks/state/tasks.actions';
+import { updateTasks, addTask } from 'src/app/tasks/state/tasks.actions';
 import { TasksLoadingState } from 'src/app/tasks/state/tasks.state';
 import { addDays, isToday, format } from 'date-fns';
 import { TaskDto } from 'src/app/tasks/models/task.dto';
@@ -207,7 +207,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
       this.tasks.length > 0 ? this.tasks[this.tasks.length - 1].id : null;
 
     this.store.dispatch(
-      add({
+      addTask({
         task: {
           title,
           previousId,

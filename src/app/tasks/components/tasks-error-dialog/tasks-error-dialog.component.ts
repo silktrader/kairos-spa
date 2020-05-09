@@ -3,7 +3,7 @@ import { AppState } from 'src/app/store/app-state';
 import { Store, select } from '@ngrx/store';
 import { first, takeUntil } from 'rxjs/operators';
 import { selectLoadingTasks } from 'src/app/tasks/state/tasks.selectors';
-import { get, getSuccess } from 'src/app/tasks/state/tasks.actions';
+import { getTasks, getTasksSuccess } from 'src/app/tasks/state/tasks.actions';
 import { selectVisibleDates } from 'src/app/store/schedule.selectors';
 import { Actions, ofType } from '@ngrx/effects';
 import { Subject } from 'rxjs';
@@ -27,7 +27,7 @@ export class TasksErrorDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.actions$
-      .pipe(ofType(getSuccess), takeUntil(this.ngUnsubscribe$))
+      .pipe(ofType(getTasksSuccess), takeUntil(this.ngUnsubscribe$))
       .subscribe(() => {
         this.dialogRef.close();
       });
@@ -42,7 +42,7 @@ export class TasksErrorDialogComponent implements OnInit, OnDestroy {
     this.store
       .pipe(select(selectVisibleDates), first())
       .subscribe((dates: Array<string>) => {
-        if (dates) this.store.dispatch(get({ dates }));
+        if (dates) this.store.dispatch(getTasks({ dates }));
         // the dialog's closed by a successful loading of tasks
       });
   }

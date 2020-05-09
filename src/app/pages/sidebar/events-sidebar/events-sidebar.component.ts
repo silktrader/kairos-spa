@@ -13,7 +13,7 @@ import {
   selectTaskEvents,
   selectTasksByDate,
 } from 'src/app/tasks/state/tasks.selectors';
-import { remove, add, edit } from 'src/app/tasks/state/tasks.actions';
+import { remove, addTask, edit } from 'src/app/tasks/state/tasks.actions';
 import { TaskService } from 'src/app/tasks/task.service';
 
 @Component({
@@ -84,7 +84,7 @@ export class EventsSidebarComponent implements OnInit, OnDestroy {
       )
       .subscribe((orderedTasks) => {
         this.store.dispatch(
-          add({
+          addTask({
             task: {
               ...taskDto,
               previousId: orderedTasks[orderedTasks.length - 1].id,

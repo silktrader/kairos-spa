@@ -3,28 +3,33 @@ import { TaskDto } from 'src/app/tasks/models/task.dto';
 import { TagDto } from '../models/tag.dto';
 import { TaskTimer } from '../models/task-timer.dto';
 
-export const get = createAction(
-  '[TASKS] Get',
+export const getTasks = createAction(
+  '[TASKS] Set Tasks',
   props<{ dates: Array<string> }>()
 );
 
-export const getSuccess = createAction(
-  '[TASKS] Get Success',
+export const getTasksSuccess = createAction(
+  '[TASKS] Set Tasks Success',
   props<{ tasks: ReadonlyArray<TaskDto> }>()
 );
 
-export const getFailed = createAction(
-  '[TASKS] Get Failed',
+export const getTasksFailed = createAction(
+  '[TASKS] Set Tasks Failed',
   props<{ dates: ReadonlyArray<string> }>()
 );
 
-export const add = createAction(
-  '[TASKS] Add',
+export const removeDatesTasks = createAction(
+  '[TASKS] Remove Date Tasks',
+  props<{ dates: ReadonlyArray<string> }>()
+);
+
+export const addTask = createAction(
+  '[TASKS] Add Task',
   props<{ task: Omit<TaskDto, 'id'> }>()
 );
 
-export const addSuccess = createAction(
-  '[TASKS] Add Success',
+export const addTaskSuccess = createAction(
+  '[TASKS] Add Task Success',
   props<{ task: TaskDto }>()
 );
 

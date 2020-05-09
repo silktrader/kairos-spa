@@ -26,11 +26,7 @@ import { NotificationService } from 'src/app/services/notification.service';
 import * as TasksActions from 'src/app/tasks/state/tasks.actions';
 import { formatDate } from 'src/app/core/format-date';
 import { AuthService } from 'src/app/auth/auth.service';
-import {
-  ShortcutInput,
-  ShortcutEventOutput,
-  KeyboardShortcutsComponent,
-} from 'ng-keyboard-shortcuts';
+import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 @Component({
   selector: 'app-home',
@@ -43,6 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private readonly ngUnsubscribe$ = new Subject();
   public readonly visibleDates$ = this.store.select(selectVisibleDates);
+  private previousVisibleDates: ReadonlySet<string> = new Set<string>();
   public readonly user$ = this.authService.user$;
 
   public sidebarState$: Observable<{
@@ -78,8 +75,30 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((dates: Array<string>) => {
         // avoid calls when no dates are set
         if (dates.length > 0) {
-          this.store.dispatch(TasksActions.get({ dates }));
           this.store.dispatch(getHabitsEntries({ dates }));
+
+          // determine which dates need to be fetched
+          const fetchDates = [];
+          for (const date of dates) {
+            if (this.previousVisibleDates.has(date)) continue;
+            fetchDates.push(date);
+          }
+
+          // dates that will be removed from the store
+          const removedDates = [];
+          for (const date of this.previousVisibleDates) {
+            if (dates.includes(date)) continue;
+            removedDates.push(date);
+          }
+
+          this.store.dispatch(TasksActions.getTasks({ dates: fetchDates }));
+          if (removedDates.length) {
+            this.store.dispatch(
+              TasksActions.removeDatesTasks({ dates: removedDates })
+            );
+          }
+
+          this.previousVisibleDates = new Set(dates);
         }
       });
 

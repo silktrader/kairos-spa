@@ -22,22 +22,28 @@ import { TasksErrorDialogComponent } from '../components/tasks-error-dialog/task
 
 @Injectable()
 export class TasksEffects {
-  get$ = createEffect(() =>
+  getTasks$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TasksActions.get),
-      mergeMap((action: { dates: Array<string> }) =>
-        this.ts.getTasksFromDates(action.dates).pipe(
-          map((tasks) => TasksActions.getSuccess({ tasks })),
-          catchError(() => of(TasksActions.getFailed({ dates: action.dates })))
-        )
-      )
+      ofType(TasksActions.getTasks),
+      mergeMap((action: { dates: Array<string> }) => {
+        const getter =
+          action.dates.length === 1
+            ? this.ts.getDateTasks(action.dates[0])
+            : this.ts.getTasksFromDates(action.dates);
+        return getter.pipe(
+          map((tasks) => TasksActions.getTasksSuccess({ tasks })),
+          catchError(() =>
+            of(TasksActions.getTasksFailed({ dates: action.dates }))
+          )
+        );
+      })
     )
   );
 
-  getFailed$ = createEffect(
+  getTasksFailed$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(TasksActions.getFailed),
+        ofType(TasksActions.getTasksFailed),
         tap(() => {
           this.matDialog.open(TasksErrorDialogComponent, {
             panelClass: 'kairos-dialog',
@@ -48,20 +54,31 @@ export class TasksEffects {
     { dispatch: false }
   );
 
+  //   fetchDatesTasks$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(TasksActions.fetchDatesTasks),
+  //     mergeMap((action: { dates: Array<string> }) =>
+  //       this.ts.getTasksFromDates(action.dates).pipe(
+  //         map((tasks) => TasksActions.addDatesTasks({ tasks })),
+  //       )
+  //     )
+  //   )
+  // );
+
   add$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TasksActions.add),
+      ofType(TasksActions.addTask),
       mergeMap((action: { task: Omit<TaskDto, 'id'> }) =>
         this.ts
           .addTask(action.task)
-          .pipe(map((task) => TasksActions.addSuccess({ task })))
+          .pipe(map((task) => TasksActions.addTaskSuccess({ task })))
       )
     )
   );
 
   addSuccess$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TasksActions.addSuccess),
+      ofType(TasksActions.addTaskSuccess),
       withLatestFrom(this.store.pipe(select(selectTags), first())),
       map(([props, tags]) => {
         const existingTags = tags.map((tag) => tag.name);

@@ -40,7 +40,7 @@ export const filteredTasks = (
 export const tasksReducer = createReducer(
   initialState,
 
-  on(TasksActions.addSuccess, (schedule, { task }) => {
+  on(TasksActions.addTaskSuccess, (schedule, { task }) => {
     return {
       ...schedule,
       tasks: [...schedule.tasks, task],
@@ -86,25 +86,33 @@ export const tasksReducer = createReducer(
     };
   }),
 
-  on(TasksActions.get, (state, props) => ({
+  on(TasksActions.getTasks, (state, props) => ({
     ...state,
     loadingDates: [...props.dates],
   })),
 
-  on(TasksActions.getSuccess, (state, { tasks }) => {
+  on(TasksActions.getTasksSuccess, (state, { tasks }) => {
     return {
       ...state,
-      tasks,
-      loadingDates: [],
+      tasks: [...state.tasks, ...tasks],
+      loadingDates: [], // possible problem
       errorDates: [],
     };
   }),
 
-  on(TasksActions.getFailed, (schedule, { dates }) => {
+  on(TasksActions.getTasksFailed, (state, { dates }) => {
     return {
-      ...schedule,
+      ...state,
       loadingDates: [],
       errorDates: [...dates],
+    };
+  }),
+
+  on(TasksActions.removeDatesTasks, (state, { dates }) => {
+    const removedDates = new Set(dates);
+    return {
+      ...state,
+      tasks: state.tasks.filter((task) => !removedDates.has(task.date)),
     };
   }),
 
