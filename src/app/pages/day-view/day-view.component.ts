@@ -312,7 +312,7 @@ export class DayViewComponent implements OnInit, OnDestroy {
     const tasks: Array<TaskDto> = [
       { ...task, previousId: null, date: null, duration: null },
     ];
-    const orphan = this.tasks.find((t) => t.previousId === t.id);
+    const orphan = this.tasks.find((t) => t.previousId === task.id);
     if (orphan) tasks.push({ ...orphan, previousId: task.previousId });
     this.store.dispatch(
       updateTasks({

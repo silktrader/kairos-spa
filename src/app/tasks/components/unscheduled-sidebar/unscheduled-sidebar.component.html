@@ -1,5 +1,5 @@
 <app-sidebar-section-title [title]="'Unscheduled Tasks'"></app-sidebar-section-title>
 
 <div id="unscheduled" class="tasks" sortablejs [sortablejsOptions]="options">
-  <app-task-card *ngFor="let task of (tasks$ | async)" [task]="task"></app-task-card>
+  <app-task-card [id]="task.id" *ngFor="let task of (tasks$ | async)" [task]="task"></app-task-card>
 </div>
