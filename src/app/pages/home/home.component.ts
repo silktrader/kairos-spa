@@ -69,6 +69,9 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
     // get all timers
     this.store.dispatch(TasksActions.getTimers());
 
+    // get unscheduled tasks
+    this.store.dispatch(TasksActions.getUnscheduledTasks());
+
     // get tasks and habits entries
     this.store
       .pipe(select(selectVisibleDates), takeUntil(this.ngUnsubscribe$))
@@ -134,7 +137,6 @@ export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
         preventDefault: true,
         command: () => {
           this.showNext();
-          console.log('asd');
         },
       }
     );

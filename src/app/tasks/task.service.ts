@@ -36,6 +36,12 @@ export class TaskService {
     );
   }
 
+  getUnscheduledTasks(): Observable<ReadonlyArray<TaskDto>> {
+    return this.http.get<ReadonlyArray<TaskDto>>(
+      `${this.tasksUrl}/unscheduled`
+    );
+  }
+
   /** Sort tasks according to their previous ID references */
   sortTasks(tasks: ReadonlyArray<TaskDto>): ReadonlyArray<TaskDto> {
     const unorderedTasks = new Set(tasks);

@@ -54,16 +54,18 @@ export class TasksEffects {
     { dispatch: false }
   );
 
-  //   fetchDatesTasks$ = createEffect(() =>
-  //   this.actions$.pipe(
-  //     ofType(TasksActions.fetchDatesTasks),
-  //     mergeMap((action: { dates: Array<string> }) =>
-  //       this.ts.getTasksFromDates(action.dates).pipe(
-  //         map((tasks) => TasksActions.addDatesTasks({ tasks })),
-  //       )
-  //     )
-  //   )
-  // );
+  getUnscheduledTasks$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TasksActions.getUnscheduledTasks),
+      mergeMap(() =>
+        this.ts
+          .getUnscheduledTasks()
+          .pipe(
+            map((tasks) => TasksActions.getUnscheduledTasksSuccess({ tasks }))
+          )
+      )
+    )
+  );
 
   add$ = createEffect(() =>
     this.actions$.pipe(

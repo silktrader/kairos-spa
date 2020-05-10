@@ -17,6 +17,7 @@ export const initialState: TasksState = {
   events: [],
   tags: [],
   timers: [],
+  unscheduled: [],
 };
 
 export const filteredTasks = (
@@ -107,6 +108,11 @@ export const tasksReducer = createReducer(
       errorDates: [...dates],
     };
   }),
+
+  on(TasksActions.getUnscheduledTasksSuccess, (state, { tasks }) => ({
+    ...state,
+    unscheduled: tasks,
+  })),
 
   on(TasksActions.removeDatesTasks, (state, { dates }) => {
     const removedDates = new Set(dates);
