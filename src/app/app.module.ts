@@ -40,7 +40,6 @@ import { AuthModule } from './auth/auth.module';
     BrowserAnimationsModule,
     MaterialModule,
     AuthModule.forRoot({ backendUrl: 'http://localhost:3000/auth/' }),
-    SortablejsModule.forRoot({ animation: 150 }),
     HabitsModule,
     TasksModule,
   ],

@@ -11,7 +11,6 @@ export interface TasksState {
   readonly events: ReadonlyArray<AppEvent>;
   readonly tags: ReadonlyArray<TagDto>;
   readonly timers: ReadonlyArray<TaskTimer>;
-  readonly unscheduled: ReadonlyArray<TaskDto>;
 }
 
 // use strings to avoid falsy values

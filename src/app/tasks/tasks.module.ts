@@ -13,6 +13,7 @@ import { EditTagDialogComponent } from './components/edit-tag-dialog/edit-tag-di
 import { TasksErrorDialogComponent } from './components/tasks-error-dialog/tasks-error-dialog.component';
 import { TaskCardComponent } from './components/task-card/task-card.component';
 import { TasksOrderErrorDialogComponent } from './components/tasks-order-error-dialog/tasks-order-error-dialog.component';
+import { UnscheduledSidebarComponent } from './components/unscheduled-sidebar/unscheduled-sidebar.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { TasksOrderErrorDialogComponent } from './components/tasks-order-error-d
     TasksErrorDialogComponent,
     TaskCardComponent,
     TasksOrderErrorDialogComponent,
+    UnscheduledSidebarComponent,
   ],
   imports: [
     CoreModule,
@@ -33,6 +35,7 @@ import { TasksOrderErrorDialogComponent } from './components/tasks-order-error-d
     SidebarSectionTitleComponent,
     TagsSidebarComponent,
     TaskCardComponent,
+    UnscheduledSidebarComponent,
   ],
   entryComponents: [
     EditTaskDialogComponent,

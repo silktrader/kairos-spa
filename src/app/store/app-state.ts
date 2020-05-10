@@ -9,6 +9,7 @@ export interface ScheduleState {
 }
 
 export enum SidebarSection {
+  Unscheduled,
   Events,
   Habits,
   Tags,

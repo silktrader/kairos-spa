@@ -6,6 +6,7 @@ import { MaterialModule } from '../material/material.module';
 import { GeneralErrorDialogComponent } from './components/general-error-dialog/general-error-dialog.component';
 import { GeneralErrorHandler } from './general-error-handler';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
+import { SortablejsModule } from 'ngx-sortablejs';
 
 @NgModule({
   declarations: [GeneralErrorDialogComponent],
@@ -15,6 +16,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    SortablejsModule.forRoot({ animation: 150 }),
     KeyboardShortcutsModule.forRoot(),
   ],
   exports: [
@@ -23,6 +25,7 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    SortablejsModule,
     KeyboardShortcutsModule,
   ],
   entryComponents: [GeneralErrorDialogComponent],

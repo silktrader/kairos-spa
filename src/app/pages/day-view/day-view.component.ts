@@ -119,12 +119,17 @@ export class DayViewComponent implements OnInit, OnDestroy {
       group: this.draggableTasksIdentifier,
 
       // reordering tasks accross dates
-      onRemove: (event: any) =>
-        this.orderTaskOtherDate(
-          this.tasks[event.oldIndex],
-          event.to.id,
-          event.newIndex
-        ),
+      onRemove: (event: any) => {
+        if (event.to.id === 'unscheduled') {
+          this.unscheduleTask(this.tasks[event.oldIndex]);
+        } else {
+          this.orderTaskOtherDate(
+            this.tasks[event.oldIndex],
+            event.to.id,
+            event.newIndex
+          );
+        }
+      },
 
       // intra date task reordering
       onUpdate: (event: any) =>
@@ -299,6 +304,19 @@ export class DayViewComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       updateTasks({
         tasks: updatedTasks,
+      })
+    );
+  }
+
+  private unscheduleTask(task: TaskDto): void {
+    const tasks: Array<TaskDto> = [
+      { ...task, previousId: null, date: null, duration: null },
+    ];
+    const orphan = this.tasks.find((t) => t.previousId === t.id);
+    if (orphan) tasks.push({ ...orphan, previousId: task.previousId });
+    this.store.dispatch(
+      updateTasks({
+        tasks,
       })
     );
   }

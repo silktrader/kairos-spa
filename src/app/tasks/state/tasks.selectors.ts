@@ -18,6 +18,11 @@ export const selectTasksByDate = createSelector(
     tasks.filter((task) => task.date === props.date)
 );
 
+export const selectUnscheduledTasks = createSelector(
+  selectTasksFeature,
+  (state) => state.tasks.filter((task) => task.date === null)
+);
+
 export const selectTaskEditingId = createSelector(
   selectTasksFeature,
   (state) => state.editingTaskId

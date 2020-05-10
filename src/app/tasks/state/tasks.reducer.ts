@@ -17,9 +17,9 @@ export const initialState: TasksState = {
   events: [],
   tags: [],
   timers: [],
-  unscheduled: [],
 };
 
+/** Remove those tasks whose ID is specified */
 export const filteredTasks = (
   tasks: ReadonlyArray<TaskDto>,
   ...removedTasksIds: Array<number>
@@ -75,15 +75,15 @@ export const tasksReducer = createReducer(
     };
   }),
 
-  on(TasksActions.updateTasksSuccess, (schedule, { tasks }) => {
+  on(TasksActions.updateTasksSuccess, (state, { tasks }) => {
     return {
-      ...schedule,
+      ...state,
       tasks: [
-        ...filteredTasks(schedule.tasks, ...tasks.map((task) => task.id)),
+        ...filteredTasks(state.tasks, ...tasks.map((task) => task.id)),
         ...tasks,
       ],
       // provide a generic notification, absent from the log but picked up by the snackbar
-      events: [...schedule.events, new GenericTaskEvent()],
+      events: [...state.events, new GenericTaskEvent()],
     };
   }),
 
@@ -111,14 +111,16 @@ export const tasksReducer = createReducer(
 
   on(TasksActions.getUnscheduledTasksSuccess, (state, { tasks }) => ({
     ...state,
-    unscheduled: tasks,
+    tasks: [...state.tasks, ...tasks],
   })),
 
   on(TasksActions.removeDatesTasks, (state, { dates }) => {
     const removedDates = new Set(dates);
     return {
       ...state,
-      tasks: state.tasks.filter((task) => !removedDates.has(task.date)),
+      tasks: state.tasks.filter(
+        (task) => task.date && !removedDates.has(task.date)
+      ),
     };
   }),
 

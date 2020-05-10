@@ -41,6 +41,8 @@
   <mat-sidenav #sidebar mode="side" position="end" class="sidebar mat-elevation-z4">
 
     <ng-container [ngSwitch]="(sidebarState$ | async)?.section">
+      <app-unscheduled-sidebar class="sidebar-section" *ngSwitchCase="sidebarSection.Unscheduled">
+      </app-unscheduled-sidebar>
       <app-events class="sidebar-section" *ngSwitchCase="sidebarSection.Events"></app-events>
       <app-habits-sidebar class="sidebar-section" *ngSwitchCase="sidebarSection.Habits"></app-habits-sidebar>
       <app-tags-sidebar class="sidebar-section" *ngSwitchCase="sidebarSection.Tags"></app-tags-sidebar>
@@ -58,6 +60,9 @@
           [ngClass]="{'last-day': last, 'day': true}"></app-day-view>
 
         <section class="sidebar-controls mat-elevation-z4">
+          <button mat-icon-button (click)="toggleSidebarSection(sidebarSection.Unscheduled)">
+            <mat-icon>event_note</mat-icon>
+          </button>
           <button mat-icon-button (click)="toggleSidebarSection(sidebarSection.Events)">
             <mat-icon>settings_backup_restore</mat-icon>
           </button>
