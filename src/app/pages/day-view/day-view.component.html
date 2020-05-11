@@ -67,9 +67,10 @@
           <ul class="habits-list">
             <!-- <li class="habit" *ngFor="let habit of (habitsDetails$ | async)" [ngStyle]="{'color': habit.colour}"> -->
             <li class="habit" *ngFor="let habit of (habitsDetails$ | async)">
-              <mat-checkbox [checked]="habit.entry !== undefined" (change)="toggleHabit(habit.id, habit.entry)"
-                color="primary">
-                <span>{{habit.title}}</span></mat-checkbox>
+              <mat-slide-toggle [checked]="habit.entry !== undefined" (change)="toggleHabit(habit.id, habit.entry)">
+                {{habit.title}}
+              </mat-slide-toggle>
+
             </li>
           </ul>
         </mat-expansion-panel>
