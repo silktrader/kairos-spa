@@ -30,14 +30,14 @@
         <mat-icon class="section-icon">assignment_turned_in</mat-icon>
         <div class="section-row">
           <button class="complete-button" mat-flat-button color="accent" (click)="toggleCompletion()"
-            *ngIf="completed$ | async; else markComplete">
+            *ngIf="completedControl$ | async; else markComplete">
             <span class="complete-button-label">Completed
               <mat-icon>done</mat-icon>
             </span>
           </button>
           <ng-template #markComplete>
-            <button class="complete-button" mat-stroked-button [disabled]="taskTimer$ | async" color="accent"
-              (click)="toggleCompletion()">
+            <button class="complete-button" mat-stroked-button
+              [disabled]="(taskTimer$ | async) || (unscheduled$ | async)" color="accent" (click)="toggleCompletion()">
               Mark Complete
             </button>
           </ng-template>
@@ -65,8 +65,8 @@
             <mat-icon class="timer-hourglass">watch</mat-icon><span>{{taskTimerMinutes$ | async}} min.</span>
           </button>
           <ng-template #startTimerButton>
-            <button class="timer-button" mat-stroked-button color="accent" [disabled]="disabledTimer$ | async"
-              (click)="startTimer()">
+            <button class="timer-button" mat-stroked-button color="accent"
+              [disabled]="(disabledTimer$ | async) || (unscheduled$ | async)" (click)="startTimer()">
               <mat-icon>watch</mat-icon>
               <span>Add Time</span>
             </button>
