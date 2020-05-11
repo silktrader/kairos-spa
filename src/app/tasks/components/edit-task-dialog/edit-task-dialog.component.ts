@@ -20,7 +20,7 @@ import {
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app-state';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { takeUntil, first, startWith, map, tap } from 'rxjs/operators';
+import { takeUntil, first, startWith, map } from 'rxjs/operators';
 import { formatISO, differenceInMinutes, parseISO } from 'date-fns';
 import {
   selectTaskEditingId,
@@ -46,7 +46,7 @@ import { TaskService } from '../../task.service';
   selector: 'app-edit-task-dialog',
   templateUrl: './edit-task-dialog.component.html',
   styleUrls: ['./edit-task-dialog.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditTaskDialogComponent implements OnInit, OnDestroy {
   @ViewChild('autosize') autosize: CdkTextareaAutosize;
@@ -111,8 +111,8 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   private ngUnsubscribe$ = new Subject();
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public initialTask: TaskDto,
-    public dialogRef: MatDialogRef<EditTaskDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public readonly initialTask: TaskDto,
+    public readonly dialogRef: MatDialogRef<EditTaskDialogComponent>,
     private readonly store: Store<AppState>,
     private readonly actions$: Actions,
     private readonly ngZone: NgZone,
@@ -120,6 +120,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // populate the auto-completable tags
     this.store
       .select(selectTags)
       .pipe(takeUntil(this.ngUnsubscribe$))
@@ -176,16 +177,18 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     // ensure that the date is set to UTC
     // the form field might be cleared while editing hence the null check
     // will create a date from either a string or a date object
-    const date = formatISO(new Date(formValue.date || Date.now()), {
-      representation: 'date',
-    });
+    const date = formValue.date
+      ? formatISO(new Date(formValue.date), {
+          representation: 'date',
+        })
+      : null;
     return {
       ...this.initialTask, // ensures the ID is present and that duration and complete aren't null
       previousId: this.initialTask.previousId,
       title: formValue.title,
       details: formValue.details,
       complete: this.completedControl$.value,
-      duration: formValue.duration,
+      duration: formValue.duration || null, // avoid undefined when the control is disabled and return null
       date,
       tags: this.editedTags$.value,
     };
@@ -208,6 +211,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   resetChanges(): void {
     this.taskForm.patchValue(this.initialTask);
     this.completedControl$.next(this.initialTask.complete);
+    this.editedTags$.next(this.initialTask.tags);
   }
 
   deleteTask(): void {
