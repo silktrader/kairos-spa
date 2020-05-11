@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { TasksState } from '../../state/tasks.state';
+import { TasksState } from '../../tasks/state/tasks.state';
 import { Store } from '@ngrx/store';
-import { selectTags } from '../../state/tasks.selectors';
-import { getTags } from '../../state/tasks.actions';
+import { selectTags } from '../../tasks/state/tasks.selectors';
+import { getTags } from '../../tasks/state/tasks.actions';
 import { MatDialog } from '@angular/material/dialog';
-import { EditTagDialogComponent } from '../edit-tag-dialog/edit-tag-dialog.component';
-import { TagDto } from '../../models/tag.dto';
+import { EditTagDialogComponent } from '../../tasks/components/edit-tag-dialog/edit-tag-dialog.component';
+import { TagDto } from '../../tasks/models/tag.dto';
 
 @Component({
   selector: 'app-tags-sidebar',

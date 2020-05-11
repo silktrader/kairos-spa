@@ -65,7 +65,6 @@
           </mat-expansion-panel-header>
 
           <ul class="habits-list">
-            <!-- <li class="habit" *ngFor="let habit of (habitsDetails$ | async)" [ngStyle]="{'color': habit.colour}"> -->
             <li class="habit" *ngFor="let habit of (habitsDetails$ | async)">
               <mat-slide-toggle [checked]="habit.entry !== undefined" (change)="toggleHabit(habit.id, habit.entry)">
                 {{habit.title}}

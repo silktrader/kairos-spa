@@ -29,12 +29,12 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { ShortcutInput } from 'ng-keyboard-shortcuts';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  selector: 'app-schedule',
+  templateUrl: './schedule.component.html',
+  styleUrls: ['./schedule.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ScheduleComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('sidebar') sidebar: MatSidenav;
 
   private readonly ngUnsubscribe$ = new Subject();

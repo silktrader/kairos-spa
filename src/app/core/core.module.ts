@@ -7,6 +7,8 @@ import { GeneralErrorDialogComponent } from './components/general-error-dialog/g
 import { GeneralErrorHandler } from './general-error-handler';
 import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { SortablejsModule } from 'ngx-sortablejs';
+import { AuthModule } from '../auth/auth.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [GeneralErrorDialogComponent],
@@ -16,15 +18,19 @@ import { SortablejsModule } from 'ngx-sortablejs';
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
+    BrowserAnimationsModule,
+    AuthModule.forRoot({ backendUrl: 'http://localhost:3000/auth/' }),
     SortablejsModule.forRoot({ animation: 150 }),
     KeyboardShortcutsModule.forRoot(),
   ],
   exports: [
     CommonModule,
-    MaterialModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    MaterialModule,
+    BrowserAnimationsModule,
+    AuthModule,
     SortablejsModule,
     KeyboardShortcutsModule,
   ],

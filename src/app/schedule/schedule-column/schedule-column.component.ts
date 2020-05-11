@@ -36,12 +36,12 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { formatDate } from 'src/app/core/format-date';
 
 @Component({
-  selector: 'app-day-view',
-  templateUrl: './day-view.component.html',
-  styleUrls: ['./day-view.component.scss'],
+  selector: 'app-schedule-column',
+  templateUrl: './schedule-column.component.html',
+  styleUrls: ['./schedule-column.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DayViewComponent implements OnInit, OnDestroy {
+export class ScheduleColumnComponent implements OnInit, OnDestroy {
   @Input() date: string;
   private dateObject: Date;
 

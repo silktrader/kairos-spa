@@ -17,7 +17,7 @@ import { remove, addTask, edit } from 'src/app/tasks/state/tasks.actions';
 import { TaskService } from 'src/app/tasks/task.service';
 
 @Component({
-  selector: 'app-events',
+  selector: 'app-events-sidebar',
   templateUrl: './events-sidebar.component.html',
   styleUrls: ['./events-sidebar.component.scss'],
 })

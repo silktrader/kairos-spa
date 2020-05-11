@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Options } from 'sortablejs';
 import { Observable, combineLatest } from 'rxjs';
-import { TaskDto } from '../../models/task.dto';
-import { TasksState } from '../../state/tasks.state';
+import { TaskDto } from '../../tasks/models/task.dto';
+import { TasksState } from '../../tasks/state/tasks.state';
 import { Store, select } from '@ngrx/store';
 import {
   selectUnscheduledTasks,
   selectTasksByDate,
   selectTasks,
-} from '../../state/tasks.selectors';
+} from '../../tasks/state/tasks.selectors';
 import { first, map } from 'rxjs/operators';
-import { TaskService } from '../../task.service';
-import { updateTasks } from '../../state/tasks.actions';
+import { TaskService } from '../../tasks/task.service';
+import { updateTasks } from '../../tasks/state/tasks.actions';
 
 @Component({
   selector: 'app-unscheduled-sidebar',

@@ -43,7 +43,7 @@
     <ng-container [ngSwitch]="(sidebarState$ | async)?.section">
       <app-unscheduled-sidebar class="sidebar-section" *ngSwitchCase="sidebarSection.Unscheduled">
       </app-unscheduled-sidebar>
-      <app-events class="sidebar-section" *ngSwitchCase="sidebarSection.Events"></app-events>
+      <app-events-sidebar class="sidebar-section" *ngSwitchCase="sidebarSection.Events"></app-events-sidebar>
       <app-habits-sidebar class="sidebar-section" *ngSwitchCase="sidebarSection.Habits"></app-habits-sidebar>
       <app-tags-sidebar class="sidebar-section" *ngSwitchCase="sidebarSection.Tags"></app-tags-sidebar>
     </ng-container>
@@ -56,8 +56,8 @@
       <ng-keyboard-shortcuts-help [key]="'f1'" [closeKey]="'escape'" [title]="'Help'"></ng-keyboard-shortcuts-help>
 
       <main *ngIf="user$ | async; else authPrompt" class="visible-days">
-        <app-day-view *ngFor="let date of (visibleDates$ | async); let last = last" [date]="date"
-          [ngClass]="{'last-day': last, 'day': true}"></app-day-view>
+        <app-schedule-column *ngFor="let date of (visibleDates$ | async); let last = last" [date]="date"
+          [ngClass]="{'last-day': last, 'day': true}"></app-schedule-column>
 
         <section class="sidebar-controls mat-elevation-z4">
           <button mat-icon-button (click)="toggleSidebarSection(sidebarSection.Unscheduled)">
@@ -76,7 +76,7 @@
       </main>
 
       <ng-template #authPrompt>
-        <app-authentication-prompt></app-authentication-prompt>
+        <!-- <app-authentication-prompt></app-authentication-prompt> -->
       </ng-template>
     </div>
   </mat-sidenav-content>
