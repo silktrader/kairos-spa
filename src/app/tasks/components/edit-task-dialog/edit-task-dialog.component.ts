@@ -65,7 +65,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
       Validators.maxLength(50),
     ]),
     details: new FormControl(undefined),
-    date: new FormControl(undefined, [Validators.required]),
+    date: new FormControl(undefined),
     duration: this.durationControl,
   });
 
@@ -106,7 +106,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
   editedTags$ = new BehaviorSubject<ReadonlyArray<string>>(
     this.initialTask.tags
   );
-  readonly tagSeparators: number[] = [ENTER, COMMA];
+  readonly tagSeparators: ReadonlyArray<number> = [ENTER, COMMA];
 
   private ngUnsubscribe$ = new Subject();
 
