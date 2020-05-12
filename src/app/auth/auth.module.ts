@@ -12,6 +12,7 @@ import { SigninPromptComponent } from './components/signin-prompt/signin-prompt.
 import { CoreModule } from '../core/core.module';
 import { MaterialModule } from '../material/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UnauthorisedInterceptor } from './unauthorised.interceptor';
 
 @NgModule({
   declarations: [AuthenticationPromptComponent, SigninPromptComponent],
@@ -35,6 +36,11 @@ export class AuthModule {
         {
           provide: HTTP_INTERCEPTORS,
           useClass: AuthInterceptor,
+          multi: true,
+        },
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: UnauthorisedInterceptor,
           multi: true,
         },
         { provide: AuthConfig, useValue: config },
