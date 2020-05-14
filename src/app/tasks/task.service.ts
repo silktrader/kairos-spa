@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { TaskDto } from './models/task.dto';
 import { environment } from 'src/environments/environment';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { DeleteTaskDto } from './models/deleteTask.dto';
 import { TagDto } from './models/tag.dto';
 import { TaskTimer } from './models/task-timer.dto';
@@ -23,11 +23,13 @@ export class TaskService {
   }
 
   getTasksFromDates(dates: Array<string>): Observable<ReadonlyArray<TaskDto>> {
-    return this.http.get<ReadonlyArray<TaskDto>>(this.tasksUrl, {
-      params: {
-        dates,
-      },
-    });
+    return dates.length === 0
+      ? of([])
+      : this.http.get<ReadonlyArray<TaskDto>>(this.tasksUrl, {
+          params: {
+            dates,
+          },
+        });
   }
 
   getDateTasks(date: string): Observable<ReadonlyArray<TaskDto>> {

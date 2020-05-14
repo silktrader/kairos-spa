@@ -22,7 +22,6 @@ export class UnauthorisedInterceptor implements HttpInterceptor {
         if (err.status === 401) {
           // auto logout; routes should take care of redirection
           this.as.signout();
-          console.log('out');
         }
 
         const error = err.error.message || err.statusText;

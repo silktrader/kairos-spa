@@ -1,9 +1,10 @@
-import { Injectable, Optional } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { map, first, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, first } from 'rxjs/operators';
 import { UserInfo } from './user-info.model';
 import { AuthConfig } from './auth-config.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,11 @@ export class AuthService {
   // expose the user subject but negate the ability to emit new values
   public readonly user$: Observable<UserInfo | null>;
 
-  constructor(config: AuthConfig, private readonly http: HttpClient) {
+  constructor(
+    config: AuthConfig,
+    private readonly http: HttpClient,
+    private readonly router: Router
+  ) {
     this.backendUrl = config.backendUrl;
     this.userKeyName = config.userKeyName ?? 'user';
 
@@ -34,29 +39,19 @@ export class AuthService {
     return this.userSubject$.value;
   }
 
-  signin(email: string, password: string): Observable<UserInfo | undefined> {
+  signin(username: string, password: string): Observable<UserInfo | undefined> {
     return this.http
       .post<UserInfo>(this.backendUrl + 'signin', {
-        email,
+        username,
         password,
       })
       .pipe(
         first(),
-        catchError((error) => {
-          console.log(error); // tk
-          return of(undefined);
-        }),
         map((userInfo: UserInfo) => {
-          // login successful if there's a jwt token in the response
-          // tk perform validation of response?
-          if (userInfo) {
-            // store user details and jwt token in local storage to keep user logged in between page refreshes
-            localStorage.setItem(this.userKeyName, JSON.stringify(userInfo));
-            this.userSubject$.next(userInfo);
-            return userInfo;
-          }
-
-          return undefined;
+          // store user details and jwt token in local storage to keep user logged in
+          localStorage.setItem(this.userKeyName, JSON.stringify(userInfo));
+          this.userSubject$.next(userInfo);
+          return userInfo;
         })
       );
   }
@@ -65,6 +60,7 @@ export class AuthService {
     // remove user from local storage to log user out
     localStorage.removeItem(this.userKeyName);
     this.userSubject$.next(null);
+    this.router.navigate(['/user']);
   }
 
   register(name: string, password: string): Observable<void> {

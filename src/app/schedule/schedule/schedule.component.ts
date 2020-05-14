@@ -58,7 +58,6 @@ export class ScheduleComponent implements OnInit, OnDestroy, AfterViewInit {
     private readonly changeDetectorRef: ChangeDetectorRef
   ) {}
 
-  // tk should be conditional on sign in
   ngOnInit(): void {
     // get the available habits, needs not be tied with the dates' changes
     this.store.dispatch(getHabits());
@@ -73,8 +72,8 @@ export class ScheduleComponent implements OnInit, OnDestroy, AfterViewInit {
     this.store.dispatch(TasksActions.getUnscheduledTasks());
 
     // get tasks and habits entries
-    this.store
-      .pipe(select(selectVisibleDates), takeUntil(this.ngUnsubscribe$))
+    this.visibleDates$
+      .pipe(takeUntil(this.ngUnsubscribe$))
       .subscribe((dates: Array<string>) => {
         // avoid calls when no dates are set
         if (dates.length > 0) {
