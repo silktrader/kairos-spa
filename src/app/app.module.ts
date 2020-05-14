@@ -8,13 +8,17 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment'; // Angular CLI environment
 import { EffectsModule } from '@ngrx/effects';
 import { ScheduleModule } from './schedule/schedule.module';
+import { resetReducer } from './store/schedule.reducers';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    StoreModule.forRoot({ schedule: Reducers.scheduleReducer }),
+    StoreModule.forRoot(
+      { schedule: Reducers.scheduleReducer },
+      { metaReducers: [resetReducer] }
+    ),
     EffectsModule.forRoot([]), // must register for feature effects to work
     StoreDevtoolsModule.instrument({
       maxAge: 10,

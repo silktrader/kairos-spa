@@ -2,6 +2,8 @@ import { createAction, props } from '@ngrx/store';
 import { SidebarSection } from './app-state';
 import { AppEvent } from './app-event.state';
 
+export const resetState = createAction('[SCHEDULE] Reset');
+
 export const setVisibleDates = createAction(
   '[SCHEDULE] Set Visible Dates',
   props<{ dates: ReadonlyArray<string> }>()

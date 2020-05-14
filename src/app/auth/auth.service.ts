@@ -5,6 +5,9 @@ import { map, first } from 'rxjs/operators';
 import { UserInfo } from './user-info.model';
 import { AuthConfig } from './auth-config.model';
 import { Router } from '@angular/router';
+import { AppState } from '../store/app-state';
+import { Store } from '@ngrx/store';
+import { resetState } from '../store/schedule.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +25,8 @@ export class AuthService {
   constructor(
     config: AuthConfig,
     private readonly http: HttpClient,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly store: Store<AppState>
   ) {
     this.backendUrl = config.backendUrl;
     this.userKeyName = config.userKeyName ?? 'user';
@@ -61,6 +65,7 @@ export class AuthService {
     localStorage.removeItem(this.userKeyName);
     this.userSubject$.next(null);
     this.router.navigate(['/user']);
+    this.store.dispatch(resetState());
   }
 
   register(name: string, password: string): Observable<void> {

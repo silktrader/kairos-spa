@@ -1,12 +1,25 @@
-import { createReducer, on } from '@ngrx/store';
+import { createReducer, on, ActionReducer } from '@ngrx/store';
 import * as ScheduleActions from './schedule.actions';
-import { ScheduleState, SidebarSection } from './app-state';
+import { ScheduleState, SidebarSection, AppState } from './app-state';
 
 export const initialState: ScheduleState = {
   visibleDates: [],
   sidebar: { opened: false, section: SidebarSection.Events },
   notifiedEventsIds: new Set(), // tk use serialisable array?
 };
+
+export function resetReducer(
+  reducer: ActionReducer<AppState>
+): ActionReducer<AppState> {
+  return (state, action) => {
+    if (action.type === '[SCHEDULE] Reset') {
+      return reducer(undefined, action);
+    }
+    // parts of the state can be maintained like so:
+    // return reducer({schedule: state.schedule}, action)
+    return reducer(state, action);
+  };
+}
 
 export const scheduleReducer = createReducer(
   initialState,
