@@ -1,30 +1,28 @@
-<main>
+<mat-toolbar color="primary" class="mat-elevation-z6">
+  <section class="header">
+    <h2>Kairos</h2>
+  </section>
+</mat-toolbar>
 
-  <mat-toolbar color="primary" class="mat-elevation-z6">
-    <section class="header">
-      <h2>Kairos</h2>
-    </section>
-  </mat-toolbar>
+<mat-card>
 
-  <mat-card>
+  <mat-card-content>
+    <mat-tab-group mat-align-tabs="center" mat-stretch-tabs>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>person</mat-icon>
+          <h3>Sign in</h3>
+        </ng-template>
 
-    <mat-card-content>
-      <mat-tab-group mat-align-tabs="center" mat-stretch-tabs>
-        <mat-tab>
-          <ng-template mat-tab-label>
-            <mat-icon>person</mat-icon>
-            <h3>Sign in</h3>
-          </ng-template>
+        <app-signin-prompt (attemptedSignin)="handleSignin($event)"></app-signin-prompt>
 
-          <app-signin-prompt (attemptedSignin)="handleSignin($event)"></app-signin-prompt>
-
-        </mat-tab>
-        <mat-tab label="Register">
-          <ng-template mat-tab-label>
-            <mat-icon>person_add</mat-icon>
-            <h3>Register</h3>
-          </ng-template>
-          <!-- <form class="container" [formGroup]="registerForm" autocomplete="off">
+      </mat-tab>
+      <mat-tab label="Register">
+        <ng-template mat-tab-label>
+          <mat-icon>person_add</mat-icon>
+          <h3>Register</h3>
+        </ng-template>
+        <!-- <form class="container" [formGroup]="registerForm" autocomplete="off">
         <mat-form-field class="form-row" appearance="fill">
           <mat-label>User Name</mat-label>
           <input matInput type="text" formControlName="registerName" />
@@ -43,9 +41,8 @@
           (click)="handleRegistration()">
           Register
         </button> -->
-          <!-- </form> -->
-        </mat-tab>
-      </mat-tab-group>
-    </mat-card-content>
-  </mat-card>
-</main>
+        <!-- </form> -->
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

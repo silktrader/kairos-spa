@@ -25,7 +25,10 @@
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/viridian-theme.scss", "src/styles.scss"],
+            "styles": [
+              "src/styles/saffron-persian-theme.scss",
+              "src/styles/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {

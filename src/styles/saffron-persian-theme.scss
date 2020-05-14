@@ -153,9 +153,10 @@ body {
 }
 
 $mat-primary: (
-  main: #ff8d46,
-  lighter: #ffddc8,
-  darker: #ff702f,
+  main: #ff9933,
+  // Saffron
+    lighter: #ffca64,
+  darker: #ff7c20,
   200: #ff8d46,
   // For slide toggle,
     contrast:
@@ -177,9 +178,10 @@ body {
 }
 
 $mat-accent: (
-  main: #3b97a2,
-  lighter: #c4e0e3,
-  darker: #267a86,
+  main: #26a69a,
+  // Persian Green
+    lighter: #64d8cb,
+  darker: #00766c,
   200: #3b97a2,
   // For slide toggle,
     contrast:
@@ -201,9 +203,9 @@ body {
 }
 
 $mat-warn: (
-  main: #d7263d,
-  lighter: #f3bec5,
-  darker: #c71727,
+  main: #ff6168,
+  lighter: #ff6168,
+  darker: #9e0017,
   200: #d7263d,
   // For slide toggle,
     contrast:
@@ -227,7 +229,7 @@ $altTheme: mat-dark-theme($theme-primary, $theme-accent, $theme-warn);
 
 .material-icons {
   font-size: 24px;
-  font-family: "Material Icons", "Material Icons";
+  font-family: "Material Icons";
   .mat-badge-content {
     font-family: "Inter";
   }
