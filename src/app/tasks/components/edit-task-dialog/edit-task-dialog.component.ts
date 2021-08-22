@@ -94,12 +94,13 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.initialTask.date === null
   );
 
-  readonly autoCompletableTags: Observable<
-    Array<string>
-  > = this.tagsControl.valueChanges.pipe(
-    startWith(null),
-    map((tag: string | null) => (tag ? this.filterTag(tag) : this.existingTags))
-  );
+  readonly autoCompletableTags: Observable<Array<string>> =
+    this.tagsControl.valueChanges.pipe(
+      startWith(null),
+      map((tag: string | null) =>
+        tag ? this.filterTag(tag) : this.existingTags
+      )
+    );
 
   // tk remove below?
   existingTags: Array<string>;
@@ -124,7 +125,7 @@ export class EditTaskDialogComponent implements OnInit, OnDestroy {
     this.store
       .select(selectTags)
       .pipe(takeUntil(this.ngUnsubscribe$))
-      .subscribe((tags) => (this.existingTags = tags.map((tag) => tag.name)));
+      .subscribe((tags) => (this.existingTags = tags.map((tag) => tag.title)));
 
     // when the original task value and the form's contents differ allow changes to be reverted
     combineLatest([

@@ -30,16 +30,12 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
     Validators.pattern('^[a-z]+$'),
   ]);
   readonly tagForm = new FormGroup({
-    name: this.nameControl,
+    title: this.nameControl,
     description: new FormControl(),
   });
 
-  public readonly initialColour = this.tag
-    ? this.tag.colour
-    : this.getRandomColour();
-  public readonly selectedColour$ = new BehaviorSubject<string>(
-    this.initialColour
-  );
+  public readonly initialHue = this.tag ? this.tag.colour : this.getRandomHue();
+  public readonly selectedHue$ = new BehaviorSubject<number>(this.initialHue);
 
   tagUpdating$ = new BehaviorSubject(false);
   readonly unchanged$ = new BehaviorSubject(false);
@@ -78,8 +74,8 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
     this.ngUnsubscribe$.complete();
   }
 
-  private getRandomColour(): string {
-    let randomColour = '#fff';
+  private getRandomHue(): number {
+    let randomColour = 0;
     this.store
       .pipe(select(selectTagColoursList), first())
       .subscribe((colours) => {
@@ -89,18 +85,18 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   }
 
   private get hasChanged(): boolean {
-    if (this.selectedColour$.value !== this.initialColour) return true;
+    if (this.selectedHue$.value !== this.initialHue) return true;
 
     if (!this.tag) return this.tagForm.dirty;
 
-    const { name, description } = this.tagForm.value;
-    if (this.tag.name !== name) return true;
+    const { title, description } = this.tagForm.value;
+    if (this.tag.title !== title) return true;
     if (this.tag.description !== description) return true;
     return false;
   }
 
-  selectColour(colour: string): void {
-    this.selectedColour$.next(colour);
+  selectColour(colour: number): void {
+    this.selectedHue$.next(colour);
     this.unchanged$.next(!this.hasChanged);
   }
 
@@ -108,7 +104,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
     this.tagForm.patchValue(
       this.tag ?? { name: undefined, description: undefined }
     );
-    this.selectedColour$.next(this.initialColour);
+    this.selectedHue$.next(this.initialHue);
   }
 
   saveTag(): void {
@@ -118,7 +114,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
           tagDto: {
             ...this.tagForm.value,
             id: this.tag.id,
-            colour: this.selectedColour$.value,
+            colour: this.selectedHue$.value,
           },
         })
       );
@@ -127,7 +123,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
         addTag({
           tagDto: {
             ...this.tagForm.value,
-            colour: this.selectedColour$.value,
+            colour: this.selectedHue$.value,
           },
         })
       );

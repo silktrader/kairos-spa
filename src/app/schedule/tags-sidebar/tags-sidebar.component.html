@@ -2,7 +2,7 @@
 
 <ul>
   <li *ngFor="let tag of (tags$ | async)">
-    <span class="tag-name" [style.backgroundColor]="tag.colour">{{tag.name}}</span>
+    <span class="tag-name" [style.backgroundColor]="getHSLColour(tag.colour)">{{tag.title}}</span>
     <button mat-icon-button (click)="editTag(tag)">
       <mat-icon>edit</mat-icon>
     </button>

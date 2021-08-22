@@ -1,7 +1,7 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { TasksState, TasksLoadingState } from './tasks.state';
 import { TagDto } from '../models/tag.dto';
-import { baseTagColours } from './colours.state';
+import { baseTagHues } from './colours.state';
 import { TaskTimer } from '../models/task-timer.dto';
 import { TaskDto } from '../models/task.dto';
 
@@ -58,7 +58,7 @@ export const selectTags = createSelector(
 );
 
 export const selectTagColoursList = createSelector(selectTags, (tags) => {
-  return baseTagColours.filter(
+  return baseTagHues.filter(
     (colour) => !tags.map((tag) => tag.colour).includes(colour)
   );
 });
@@ -66,7 +66,7 @@ export const selectTagColoursList = createSelector(selectTags, (tags) => {
 export const selectTagColour = createSelector(
   selectTags,
   (tags: Array<TagDto>, props: { tagName: string }) =>
-    tags.find((tag) => tag.name === props.tagName)?.colour
+    tags.find((tag) => tag.title === props.tagName)?.colour
 );
 
 /* Timers */

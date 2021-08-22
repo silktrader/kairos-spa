@@ -182,7 +182,7 @@ export const tasksReducer = createReducer(
       ...state,
       tasks: state.tasks.map((task) => ({
         ...task,
-        tags: task.tags.filter((tag) => tag !== tagDto.name),
+        tags: task.tags.filter((tag) => tag !== tagDto.title),
       })),
       tags: state.tags.filter((tag) => tag.id !== tagDto.id),
     };

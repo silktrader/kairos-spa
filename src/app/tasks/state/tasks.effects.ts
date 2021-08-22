@@ -26,11 +26,11 @@ export class TasksEffects {
     this.actions$.pipe(
       ofType(TasksActions.getTasks),
       mergeMap((action: { dates: Array<string> }) => {
-        const getter =
-          action.dates.length === 1
-            ? this.ts.getDateTasks(action.dates[0])
-            : this.ts.getTasksFromDates(action.dates);
-        return getter.pipe(
+        // const getter =
+        //   action.dates.length === 1
+        //     ? this.ts.getDateTasks(action.dates[0])
+        //     : this.ts.getTasksFromDates(action.dates);
+        return this.ts.getTasksFromDates(action.dates).pipe(
           map((tasks) => TasksActions.getTasksSuccess({ tasks })),
           catchError(() =>
             of(TasksActions.getTasksFailed({ dates: action.dates }))
@@ -83,7 +83,7 @@ export class TasksEffects {
       ofType(TasksActions.addTaskSuccess),
       withLatestFrom(this.store.pipe(select(selectTags), first())),
       map(([props, tags]) => {
-        const existingTags = tags.map((tag) => tag.name);
+        const existingTags = tags.map((tag) => tag.title);
         for (const tag of props.task.tags) {
           if (!existingTags.includes(tag)) {
             return TasksActions.getTags();
@@ -100,7 +100,7 @@ export class TasksEffects {
       ofType(TasksActions.editSuccess),
       withLatestFrom(this.store.pipe(select(selectTags), first())),
       map(([props, tags]) => {
-        const existingTags = tags.map((tag) => tag.name);
+        const existingTags = tags.map((tag) => tag.title);
         for (const tag of props.updatedTask.tags) {
           if (!existingTags.includes(tag)) {
             return TasksActions.getTags();

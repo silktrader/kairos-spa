@@ -14,6 +14,7 @@ import { timer, combineLatest, Subject, Observable } from 'rxjs';
 import { parseISO, differenceInMinutes } from 'date-fns';
 import { TaskTimer } from '../../models/task-timer.dto';
 import { TaskDto } from '../../models/task.dto';
+import { Tags } from '../../models/tag.dto';
 
 @Component({
   selector: 'app-task-card',
@@ -62,7 +63,7 @@ export class TaskCardComponent implements OnInit {
         const height = `${60 * badgeNumber}px`;
         const width = height;
         return {
-          backgroundColor: colour,
+          backgroundColor: Tags.getHSLColour(colour ?? 0), // todo: handle missing colour with an alert or upstream
           height,
           left,
           bottom,

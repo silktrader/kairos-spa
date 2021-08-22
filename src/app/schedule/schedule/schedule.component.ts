@@ -76,32 +76,28 @@ export class ScheduleComponent implements OnInit, OnDestroy, AfterViewInit {
       .pipe(takeUntil(this.ngUnsubscribe$))
       .subscribe((dates: Array<string>) => {
         // avoid calls when no dates are set
-        if (dates.length > 0) {
-          this.store.dispatch(getHabitsEntries({ dates }));
+        if (dates.length === 0) return;
 
-          // determine which dates need to be fetched
-          const fetchDates = [];
-          for (const date of dates) {
-            if (this.previousVisibleDates.has(date)) continue;
-            fetchDates.push(date);
-          }
+        this.store.dispatch(getHabitsEntries({ dates }));
 
-          // dates that will be removed from the store
-          const removedDates = [];
-          for (const date of this.previousVisibleDates) {
-            if (dates.includes(date)) continue;
-            removedDates.push(date);
-          }
+        // determine which dates need to be fetched
+        const fetchDates = dates.filter(
+          (date) => !this.previousVisibleDates.has(date)
+        );
 
-          this.store.dispatch(TasksActions.getTasks({ dates: fetchDates }));
-          if (removedDates.length) {
-            this.store.dispatch(
-              TasksActions.removeDatesTasks({ dates: removedDates })
-            );
-          }
+        // dates that will be removed from the store
+        const removedDates = [...this.previousVisibleDates].filter(
+          (date) => !dates.includes(date)
+        );
 
-          this.previousVisibleDates = new Set(dates);
-        }
+        if (removedDates.length)
+          this.store.dispatch(
+            TasksActions.removeDatesTasks({ dates: removedDates })
+          );
+
+        this.store.dispatch(TasksActions.getTasks({ dates: fetchDates }));
+
+        this.previousVisibleDates = new Set(dates);
       });
 
     this.showToday();

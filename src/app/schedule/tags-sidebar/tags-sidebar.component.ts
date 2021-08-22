@@ -5,7 +5,7 @@ import { selectTags } from '../../tasks/state/tasks.selectors';
 import { getTags } from '../../tasks/state/tasks.actions';
 import { MatDialog } from '@angular/material/dialog';
 import { EditTagDialogComponent } from '../../tasks/components/edit-tag-dialog/edit-tag-dialog.component';
-import { TagDto } from '../../tasks/models/tag.dto';
+import { TagDto, Tags } from '../../tasks/models/tag.dto';
 
 @Component({
   selector: 'app-tags-sidebar',
@@ -36,5 +36,9 @@ export class TagsSidebarComponent implements OnInit {
       panelClass: 'kairos-dialog',
       data: tag,
     });
+  }
+
+  getHSLColour(hueValue: number): string {
+    return Tags.getHSLColour(hueValue);
   }
 }
