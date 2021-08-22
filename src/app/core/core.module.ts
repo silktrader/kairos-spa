@@ -19,7 +19,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     ReactiveFormsModule,
     MaterialModule,
     BrowserAnimationsModule,
-    AuthModule.forRoot({ backendUrl: 'http://localhost:3000/auth/' }),
+    AuthModule.forRoot({ backendUrl: 'http://localhost:8080/auth/' }),
     SortablejsModule.forRoot({ animation: 150 }),
     KeyboardShortcutsModule.forRoot(),
   ],

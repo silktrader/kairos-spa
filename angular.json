@@ -65,7 +65,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "kairos-spa:build"
+            "browserTarget": "kairos-spa:build",
+            "port": 8181
           },
           "configurations": {
             "production": {

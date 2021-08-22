@@ -1,0 +1,18 @@
+<form [formGroup]="signupForm" (ngSubmit)="attemptSignUp()">
+  <mat-form-field appearance="outline">
+    <mat-label>User Name</mat-label>
+    <input matInput type="text" formControlName="username" autocomplete="off" />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Email</mat-label>
+    <input matInput type="text" formControlName="email" />
+  </mat-form-field>
+  <mat-form-field appearance="outline">
+    <mat-label>Password</mat-label>
+    <input matInput type="text" formControlName="password" />
+  </mat-form-field>
+  <button mat-raised-button color="primary" [disabled]="!signupForm.valid || (loading$ | async)">
+    <mat-spinner *ngIf="loading$ | async else signupLabel" [diameter]="35"></mat-spinner>
+    <ng-template #signupLabel>Sign Up</ng-template>
+  </button>
+</form>

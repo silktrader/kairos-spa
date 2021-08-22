@@ -11,13 +11,10 @@ import { BehaviorSubject } from 'rxjs';
   styleUrls: ['./signin-prompt.component.scss'],
 })
 export class SigninPromptComponent implements OnInit {
-  readonly email = new FormControl(undefined, [
-    Validators.required,
-    Validators.email,
-  ]);
+  readonly username = new FormControl(undefined, [Validators.required]);
   readonly password = new FormControl(undefined, [Validators.required]);
   readonly signinForm = new FormGroup({
-    email: this.email,
+    username: this.username,
     password: this.password,
   });
 
@@ -34,10 +31,10 @@ export class SigninPromptComponent implements OnInit {
   ngOnInit(): void {}
 
   attemptSignin(): void {
-    const { email, password } = this.signinForm.value;
+    const { username, password } = this.signinForm.value;
     this.loading$.next(true);
     this.as
-      .signin(email, password)
+      .signin(username, password)
       .pipe(first())
       .subscribe(
         (user) => {

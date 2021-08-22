@@ -9,13 +9,18 @@ import { AuthInterceptor } from './auth.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthenticationPromptComponent } from './components/authentication-prompt/authentication-prompt.component';
 import { SigninPromptComponent } from './components/signin-prompt/signin-prompt.component';
-import { CoreModule } from '../core/core.module';
 import { MaterialModule } from '../material/material.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UnauthorisedInterceptor } from './unauthorised.interceptor';
+import { SignupPromptComponent } from './components/signup-prompt/signup-prompt.component';
 
 @NgModule({
-  declarations: [AuthenticationPromptComponent, SigninPromptComponent],
+  declarations: [
+    AuthenticationPromptComponent,
+    SigninPromptComponent,
+    SignupPromptComponent,
+    SignupPromptComponent,
+  ],
   imports: [ReactiveFormsModule, MaterialModule],
   exports: [AuthenticationPromptComponent, SigninPromptComponent],
 })

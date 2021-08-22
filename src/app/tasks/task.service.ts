@@ -32,6 +32,7 @@ export class TaskService {
         });
   }
 
+  // remove? tk
   getDateTasks(date: string): Observable<ReadonlyArray<TaskDto>> {
     return this.http.get<ReadonlyArray<TaskDto>>(
       `${this.tasksUrl}/date/${date}`

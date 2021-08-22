@@ -3,7 +3,7 @@ import {
   HttpInterceptor,
   HttpRequest,
   HttpHandler,
-  HttpEvent
+  HttpEvent,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -18,11 +18,11 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     const currentUser = this.auth.user;
 
-    if (currentUser && currentUser.token) {
+    if (currentUser && currentUser.authenticationToken) {
       const cloned = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${currentUser.token}`
-        }
+          Authorization: `Bearer ${currentUser.authenticationToken}`,
+        },
       });
       return next.handle(cloned);
     } else {

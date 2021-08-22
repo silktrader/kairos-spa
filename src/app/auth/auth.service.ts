@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, first } from 'rxjs/operators';
+import { map, first, flatMap } from 'rxjs/operators';
 import { UserInfo } from './user-info.model';
 import { AuthConfig } from './auth-config.model';
 import { Router } from '@angular/router';
@@ -46,7 +46,7 @@ export class AuthService {
   signin(username: string, password: string): Observable<UserInfo | undefined> {
     return this.http
       .post<UserInfo>(this.backendUrl + 'signin', {
-        username,
+        name: username,
         password,
       })
       .pipe(
@@ -68,10 +68,17 @@ export class AuthService {
     this.store.dispatch(resetState());
   }
 
-  register(name: string, password: string): Observable<void> {
-    return this.http.post<void>(this.backendUrl + 'signup', {
-      Name: name,
-      Password: password,
-    });
+  signUp(
+    name: string,
+    email: string,
+    password: string
+  ): Observable<UserInfo | undefined> {
+    return this.http
+      .post<void>(this.backendUrl + 'signup', {
+        name,
+        email,
+        password,
+      })
+      .pipe(flatMap(() => this.signin(name, password)));
   }
 }
