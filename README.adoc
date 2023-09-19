@@ -1,8 +1,73 @@
 # Kairos
 
-This project was generated with https://github.com/angular/angular-cli[Angular CLI] version 9.0.5.
+Kairos was a test project to explore web frameworks and toolkits. The Single-Page-Application was developped with *Angular*, *NgRx* and *Angular Material*.
+
+The user interface is rather simplistic.
+
+The application expects a small set of REST endpoints, even though I concluded that using gRPC or SignalR would better serve the needs of a cross-platform time keeping application.
+
+## Features
+
+Users can:
+
+* add, edit and track daily habits
+* add and edit tasks
+* assign tags to tasks
+* authenticate with a simple login and password combination through access tokens
+
+## Screenshots
+
+.Home
+image::readme_assets/home.jpg[]
+
+.Account Management
+image::readme_assets/account.jpg[]
+
+.Sign In
+image::readme_assets/authentication_1.jpg[]
+
+.Sign Up
+image::readme_assets/authentication_2.jpg[]
+
+.Day Menu
+image::readme_assets/day_menu.jpg[]
+
+.Add Habit
+image::readme_assets/habit_add_1.jpg[]
+
+.Add Habit
+image::readme_assets/habit_add_2.jpg[]
+
+.Add Habit
+image::readme_assets/habit_add_3.jpg[]
+
+.Habits Events
+image::readme_assets/habits_events.jpg[]
+
+.Habits List
+image::readme_assets/habits_list.jpg[]
+
+.Tag Edit
+image::readme_assets/tag_edit.jpg[]
+
+.Tags List
+image::readme_assets/tags_list.jpg[]
+
+.Task Add
+image::readme_assets/task_add.jpg[]
+
+.Task Edit
+image::readme_assets/task_edit.jpg[]
+
+.Task Events
+image::readme_assets/task_events.jpg[]
+
+.Unscheduled Tasks
+image::readme_assets/unscheduled_tasks.jpg[]
 
 ## Development server
+
+This project was generated with https://github.com/angular/angular-cli[Angular CLI] version 9.0.5.
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
