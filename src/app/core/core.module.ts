@@ -9,9 +9,10 @@ import { KeyboardShortcutsModule } from 'ng-keyboard-shortcuts';
 import { SortablejsModule } from 'ngx-sortablejs';
 import { AuthModule } from '../auth/auth.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HuePickerComponent } from './components/hue-picker/hue-picker.component';
 
 @NgModule({
-  declarations: [GeneralErrorDialogComponent],
+  declarations: [GeneralErrorDialogComponent, HuePickerComponent],
   imports: [
     CommonModule,
     HttpClientModule,
@@ -33,6 +34,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AuthModule,
     SortablejsModule,
     KeyboardShortcutsModule,
+    HuePickerComponent,
   ],
   entryComponents: [GeneralErrorDialogComponent],
   providers: [{ provide: ErrorHandler, useClass: GeneralErrorHandler }],

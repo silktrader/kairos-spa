@@ -32,6 +32,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   readonly tagForm = new FormGroup({
     title: this.nameControl,
     description: new FormControl(),
+    colour: new FormControl(50, [Validators.required]),
   });
 
   public readonly initialHue = this.tag ? this.tag.colour : this.getRandomHue();
@@ -85,24 +86,25 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
   }
 
   private get hasChanged(): boolean {
-    if (this.selectedHue$.value !== this.initialHue) return true;
+    //if (this.selectedHue$.value !== this.initialHue) return true;
 
     if (!this.tag) return this.tagForm.dirty;
 
-    const { title, description } = this.tagForm.value;
+    const { title, description, colour } = this.tagForm.value;
     if (this.tag.title !== title) return true;
     if (this.tag.description !== description) return true;
+    if (this.tag.colour !== colour) return true; // tk, todo there must be a terser synthax for the block above
     return false;
   }
 
-  selectColour(colour: number): void {
-    this.selectedHue$.next(colour);
+  selectHue(hue: number): void {
+    this.selectedHue$.next(hue);
     this.unchanged$.next(!this.hasChanged);
   }
 
   resetChanges(): void {
     this.tagForm.patchValue(
-      this.tag ?? { name: undefined, description: undefined }
+      this.tag ?? { name: undefined, description: undefined, colour: 50 } // tk, todo: add random colour
     );
     this.selectedHue$.next(this.initialHue);
   }
@@ -114,7 +116,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
           tagDto: {
             ...this.tagForm.value,
             id: this.tag.id,
-            colour: this.selectedHue$.value,
+            //colour: this.selectedHue$.value,
           },
         })
       );
@@ -123,7 +125,7 @@ export class EditTagDialogComponent implements OnInit, OnDestroy {
         addTag({
           tagDto: {
             ...this.tagForm.value,
-            colour: this.selectedHue$.value,
+            //colour: this.selectedHue$.value,
           },
         })
       );

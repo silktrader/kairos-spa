@@ -65,11 +65,11 @@ const materialModules = [
   MatTableModule,
   MatSortModule,
   MatPaginatorModule,
-  MatRippleModule
+  MatRippleModule,
 ];
 
 @NgModule({
   imports: materialModules,
-  exports: materialModules
+  exports: materialModules,
 })
 export class MaterialModule {}

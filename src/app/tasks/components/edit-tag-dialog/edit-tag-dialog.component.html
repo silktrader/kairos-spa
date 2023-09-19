@@ -28,18 +28,21 @@
     <section class="form-section">
       <mat-icon class="section-icon">palette</mat-icon>
       <div class="colours-controls">
-        <section class="colours-grid">
-          <ng-container *ngIf="selectedColour$ | async as selectedColour">
-            <!-- conditional display to avoid duplicated colour appearing when adding new tag -->
-            <div *ngIf="tag" class="colour-selector" matRipple [style.backgroundColor]="initialColour"
-              [class.colour-selected]="initialColour === selectedColour" (click)="selectColour(initialColour)">
-            </div>
-            <div class="colour-selector" matRipple *ngFor="let colour of (tagColoursList$ | async)"
-              [style.backgroundColor]="colour" [class.colour-selected]="selectedColour === colour"
-              (click)="selectColour(colour)">
-            </div>
-          </ng-container>
-        </section>
+        <mat-slider thumbLabel min="0" max="360" step="1" formControlName="colour"></mat-slider>
+
+        <!-- <section class="colours-grid">
+          <ng-container *ngIf="selectedHue$ | async as selectedHue">
+           conditional display to avoid duplicated colour appearing when adding new tag
+        <div *ngIf="tag" class="colour-selector" matRipple [style.backgroundColor]="initialHue"
+          [class.colour-selected]="initialHue === selectedHue" (click)="selectHue(initialHue)">
+        </div>
+        <div class="colour-selector" matRipple *ngFor="let colour of (tagColoursList$ | async)"
+          [style.backgroundColor]="colour" [class.colour-selected]="selectedColour === colour"
+          (click)="selectColour(colour)">
+        </div>
+        </ng-container>
+    </section> -->
+
       </div>
     </section>
   </main>
